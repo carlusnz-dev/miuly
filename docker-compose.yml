@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    image: miuly_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17.10
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - miuly_db:/var/lib/postgresql/data
+    
+volumes:
+  miuly_db: 
