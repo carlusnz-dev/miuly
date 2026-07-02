@@ -11,3 +11,80 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// Models
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  username   String    @unique
+  role       Role      @default(USER)
+  finaces    Finaces[]
+  tasks      Task[]
+  banks      Bank[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model Finaces {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     Int
+  name        String
+  description String   @db.VarChar(500)
+  value       Decimal  @default(0) @db.Decimal(10, 2)
+  type_id     Int
+  type        Types    @relation(fields: [type_id], references: [id], onDelete: Restrict)
+  bank_id     Int
+  bank        Bank     @relation(fields: [bank_id], references: [id], onDelete: NoAction)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Types {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  applies_to String[]
+  finaces    Finaces[]
+  tasks      Task[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model Bank {
+  id         Int       @id @default(autoincrement())
+  name       String
+  balance    Decimal   @db.Decimal(10, 2)
+  finaces    Finaces[]
+  user_id    Int
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model Task {
+  id          BigInt   @id @default(autoincrement())
+  name        String
+  description String
+  priority    Priority @default(MEDIUM)
+  type_id     Int
+  type        Types    @relation(fields: [type_id], references: [id], onDelete: Restrict)
+  sync        Boolean? @default(false)
+  due_date    DateTime
+  user_id     Int
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
