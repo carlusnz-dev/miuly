@@ -24,3 +24,5 @@ padrões de arquitetura. Decisões pequenas e reversíveis não precisam de ADR.
 | ADR | Título | Status | Data |
 | --- | --- | --- | --- |
 | [0001](0001-topologia-de-deploy.md) | Topologia de deploy (Vercel + Raspberry Pi) | Aceito | 2026-07-01 |
+| [0002](0002-modelagem-financas-tarefas-contas.md) | Modelagem inicial de Finanças, Tarefas e Contas | Aceito | 2026-07-01 |
+| [0003](0003-postgres-local-para-dev-mvp.md) | Postgres local para desenvolvimento no MVP | Aceito | 2026-07-01 |
