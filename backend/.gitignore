@@ -3,3 +3,6 @@ node_modules/
 /src/generated/prisma
 dist/
 .prettierrc
+
+# Pasta de logs
+logs/
