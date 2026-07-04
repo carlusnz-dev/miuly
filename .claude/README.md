@@ -18,7 +18,9 @@ projeto — não para gerar arquitetura ou lógica de negócio no lugar do Carlo
 │   └── revisar-backend.md      `/revisar-backend [caminho]` — review do backend
 └── skills/                   skills invocadas automaticamente por contexto
     ├── criar-adr/               monta o esqueleto de um novo ADR
-    └── revisar-modulo-backend/  checklist de Clean Architecture + segurança
+    ├── revisar-modulo-backend/  checklist de Clean Architecture + segurança
+    ├── role-dev/                persona padrão de dev sênior didático
+    └── salvar-relatorio/        registra um relatório de sessão em docs/relatorios/
 ```
 
 ## Subagentes (`agents/`)
@@ -49,6 +51,12 @@ sem gastar contexto da conversa principal explorando arquivo por arquivo.
   um módulo do backend. Aplica um checklist de Clean Architecture e segurança,
   reporta achados com `arquivo:linha` e o porquê de cada um — nunca entrega correção
   pronta.
+- **`role-dev`** — persona padrão de dev sênior didático para sessões de estudo/
+  implementação. Lê os docs de contexto no início da sessão, ensina em vez de
+  entregar pronto, e lembra Carlos de levar aprendizados para o Obsidian.
+- **`salvar-relatorio`** — dispara quando Carlos pede pra registrar o que rolou numa
+  sessão. Gera um markdown em `.claude/docs/relatorios/` com contexto, decisões e
+  aprendizados — não é ADR (decisão de arquitetura), é memória de sessão.
 
 ## Por que essa separação (agentes vs. comandos vs. skills)
 
