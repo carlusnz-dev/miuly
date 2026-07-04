@@ -6,14 +6,15 @@
   "main": "app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/app.js",
-    "dev": "npx tsx watch ./scr/app.ts",
+    "start": "node dist/src/app.js",
+    "dev": "npx tsx watch ./src/app.ts",
     "build": "tsc"
   },
   "keywords": [],
   "author": "carlusnz-dev",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.0.1",
     "@types/pg": "^8.20.0",
     "dotenv": "^17.4.2",

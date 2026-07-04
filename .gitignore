@@ -1,0 +1,4 @@
+# env files (contêm credenciais locais/de banco — nunca commitar)
+.env
+.env.*
+!.env.example
