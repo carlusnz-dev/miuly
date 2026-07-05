@@ -136,6 +136,18 @@ anterior.
   `return` nesta sessão. Esse é o ganho concreto de trocar `undefined`/`null`/
   string solta por um contrato de tipo único.
 
+## Links e materiais
+
+- Sintaxe de `extends` no flat config do ESLint: [ESLint — Configuration Migration Guide](https://eslint.org/docs/latest/use/configure/migration-guide)
+- Escopo de `ignores` no flat config: [ESLint — Ignoring files](https://eslint.org/docs/latest/use/configure/ignore)
+- Extensões oficiais de formatação/lint no VSCode: [Prettier — VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) e [ESLint — VS Code extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- `&&` vs `;` no encadeamento de comandos shell: [GNU Bash Manual — Lists of Commands](https://www.gnu.org/software/bash/manual/html_node/Lists.html)
+- `omit` nativo do Prisma para excluir campos sensíveis: [Prisma — Excluding fields](https://www.prisma.io/docs/orm/prisma-client/queries/excluding-fields)
+- `where` com `OR`/`AND`/`NOT` no Prisma: [Prisma — Filtering and sorting (combining operators)](https://www.prisma.io/docs/orm/prisma-client/queries/filtering-and-sorting#filter-on-and-or-not-conditions)
+- Generics (`<T>`) em TypeScript: [TypeScript Handbook — Generics](https://www.typescriptlang.org/docs/handbook/2/generics.html)
+- Utility type `Omit<Type, Keys>`: [TypeScript Handbook — Utility Types (Omit)](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys)
+- União discriminada travando build por caminho sem `return`: [TypeScript Handbook — Discriminated unions](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions)
+
 ## Próximos passos
 
 - Corrigir o typo "usuários" → "usuário" na mensagem de conflito do

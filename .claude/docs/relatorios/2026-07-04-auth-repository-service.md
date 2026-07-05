@@ -94,6 +94,15 @@ senha/hash/validação, depois escreveu o `user.repository.ts` e o
   camada de Repository deixa de ser a única porta de entrada pro banco, o que
   quebra a garantia de Clean Architecture que o projeto vem seguindo.
 
+## Links e materiais
+
+- Contrato de retorno único (o que a sessão seguinte formalizou como union
+  discriminada): [TypeScript Handbook — Discriminated unions](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions)
+- `hashSync` bloqueando o event loop: [Node.js — Don't Block the Event Loop](https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop)
+- `where` com múltiplos campos é AND, uso de `OR`/`AND`/`NOT`: [Prisma — Filtering and sorting (combining operators)](https://www.prisma.io/docs/orm/prisma-client/queries/filtering-and-sorting#filter-on-and-or-not-conditions)
+- Repository como função pura e cache de módulos do Node: [Node.js — Modules: caching](https://nodejs.org/api/modules.html#caching)
+- Separação de camadas (Service não deve acessar o Prisma diretamente): [The Clean Architecture — Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+
 ## Próximos passos
 
 - Corrigir o `user.repository.ts`: renomear `CreateUser` → `createUser`,

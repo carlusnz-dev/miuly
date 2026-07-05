@@ -34,6 +34,12 @@ sugestão da IA a ser validada por ele}}
 ## Aprendizados
 {{Conceitos novos ou revisados nesta sessão — pensados para virar nota no Obsidian}}
 
+## Links e materiais
+{{Um link por aprendizado/tópico técnico citado (doc oficial, MDN, OWASP, RFC,
+etc.). Se um aprendizado foi discutido mas nenhum link foi citado na conversa,
+busque a referência oficial equivalente antes de salvar — não deixe a seção
+vazia nem com "não citado".}}
+
 ## Próximos passos
 {{Ações concretas que Carlos definiu fazer a seguir}}
 ```
@@ -41,3 +47,10 @@ sugestão da IA a ser validada por ele}}
 4. Salve o arquivo em `.claude/docs/relatorios/`.
 5. Avise o caminho do arquivo criado e lembre Carlos (regra da persona `role-dev`)
    de levar a seção "Aprendizados" para o Obsidian.
+
+## Nota sobre links (desde 2026-07-05)
+
+A partir da sessão de 2026-07-05, todo relatório passou a levar uma seção
+"Links e materiais" com uma referência por aprendizado citado. Relatórios
+anteriores a essa data foram complementados retroativamente com essa mesma
+seção. Ao revisar/atualizar um relatório antigo, mantenha esse padrão.

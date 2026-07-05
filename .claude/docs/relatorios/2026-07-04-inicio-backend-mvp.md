@@ -53,6 +53,12 @@ diretórios, considerando que o Model já está resolvido via Prisma.
   `editar schema.prisma` → `npx prisma migrate dev --name X` → client
   regenerado automaticamente.
 
+## Links e materiais
+
+- Bootstrap mínimo de servidor e roteamento no Express: [Express — Basic routing](https://expressjs.com/en/starter/basic-routing.html)
+- Clean Architecture (Controller/Service/Repository): [The Clean Architecture — Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- Ciclo `schema.prisma` → migration → client: [Prisma Migrate — Getting started](https://www.prisma.io/docs/orm/prisma-migrate/getting-started)
+
 ## Próximos passos
 
 - Corrigir o typo `scr` → `src` em `backend/package.json`.
