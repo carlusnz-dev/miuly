@@ -1,8 +1,20 @@
-import type { UserCreateInput, UserModel } from '../generated/prisma/models.js';
+import type {
+  UserCreateInput,
+  UserModel,
+  UserUpdateInput,
+} from '../generated/prisma/models.js';
 import { prisma } from '../lib/prisma.js';
 
 export async function createUser(data: UserCreateInput) {
   return prisma.user.create({ data, omit: { password: true } });
+}
+
+export async function updateUser(data: UserUpdateInput, userId: number) {
+  return prisma.user.update({
+    data,
+    where: { id: userId },
+    omit: { password: true },
+  });
 }
 
 export async function findUserByEmailOrUsername(data: UserModel) {

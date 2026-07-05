@@ -3,6 +3,7 @@ import {
   createUserController,
   findAllUsersController,
   findUserByIdController,
+  updateUserController,
 } from '../controllers/user.controller.js';
 
 const userRouter = express.Router();
@@ -20,6 +21,10 @@ userRouter.get('/all', async (req, res) => {
 
 userRouter.get('/:id', async (req, res) => {
   await findUserByIdController(req, res);
+});
+
+userRouter.put('/update/:id', async (req, res) => {
+  await updateUserController(req, res);
 });
 
 export default userRouter;

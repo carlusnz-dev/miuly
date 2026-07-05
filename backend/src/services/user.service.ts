@@ -4,6 +4,7 @@ import {
   findAllUsers,
   findUserByEmailOrUsername,
   findUserById,
+  updateUser,
 } from '../repositories/user.repository.js';
 import type { UserModel } from '../generated/prisma/models.js';
 import type { ServiceResult } from '../types/result.type.js';
@@ -57,6 +58,60 @@ export async function createUserService(
   };
 }
 
+export async function updateUserService(
+  data: UserModel,
+  userId: number,
+): Promise<ServiceResult<Omit<UserModel, 'password'>>> {
+  const findedUser = await findUserById(userId);
+
+  if (!findedUser) {
+    Logger.error(`Usuário ${userId} não foi encontrado.`);
+    return {
+      ok: false,
+      reason: 'not_found',
+      message: `Usuário ID ${userId} não foi encontrado`,
+    };
+  }
+
+  if (findedUser) {
+    Logger.info(`Usuário encontrado: ${findedUser.id}`);
+    const findedEmail = await findUserByEmailOrUsername(data);
+    if (findedEmail) {
+      Logger.error(`E-mail já existe no banco. ${findedEmail.email}`);
+
+      return {
+        ok: false,
+        reason: 'conflict',
+        message: `E-mail ${findedEmail.email} já existe no sistema.`,
+      };
+    }
+
+    try {
+      const updatedUser = await updateUser(
+        {
+          username: data.username,
+          email: data.email,
+        },
+        userId,
+      );
+
+      Logger.info(`Usuário ${data.id} atualizado com sucesso!`);
+      return {
+        ok: true,
+        data: updatedUser,
+      };
+    } catch (e) {
+      Logger.error(`Erro ao atualizar o usuário ${userId}: ${e}`);
+    }
+  }
+
+  return {
+    ok: false,
+    reason: 'error',
+    message: 'Dados inválidos para atualização do usuário.',
+  };
+}
+
 export async function findAllUsersService(): Promise<
   ServiceResult<Omit<UserModel, 'password'>[]>
 > {
@@ -91,6 +146,7 @@ export async function findUserByIdService(
         data: findedUser,
       };
     } else {
+      Logger.warn(`Usuário ${userId} não existe.`);
       return {
         ok: false,
         reason: 'not_found',
