@@ -1,6 +1,7 @@
-import type { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 import {
   createUserService,
+  deleteUserService,
   findAllUsersService,
   findUserByIdService,
   updateUserService,
@@ -34,6 +35,24 @@ export async function updateUserController(req: Request, res: Response) {
   }
 
   res.status(200).json(result);
+}
+
+export async function deleteUserController(req: Request, res: Response) {
+  const { id } = req.params;
+  const rawId = Number(id);
+  const result = await deleteUserService(rawId);
+
+  if (!result.ok) {
+    if (result.reason == 'not_found') {
+      return res.status(404).json(result);
+    } else if (result.reason == 'conflict') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(500).json(result);
+    }
+  }
+
+  return res.status(200).json(result);
 }
 
 export async function findAllUsersController(req: Request, res: Response) {

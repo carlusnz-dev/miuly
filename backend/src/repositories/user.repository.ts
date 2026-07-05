@@ -17,6 +17,13 @@ export async function updateUser(data: UserUpdateInput, userId: number) {
   });
 }
 
+export async function deleteUser(userId: number) {
+  return prisma.user.delete({
+    where: { id: userId },
+    omit: { password: true },
+  });
+}
+
 export async function findUserByEmailOrUsername(data: UserModel) {
   return prisma.user.findFirst({
     where: { OR: [{ email: data.email }, { username: data.username }] },

@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   createUserController,
+  deleteUserController,
   findAllUsersController,
   findUserByIdController,
   updateUserController,
@@ -25,6 +26,10 @@ userRouter.get('/:id', async (req, res) => {
 
 userRouter.put('/update/:id', async (req, res) => {
   await updateUserController(req, res);
+});
+
+userRouter.delete('/delete/:id', async (req, res) => {
+  await deleteUserController(req, res);
 });
 
 export default userRouter;

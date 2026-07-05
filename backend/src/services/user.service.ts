@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import {
   createUser,
+  deleteUser,
   findAllUsers,
   findUserByEmailOrUsername,
   findUserById,
@@ -109,6 +110,47 @@ export async function updateUserService(
     ok: false,
     reason: 'error',
     message: 'Dados inválidos para atualização do usuário.',
+  };
+}
+
+export async function deleteUserService(
+  userId: number,
+): Promise<ServiceResult<Omit<UserModel, 'password'>>> {
+  const findedUser = await findUserById(userId);
+
+  if (!findedUser) {
+    Logger.error(`Usuário ID ${userId} não encontrado.`);
+    return {
+      ok: false,
+      reason: 'not_found',
+      message: `Usuário ID ${userId} não encontrado.`,
+    };
+  }
+
+  if (findedUser) {
+    Logger.info(`Usuário ID ${userId} encontrado com sucesso!`);
+
+    try {
+      const deletedUser = await deleteUser(userId);
+
+      return {
+        ok: true,
+        data: deletedUser,
+      };
+    } catch (e) {
+      Logger.error(`Erro ao deletar o usuário ${userId}: ${e}`);
+      return {
+        ok: false,
+        reason: 'error',
+        message: 'Erro ao deletar o usuário.',
+      };
+    }
+  }
+
+  return {
+    ok: false,
+    reason: 'error',
+    message: 'Dados inválidos para excluir o usuário.',
   };
 }
 
