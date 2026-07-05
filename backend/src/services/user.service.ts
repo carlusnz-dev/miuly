@@ -76,7 +76,7 @@ export async function updateUserService(
 
   if (findedUser) {
     Logger.info(`Usuário encontrado: ${findedUser.id}`);
-    const findedEmail = await findUserByEmailOrUsername(data);
+    const findedEmail = await findUserByEmailOrUsername(data, userId);
     if (findedEmail) {
       Logger.error(`E-mail já existe no banco. ${findedEmail.email}`);
 
@@ -96,7 +96,7 @@ export async function updateUserService(
         userId,
       );
 
-      Logger.info(`Usuário ${data.id} atualizado com sucesso!`);
+      Logger.info(`Usuário ${userId} atualizado com sucesso!`);
       return {
         ok: true,
         data: updatedUser,

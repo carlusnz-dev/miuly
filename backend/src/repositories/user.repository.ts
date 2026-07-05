@@ -24,9 +24,15 @@ export async function deleteUser(userId: number) {
   });
 }
 
-export async function findUserByEmailOrUsername(data: UserModel) {
+export async function findUserByEmailOrUsername(
+  data: UserModel,
+  excludeId?: number,
+) {
   return prisma.user.findFirst({
-    where: { OR: [{ email: data.email }, { username: data.username }] },
+    where: {
+      OR: [{ email: data.email }, { username: data.username }],
+      ...(excludeId ? { NOT: { id: excludeId } } : {}),
+    },
   });
 }
 
