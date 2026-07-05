@@ -1,5 +1,9 @@
 import express from 'express';
-import { createUserController } from '../controllers/user.controller.js';
+import {
+  createUserController,
+  findAllUsersController,
+  findUserByIdController,
+} from '../controllers/user.controller.js';
 
 const userRouter = express.Router();
 
@@ -8,6 +12,14 @@ const userRouter = express.Router();
 
 userRouter.post('/create', async (req, res) => {
   await createUserController(req, res);
+});
+
+userRouter.get('/all', async (req, res) => {
+  await findAllUsersController(req, res);
+});
+
+userRouter.get('/:id', async (req, res) => {
+  await findUserByIdController(req, res);
 });
 
 export default userRouter;
