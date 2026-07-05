@@ -31,7 +31,11 @@ export async function createUserService(
 
     // criar novo user
     try {
-      const newUser = await createUser({ ...data, password: hashedPassword });
+      const newUser = await createUser({
+        username: data.username,
+        email: data.email,
+        password: hashedPassword,
+      });
       return {
         ok: true,
         data: newUser,
@@ -89,7 +93,7 @@ export async function findUserByIdService(
     } else {
       return {
         ok: false,
-        reason: 'conflict',
+        reason: 'not_found',
         message: 'Usuário não existe.',
       };
     }
