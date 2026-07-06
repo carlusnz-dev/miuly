@@ -13,8 +13,15 @@ const updateUserSchema = z
   })
   .partial();
 
+const loginUserSchema = z.object({
+  username: z.string().min(3).max(30).optional(),
+  email: z.email().optional(),
+  password: z.string().min(8),
+});
+
 type CreateUserInput = z.infer<typeof createUserSchema>;
 type UpdateUserInput = z.infer<typeof updateUserSchema>;
+type LoginUserInput = z.infer<typeof loginUserSchema>;
 
-export { createUserSchema, updateUserSchema };
-export type { CreateUserInput, UpdateUserInput };
+export { createUserSchema, updateUserSchema, loginUserSchema };
+export type { CreateUserInput, UpdateUserInput, LoginUserInput };
