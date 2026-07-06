@@ -6,10 +6,24 @@ import {
   findUserByIdService,
   updateUserService,
 } from '../services/user.service.js';
+import { createUserSchema, updateUserSchema } from '../types/user.type.js';
+
+// types Zod para parse no objeto do req.body
+// type CreateUserInput = z.infer<typeof createUserSchema>;
 
 // Criar novo usuário
 export async function createUserController(req: Request, res: Response) {
-  const result = await createUserService(req.body);
+  const parsed = createUserSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    return res.status(400).json({
+      ok: false,
+      reason: 'invalid',
+      message: `Erro ao validar os campos da requisição: ${parsed.error}`,
+    });
+  }
+
+  const result = await createUserService(parsed.data);
   if (!result.ok) {
     if (result.reason == 'error') {
       return res.status(500).json(result);
@@ -24,7 +38,17 @@ export async function createUserController(req: Request, res: Response) {
 export async function updateUserController(req: Request, res: Response) {
   const { id } = req.params;
   const rawId = Number(id);
-  const result = await updateUserService(req.body, rawId);
+
+  const parsed = updateUserSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      ok: false,
+      reason: 'invalid',
+      message: `Erro ao validar os campos da requisição: ${parsed.error}`,
+    });
+  }
+
+  const result = await updateUserService(parsed.data, rawId);
 
   if (!result.ok) {
     if (result.reason == 'not_found') {

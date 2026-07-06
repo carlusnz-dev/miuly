@@ -10,9 +10,10 @@ import {
 import type { UserModel } from '../generated/prisma/models.js';
 import type { ServiceResult } from '../types/result.type.js';
 import Logger from '../lib/logger.js';
+import type { CreateUserInput, UpdateUserInput } from '../types/user.type.js';
 
 export async function createUserService(
-  data: UserModel,
+  data: CreateUserInput,
 ): Promise<ServiceResult<Omit<UserModel, 'password'>>> {
   if (data) {
     // Verificar email e username
@@ -60,7 +61,7 @@ export async function createUserService(
 }
 
 export async function updateUserService(
-  data: UserModel,
+  data: UpdateUserInput,
   userId: number,
 ): Promise<ServiceResult<Omit<UserModel, 'password'>>> {
   const findedUser = await findUserById(userId);
@@ -76,7 +77,13 @@ export async function updateUserService(
 
   if (findedUser) {
     Logger.info(`Usuário encontrado: ${findedUser.id}`);
-    const findedEmail = await findUserByEmailOrUsername(data, userId);
+    const findedEmail = await findUserByEmailOrUsername(
+      {
+        ...(data.username && { username: data.username }),
+        ...(data.email && { email: data.email }),
+      },
+      userId,
+    );
     if (findedEmail) {
       Logger.error(`E-mail já existe no banco. ${findedEmail.email}`);
 
@@ -90,8 +97,8 @@ export async function updateUserService(
     try {
       const updatedUser = await updateUser(
         {
-          username: data.username,
-          email: data.email,
+          ...(data.username && { username: data.username }),
+          ...(data.email && { email: data.email }),
         },
         userId,
       );

@@ -5,11 +5,16 @@ import type {
 } from '../generated/prisma/models.js';
 import { prisma } from '../lib/prisma.js';
 
-export async function createUser(data: UserCreateInput) {
+export async function createUser(
+  data: Pick<UserCreateInput, 'username' | 'email' | 'password'>,
+) {
   return prisma.user.create({ data, omit: { password: true } });
 }
 
-export async function updateUser(data: UserUpdateInput, userId: number) {
+export async function updateUser(
+  data: Partial<Pick<UserUpdateInput, 'email' | 'username'>>,
+  userId: number,
+) {
   return prisma.user.update({
     data,
     where: { id: userId },
@@ -25,12 +30,15 @@ export async function deleteUser(userId: number) {
 }
 
 export async function findUserByEmailOrUsername(
-  data: UserModel,
+  data: Partial<Pick<UserModel, 'email' | 'username'>>,
   excludeId?: number,
 ) {
   return prisma.user.findFirst({
     where: {
-      OR: [{ email: data.email }, { username: data.username }],
+      OR: [
+        ...(data.username ? [{ username: data.username }] : []),
+        ...(data.email ? [{ email: data.email }] : []),
+      ],
       ...(excludeId ? { NOT: { id: excludeId } } : {}),
     },
   });
