@@ -19,7 +19,8 @@ export async function createUserController(req: Request, res: Response) {
     return res.status(400).json({
       ok: false,
       reason: 'invalid',
-      message: `Erro ao validar os campos da requisição: ${parsed.error}`,
+      message: 'Erro ao validar os campos da requisição.',
+      error: parsed.error.message,
     });
   }
 
@@ -44,7 +45,8 @@ export async function updateUserController(req: Request, res: Response) {
     return res.status(400).json({
       ok: false,
       reason: 'invalid',
-      message: `Erro ao validar os campos da requisição: ${parsed.error}`,
+      message: `Erro ao validar os campos da requisição.`,
+      error: parsed.error.message,
     });
   }
 
