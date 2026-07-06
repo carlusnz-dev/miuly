@@ -56,7 +56,7 @@ export async function updateUserController(req: Request, res: Response) {
     if (result.reason == 'not_found') {
       return res.status(404).json(result);
     } else {
-      return res.status(500).json(result);
+      return res.status(409).json(result);
     }
   }
 
