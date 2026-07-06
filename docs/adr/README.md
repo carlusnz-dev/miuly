@@ -27,3 +27,4 @@ padrões de arquitetura. Decisões pequenas e reversíveis não precisam de ADR.
 | [0002](0002-modelagem-financas-tarefas-contas.md) | Modelagem inicial de Finanças, Tarefas e Contas | Aceito | 2026-07-01 |
 | [0003](0003-postgres-local-para-dev-mvp.md) | Postgres local para desenvolvimento no MVP | Aceito | 2026-07-01 |
 | [0004](0004-estrategia-de-autenticacao.md) | Estratégia de autenticação (hash de senha, exposição de dados, validação de RN) | Aceito | 2026-07-04 |
+| [0005](0005-validacao-de-entrada-com-zod.md) | Validação de entrada com Zod na camada de controller | Proposto | 2026-07-05 |
