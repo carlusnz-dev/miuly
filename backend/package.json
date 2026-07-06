@@ -5,11 +5,11 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/src/app.js",
     "dev": "npx tsx watch ./src/app.ts",
     "build": "tsc",
-    "lint": "npx eslint . --fix ; npx prettier --write ."
+    "lint": "npx eslint . --fix ; npx prettier --write .",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "carlusnz-dev",
@@ -18,7 +18,7 @@
     "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
-    "@types/node": "^26.0.1",
+    "@types/node": "^26.1.0",
     "@types/pg": "^8.20.0",
     "@typescript-eslint/eslint-plugin": "^8.62.1",
     "@typescript-eslint/parser": "^8.62.1",
@@ -31,7 +31,8 @@
     "prettier": "^3.9.4",
     "prisma": "^7.8.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.62.1"
+    "typescript-eslint": "^8.62.1",
+    "vitest": "^4.1.9"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
