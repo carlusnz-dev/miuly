@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -16,7 +17,7 @@ export default defineConfig([
         projectService: {
           allowDefaultProject: ['eslint.config.ts', 'prisma.config.ts'],
         },
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: fileURLToPath(new URL('.', import.meta.url)),
       },
     },
   },
@@ -24,4 +25,11 @@ export default defineConfig([
   tseslint.configs.strict,
   tseslint.configs.stylistic,
   eslintConfigPrettier,
+  // Testes: mocks usam `as any` para dublês parciais.
+  {
+    files: ['tests/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ]);
