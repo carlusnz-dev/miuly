@@ -9,12 +9,14 @@ export function authMiddleware(
 ) {
   const { SESSIONID } = req.cookies || {};
 
-  if (!SESSIONID)
+  if (!SESSIONID) {
+    Logger.error('Cookie de sessão não existe no sistema.');
     return res.status(401).json({
       ok: false,
       reason: 'not_found',
       message: 'Usuário não autenticado no sistema.',
     });
+  }
 
   try {
     const payload = jwt.verify(SESSIONID, process.env.JWT_SECRET as string);
@@ -27,7 +29,9 @@ export function authMiddleware(
       });
     }
 
+    Logger.info('Payload aprovado.');
     req.userId = payload.id;
+    Logger.info('Middleware aprovado, passando para a próxima req.');
     return next();
   } catch (e) {
     Logger.error('Erro na verificação do token de login do usuário: ', e);
