@@ -41,3 +41,13 @@ export async function logoutController(req: Request, res: Response) {
     .status(200)
     .json({ ok: true, message: 'Log-out feito com sucesso!' });
 }
+
+export async function aboutMeController(req: Request, res: Response) {
+  res.status(200).json({
+    ok: true,
+    message: {
+      userId: req.userId,
+      info: 'Usuário possui sessão ativa no sistema.',
+    },
+  });
+}
