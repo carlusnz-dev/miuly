@@ -16,4 +16,4 @@ financesRouter.post('/create', authMiddleware, async (req, res) => {
   createFinanceController(req, res);
 });
 
-export { financesRouter };
+export default financesRouter;

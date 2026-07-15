@@ -6,8 +6,8 @@ export type ServiceResult<T> =
       message: string;
     };
 
-export type ServiceNoDataResult<T> =
-  | { ok: true; message: T }
+export type ServiceNoDataResult<T, D> =
+  | { ok: true; message: T; data?: D }
   | {
       ok: false;
       reason: 'conflict' | 'error' | 'not_found' | 'unauthorized';
