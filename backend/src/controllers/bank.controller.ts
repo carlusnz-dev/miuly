@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { createBankSchema } from '../types/bank.type.js';
+import { createBankSchema, updateBankSchema } from '../types/bank.type.js';
 import {
   createBankService,
   deleteBankService,
@@ -35,7 +35,7 @@ export async function createBankController(req: Request, res: Response) {
 }
 
 export async function updateBankController(req: Request, res: Response) {
-  const parsed = createBankSchema.safeParse(req.body);
+  const parsed = updateBankSchema.safeParse(req.body);
 
   if (!parsed.success) {
     return res.status(401).json({

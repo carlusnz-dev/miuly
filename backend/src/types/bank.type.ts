@@ -7,7 +7,7 @@ const createBankSchema = z.object({
 
 const updateBankSchema = z
   .object({
-    name: z.string().min(3).max(3),
+    name: z.string().min(3).max(30),
     balance: z.number(),
   })
   .partial();

@@ -103,7 +103,7 @@ export async function updateBankService(
       const updatedBank = await updateBank(
         {
           ...(data.name && { name: data.name }),
-          ...(data.balance && { balance: data.balance }),
+          ...((data.balance || data.balance == 0) && { balance: data.balance }),
         },
         id,
         userId,
