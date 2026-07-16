@@ -1,12 +1,15 @@
 import type {
   BankModel,
   BankUncheckedCreateInput,
+  BankUncheckedUpdateInput,
 } from '../generated/prisma/models.js';
 import Logger from '../lib/logger.js';
 import {
   createBank,
   deleteBank,
   findBankById,
+  findAllBanksByUserId,
+  updateBank,
 } from '../repositories/bank.repository.js';
 import { findUserById } from '../repositories/user.repository.js';
 import type {
@@ -58,6 +61,54 @@ export async function createBankService(
     ok: false,
     reason: 'error',
     message: 'Dados inválidos para criação do banco.',
+  };
+}
+
+export async function updateBankService(
+  data: Pick<BankUncheckedUpdateInput, 'name' | 'balance'>,
+  id: number,
+  userId: number,
+): Promise<
+  ServiceResult<Pick<BankModel, 'id' | 'name' | 'balance' | 'updated_at'>>
+> {
+  const foundUser = await findUserById(userId);
+  const foundBank = await findBankById(id);
+
+  if (!foundUser) {
+    Logger.error(`Usuário ID ${userId} não foi encontrado.`);
+    return {
+      ok: false,
+      reason: 'not_found',
+      message: 'Usuário não foi encontrado.',
+    };
+  }
+
+  if (!foundBank) {
+    Logger.error(`Banco ID ${id} não foi encontrado.`);
+    return {
+      ok: false,
+      reason: 'not_found',
+      message: 'Banco não foi encontrado.',
+    };
+  }
+
+  if (data) {
+    try {
+      const updatedBank = await updateBank(data, id, userId);
+      Logger.info(`Banco ID ${id} foi atualizado com sucesso!`);
+      return {
+        ok: true,
+        data: updatedBank,
+      };
+    } catch (error) {
+      Logger.error(`Erro ao atualizar o banco: ${error}`);
+    }
+  }
+
+  return {
+    ok: false,
+    reason: 'error',
+    message: 'Dados inválidos para atualizar o banco.',
   };
 }
 
@@ -148,4 +199,37 @@ export async function findBankByIdService(
     reason: 'error',
     message: 'Dados inválidos para buscar o banco.',
   };
+}
+
+export async function findAllBanksByUserIdService(
+  userId: number,
+): Promise<
+  ServiceResult<Pick<BankModel, 'id' | 'name' | 'balance' | 'created_at'>[]>
+> {
+  const foundUser = await findUserById(userId);
+
+  if (!foundUser) {
+    Logger.error(`Usuário ID ${userId} não foi encontrado.`);
+    return {
+      ok: false,
+      reason: 'not_found',
+      message: 'Nenhum usuário foi encontrado.',
+    };
+  }
+
+  try {
+    const foundAllBanks = await findAllBanksByUserId(userId);
+    Logger.info('Todos os bancos foram encontrados.');
+    return {
+      ok: true,
+      data: foundAllBanks,
+    };
+  } catch (error) {
+    Logger.error(`Erro ao procurar os bancos: ${error}`);
+    return {
+      ok: false,
+      reason: 'error',
+      message: 'Erro ao procurar os bancos.',
+    };
+  }
 }

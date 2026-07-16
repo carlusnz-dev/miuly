@@ -40,6 +40,6 @@ export async function findBankById(id: number) {
   return prisma.bank.findFirst({ where: { id } });
 }
 
-export async function findAllBanks() {
-  return prisma.bank.findMany();
+export async function findAllBanksByUserId(userId: number) {
+  return prisma.bank.findMany({ where: { user_id: userId } });
 }
