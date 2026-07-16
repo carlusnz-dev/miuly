@@ -82,7 +82,7 @@ export async function deleteUserController(req: Request, res: Response) {
 }
 
 export async function findAllUsersController(req: Request, res: Response) {
-  const result = await findAllUsersService();
+  const result = await findAllUsersService(Number(req.userId));
   if (!result.ok) {
     return res.status(500).json(result);
   }
@@ -93,7 +93,8 @@ export async function findAllUsersController(req: Request, res: Response) {
 export async function findUserByIdController(req: Request, res: Response) {
   const { id } = req.params;
   const rawId = Number(id);
-  const result = await findUserByIdService(rawId);
+  const rawIdUserLoged = Number(req.userId);
+  const result = await findUserByIdService(rawId, rawIdUserLoged);
 
   if (!result.ok) {
     return res.status(404).json(result);

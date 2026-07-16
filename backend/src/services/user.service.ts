@@ -161,9 +161,19 @@ export async function deleteUserService(
   };
 }
 
-export async function findAllUsersService(): Promise<
-  ServiceResult<Omit<UserModel, 'password'>[]>
-> {
+export async function findAllUsersService(
+  userId: number,
+): Promise<ServiceResult<Omit<UserModel, 'password'>[]>> {
+  const foundUser = await findUserById(userId);
+  if (foundUser && !(foundUser.role == 'ADMIN')) {
+    Logger.error('Usuário não possui a role ADMIN!');
+    return {
+      ok: false,
+      reason: 'unauthorized',
+      message: 'Usuário não possui permissão.',
+    };
+  }
+
   const allUsers = await findAllUsers();
   Logger.debug('A busca no banco está sendo feita (allUsers).');
 
@@ -184,15 +194,25 @@ export async function findAllUsersService(): Promise<
 
 export async function findUserByIdService(
   userId: number,
+  id: number,
 ): Promise<ServiceResult<Omit<UserModel, 'password'>>> {
-  if (userId) {
-    const findedUser = await findUserById(userId);
+  if (userId && id) {
+    const foundUserAdmin = await findUserById(id);
+    if (foundUserAdmin && !(foundUserAdmin.role == 'ADMIN')) {
+      Logger.error('Usuário não possui a role ADMIN!');
+      return {
+        ok: false,
+        reason: 'unauthorized',
+        message: 'Usuário não possui permissão.',
+      };
+    }
 
-    if (findedUser) {
+    const foundUser = await findUserById(userId);
+    if (foundUser) {
       Logger.info('Usuário foi encontrado com sucesso!');
       return {
         ok: true,
-        data: findedUser,
+        data: foundUser,
       };
     } else {
       Logger.warn(`Usuário ${userId} não existe.`);
