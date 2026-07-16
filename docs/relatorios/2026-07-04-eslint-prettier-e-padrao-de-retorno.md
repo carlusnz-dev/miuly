@@ -1,4 +1,11 @@
-# Relatório de sessão — 2026-07-04
+# Eslint prettier e padrao de retorno
+--- Cabeçalho ---
+Autor: Claude Code
+Data: 2026-07-04
+Módulos: Backend
+Atividade: Eslint prettier e padrao de retorno
+
+# Corpo
 
 ## Contexto
 

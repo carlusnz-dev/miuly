@@ -1,4 +1,11 @@
-# Relatório de sessão — 2026-07-05
+# Controller router auth e seguranca
+--- Cabeçalho ---
+Autor: Claude Code
+Data: 2026-07-05
+Módulos: Backend
+Atividade: Controller router auth e seguranca
+
+# Corpo
 
 ## Contexto
 

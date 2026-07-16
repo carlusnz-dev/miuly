@@ -1,4 +1,11 @@
-# Relatório de sessão — 2026-07-04
+# Inicio backend mvp
+--- Cabeçalho ---
+Autor: Claude Code
+Data: 2026-07-04
+Módulos: Backend
+Atividade: Inicio backend mvp
+
+# Corpo
 
 ## Contexto
 

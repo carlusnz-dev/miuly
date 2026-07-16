@@ -1,4 +1,11 @@
-# Relatório de sessão — 2026-07-06
+# Validacao de entrada com zod
+--- Cabeçalho ---
+Autor: Claude Code
+Data: 2026-07-06
+Módulos: Backend
+Atividade: Validacao de entrada com zod
+
+# Corpo
 
 ## Contexto
 

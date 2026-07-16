@@ -1,4 +1,11 @@
-# Relatório de sessão — 2026-07-07
+# Middleware jwt logout e fechamento rf006
+--- Cabeçalho ---
+Autor: Claude Code
+Data: 2026-07-07
+Módulos: Backend
+Atividade: Middleware jwt logout e fechamento rf006
+
+# Corpo
 
 ## Contexto
 

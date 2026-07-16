@@ -1,4 +1,11 @@
-# Relatório de sessão — 2026-07-06
+# Modulo auth login
+--- Cabeçalho ---
+Autor: Claude Code
+Data: 2026-07-06
+Módulos: Backend
+Atividade: Modulo auth login
+
+# Corpo
 
 ## Contexto
 

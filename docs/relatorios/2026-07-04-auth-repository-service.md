@@ -1,4 +1,11 @@
-# Relatório de sessão — 2026-07-04
+# Auth repository service
+--- Cabeçalho ---
+Autor: Claude Code
+Data: 2026-07-04
+Módulos: Backend
+Atividade: Auth repository service
+
+# Corpo
 
 ## Contexto
 
