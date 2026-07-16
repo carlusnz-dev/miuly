@@ -108,10 +108,17 @@ export async function updateBankService(
         id,
         userId,
       );
+      const { name, balance, updated_at } = updatedBank;
+
       Logger.info(`Banco ID ${id} foi atualizado com sucesso!`);
       return {
         ok: true,
-        data: updatedBank,
+        data: {
+          id,
+          name,
+          balance,
+          updated_at,
+        },
       };
     } catch (error) {
       Logger.error(`Erro ao atualizar o banco: ${error}`);
@@ -155,11 +162,16 @@ export async function deleteBankService(
   if (foundBank.user_id == foundUser.id) {
     try {
       const removedBank = await deleteBank(id, userId);
+      const { name, balance } = removedBank;
       Logger.info(`Banco ${id} foi apagado com sucesso!`);
       return {
         ok: true,
         message: `Banco ${id} foi apagado com sucesso.`,
-        data: removedBank,
+        data: {
+          id,
+          name,
+          balance,
+        },
       };
     } catch (error) {
       Logger.error(`Erro ao apagar o banco: ${error}`);
@@ -188,7 +200,8 @@ export async function deleteBankService(
 
 export async function findBankByIdService(
   id: number,
-): Promise<ServiceResult<BankModel>> {
+  userId: number,
+): Promise<ServiceResult<Omit<BankModel, 'user_id'>>> {
   const foundBank = await findBankById(id);
 
   if (!foundBank) {
@@ -201,9 +214,20 @@ export async function findBankByIdService(
   }
 
   if (foundBank) {
+    if (foundBank.user_id != userId) {
+      Logger.error(`Banco não pertence ao usuário logado!`);
+      return {
+        ok: false,
+        reason: 'unauthorized',
+        message: 'O banco não pertence a este usuário.',
+      };
+    }
+    const { user_id, ...foundBankResult } = foundBank;
+    void user_id;
+
     return {
       ok: true,
-      data: foundBank,
+      data: foundBankResult,
     };
   }
 
@@ -216,9 +240,7 @@ export async function findBankByIdService(
 
 export async function findAllBanksByUserIdService(
   userId: number,
-): Promise<
-  ServiceResult<Pick<BankModel, 'id' | 'name' | 'balance' | 'created_at'>[]>
-> {
+): Promise<ServiceResult<Omit<BankModel, 'user_id'>[]>> {
   const foundUser = await findUserById(userId);
 
   if (!foundUser) {
@@ -232,6 +254,15 @@ export async function findAllBanksByUserIdService(
 
   try {
     const foundAllBanks = await findAllBanksByUserId(userId);
+    if (foundAllBanks.length == 0) {
+      Logger.info('Não foi encontrado nenhum banco para este usuário.');
+      return {
+        ok: false,
+        reason: 'not_found',
+        message: 'Não há bancos registrados neste usuário.',
+      };
+    }
+
     Logger.info('Todos os bancos foram encontrados.');
     return {
       ok: true,
