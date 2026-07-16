@@ -14,7 +14,7 @@ export async function createBank(
 }
 
 export async function updateBank(
-  data: Pick<BankUncheckedUpdateInput, 'name' | 'balance'>,
+  data: Partial<Pick<BankUncheckedUpdateInput, 'name' | 'balance'>>,
   id: number,
   userId: number,
 ) {

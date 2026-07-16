@@ -14,7 +14,7 @@ bankRouter.get('/', authMiddleware, async (req, res) => {
   findAllBanksByUserIdController(req, res);
 });
 
-bankRouter.post('/create', authMiddleware, async (req, res) => {
+bankRouter.post('/', authMiddleware, async (req, res) => {
   createBankController(req, res);
 });
 
@@ -22,11 +22,11 @@ bankRouter.get('/:id', authMiddleware, async (req, res) => {
   findBankByIdController(req, res);
 });
 
-bankRouter.delete('/delete/:id', authMiddleware, async (req, res) => {
+bankRouter.delete('/:id', authMiddleware, async (req, res) => {
   deleteBankController(req, res);
 });
 
-bankRouter.put('/update/:id', authMiddleware, async (req, res) => {
+bankRouter.put('/:id', authMiddleware, async (req, res) => {
   updateBankController(req, res);
 });
 

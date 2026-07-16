@@ -5,7 +5,15 @@ const createBankSchema = z.object({
   balance: z.number().default(0),
 });
 
-type CreateBankInput = z.infer<typeof createBankSchema>;
+const updateBankSchema = z
+  .object({
+    name: z.string().min(3).max(3),
+    balance: z.number(),
+  })
+  .partial();
 
-export type { CreateBankInput };
-export { createBankSchema };
+type CreateBankInput = z.infer<typeof createBankSchema>;
+type UpdateBankInput = z.infer<typeof updateBankSchema>;
+
+export type { CreateBankInput, UpdateBankInput };
+export { createBankSchema, updateBankSchema };

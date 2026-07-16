@@ -1,8 +1,4 @@
-import type {
-  BankModel,
-  BankUncheckedCreateInput,
-  BankUncheckedUpdateInput,
-} from '../generated/prisma/models.js';
+import type { BankModel } from '../generated/prisma/models.js';
 import Logger from '../lib/logger.js';
 import {
   createBank,
@@ -12,13 +8,14 @@ import {
   updateBank,
 } from '../repositories/bank.repository.js';
 import { findUserById } from '../repositories/user.repository.js';
+import type { CreateBankInput, UpdateBankInput } from '../types/bank.type.js';
 import type {
   ServiceNoDataResult,
   ServiceResult,
 } from '../types/result.type.js';
 
 export async function createBankService(
-  data: Pick<BankUncheckedCreateInput, 'id' | 'name' | 'balance'>,
+  data: Pick<CreateBankInput, 'name' | 'balance'>,
   userId: number,
 ): Promise<
   ServiceResult<Pick<BankModel, 'id' | 'name' | 'balance' | 'created_at'>>
@@ -65,7 +62,7 @@ export async function createBankService(
 }
 
 export async function updateBankService(
-  data: Pick<BankUncheckedUpdateInput, 'name' | 'balance'>,
+  data: Pick<UpdateBankInput, 'name' | 'balance'>,
   id: number,
   userId: number,
 ): Promise<
@@ -93,8 +90,24 @@ export async function updateBankService(
   }
 
   if (data) {
+    if (userId != foundBank.user_id) {
+      Logger.error('O banco não pertece a este usuário!');
+      return {
+        ok: false,
+        reason: 'unauthorized',
+        message: 'O banco não pertence a este usuário.',
+      };
+    }
+
     try {
-      const updatedBank = await updateBank(data, id, userId);
+      const updatedBank = await updateBank(
+        {
+          ...(data.name && { name: data.name }),
+          ...(data.balance && { balance: data.balance }),
+        },
+        id,
+        userId,
+      );
       Logger.info(`Banco ID ${id} foi atualizado com sucesso!`);
       return {
         ok: true,
