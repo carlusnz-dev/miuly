@@ -9,7 +9,7 @@ tarefas, Google Calendar e, futuramente, Obsidian.
 
 Meta de entrega: **16 de julho de 2026**. O MVP entrega **três módulos ponta a ponta** —
 Financeiro (RF002), To-do List (RF001) e Google Calendar (RF008) — sobre uma base de
-autenticação (RF006). Detalhes de requisitos e cronograma em [`docs/plano_mvp.md`](docs/plano_mvp.md).
+autenticação (RF006). Detalhes de requisitos e cronograma em [`docs/plano-mvp.md`](docs/plano-mvp.md).
 Decisão de topologia de deploy em [`docs/adr/0001-topologia-de-deploy.md`](docs/adr/0001-topologia-de-deploy.md).
 
 ## Metas e Fases

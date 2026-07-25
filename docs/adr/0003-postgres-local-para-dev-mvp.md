@@ -7,7 +7,7 @@
 ## Contexto
 
 Antes de rodar a primeira migration do schema Prisma (ADR-0002), era preciso decidir
-contra qual banco desenvolver. O `plano_mvp.md`/`CLAUDE.md` já previa Supabase
+contra qual banco desenvolver. O `plano-mvp.md`/`CLAUDE.md` já previa Supabase
 (PostgreSQL gerenciado) como banco do projeto, mas isso levantou uma dúvida prática:
 Supabase expõe API keys (`anon`, `service_role`) para sua API REST/GraphQL
 autogerada (PostgREST) — e não ficava claro se conectar via Prisma exigiria lidar

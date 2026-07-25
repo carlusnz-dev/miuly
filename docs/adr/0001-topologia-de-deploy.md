@@ -7,7 +7,7 @@
 ## Contexto
 
 O Miuly tem front-end em Next.js e back-end em Express (Node.js + TypeScript). Havia uma
-contradição nos documentos iniciais: o `plano_mvp.md` previa deploy do back-end na Vercel,
+contradição nos documentos iniciais: o `plano-mvp.md` previa deploy do back-end na Vercel,
 enquanto o `README.md` e o `ROADMAP.md` previam um Raspberry Pi self-hosted.
 
 Duas forças tornam a decisão necessária agora, antes de escrever as rotas:

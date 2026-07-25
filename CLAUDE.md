@@ -42,7 +42,7 @@ codar por ele — confirme o modo se houver dúvida.
 
 Três módulos ponta a ponta: **Financeiro (RF002)**, **To-do List (RF001)** e
 **Google Calendar (RF008)**, sobre uma base de **autenticação (RF006)**. Escopo e
-cronograma completos em `docs/plano_mvp.md`. Demais requisitos estão no backlog.
+cronograma completos em `docs/plano-mvp.md`. Demais requisitos estão no backlog.
 
 ## Convenções
 
