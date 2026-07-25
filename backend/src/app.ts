@@ -5,6 +5,7 @@ import authRouter from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
 import financesRouter from './routes/finances.router.js';
 import bankRouter from './routes/bank.route.js';
+import typesRouter from './routes/types.route.js';
 
 const app = express();
 app.use(express.json()); // formato JSON nas requisições
@@ -14,6 +15,7 @@ app.use('/user', userRouter); // router para User
 app.use('/auth', authRouter); // router para autenticação
 app.use('/finances', financesRouter); // router para finanças
 app.use('/bank', bankRouter); // router para banco
+app.use('/type', typesRouter); // router para tipos
 
 app.listen(8000, (error) => {
   if (error) {

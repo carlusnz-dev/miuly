@@ -23,6 +23,7 @@ model User {
   finances   Finances[]
   tasks      Task[]
   banks      Bank[]
+  types      Types[]
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
 }
@@ -43,13 +44,17 @@ model Finances {
 }
 
 model Types {
-  id         Int        @id @default(autoincrement())
-  name       String     @unique
+  id         Int         @id @default(autoincrement())
+  name       String
   applies_to String[]
   finances   Finances[]
   tasks      Task[]
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
+  user_id    Int
+  user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  @@unique([user_id, name])
 }
 
 model Bank {
@@ -88,4 +93,9 @@ enum Priority {
   MEDIUM
   HIGH
   URGENT
+}
+
+enum AppliesTo {
+  FINANCES
+  TASK
 }
