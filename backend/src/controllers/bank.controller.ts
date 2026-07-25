@@ -83,7 +83,8 @@ export async function deleteBankController(req: Request, res: Response) {
 
 export async function findBankByIdController(req: Request, res: Response) {
   const rawId = Number(req.params.id);
-  const result = await findBankByIdService(rawId);
+  const rawUserId = Number(req.userId);
+  const result = await findBankByIdService(rawId, rawUserId);
 
   if (!result.ok) {
     if (result.reason == 'not_found') {
