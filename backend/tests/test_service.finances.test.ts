@@ -123,9 +123,20 @@ describe('createFinancesService', () => {
     if (!r.ok) expect(r.reason).toBe('error');
   });
 
-  // Gap conhecido: findBankById não filtra por dono e o service não confere
-  // foundBank.user_id — usuário A consegue apontar para o banco do usuário B.
-  it.todo('deveria recusar bank_id que pertence a outro usuário');
+  it('recusa bank_id que pertence a outro usuário', async () => {
+    vi.mocked(userRepo.findUserById).mockResolvedValue({ id: 1 } as any);
+    vi.mocked(bankRepo.findBankById).mockResolvedValue({
+      id: 1,
+      user_id: 2,
+    } as any);
+    vi.mocked(typesRepo.findTypeById).mockResolvedValue(tipoValido as any);
+
+    const r = await createFinancesService(entrada, 1);
+
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.reason).toBe('not_found');
+    expect(financesRepo.createFinance).not.toHaveBeenCalled();
+  });
 });
 
 describe('updateFinanceService', () => {
@@ -223,9 +234,32 @@ describe('deleteFinanceService', () => {
     expect(financesRepo.deleteFinance).toHaveBeenCalledWith(5, 1);
   });
 
-  // As buscas iniciais do delete estão fora do try/catch: uma falha do banco
-  // vira unhandled rejection e derruba o processo em vez de responder 500.
-  it.todo('deveria devolver error quando a busca inicial falha no banco');
+  it('devolve error em vez de derrubar o processo quando o banco falha', async () => {
+    vi.mocked(financesRepo.findFinanceById).mockRejectedValue(
+      new Error('boom'),
+    );
+    vi.mocked(userRepo.findUserById).mockResolvedValue({ id: 1 } as any);
+
+    const r = await deleteFinanceService(5, 1);
+
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.reason).toBe('error');
+  });
+
+  it('não expõe o user_id na resposta (ADR-0007)', async () => {
+    vi.mocked(financesRepo.findFinanceById).mockResolvedValue(
+      financaSalva as any,
+    );
+    vi.mocked(userRepo.findUserById).mockResolvedValue({ id: 1 } as any);
+    vi.mocked(financesRepo.deleteFinance).mockResolvedValue(
+      financaSalva as any,
+    );
+
+    const r = await deleteFinanceService(5, 1);
+
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.data).not.toHaveProperty('user_id');
+  });
 });
 
 describe('findAllFinancesByUserIdService', () => {

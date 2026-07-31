@@ -57,7 +57,7 @@ describe('updateTaskSchema', () => {
     expect(r.success).toBe(true);
   });
 
-  it('aceita corpo vazio — mesmo gap do updateFinanceSchema', () => {
+  it('aceita corpo vazio — o updateFinanceSchema já barra isso com .refine()', () => {
     const r = updateTaskSchema.safeParse({});
 
     expect(r.success).toBe(true);
