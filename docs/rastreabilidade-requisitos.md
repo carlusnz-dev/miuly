@@ -69,7 +69,7 @@
 | Módulo | Status | Onde está | Gaps |
 |--------|--------|-----------|------|
 | **Bank** | 🟢 Feito | `routes/bank.route.ts`, `controllers/bank.controller.ts`, `services/bank.service.ts` | `updateBankService` engole a exceção no `catch` e cai no retorno genérico "Dados inválidos" — a mensagem mente sobre a causa. |
-| **Types** | 🟡 Parcial | `routes/types.route.ts`, `services/types.service.ts` | Só `create` e `findById`. **Faltam `list`, `update` e `delete`** — a rota `GET /` está comentada (`types.route.ts:11`). **Bloqueia o front**: sem listar tipos não dá para montar o select de categoria em Finanças nem em Tarefas. O `delete` precisa checar vínculos (FK `Restrict`) e devolver `conflict`. Violação de `@@unique` volta como `error` genérico. |
+| **Types** | 🟢 Feito | `routes/types.route.ts`, `controllers/types.controller.ts`, `services/types.service.ts`, `repositories/types.repository.ts` | CRUD completo. `delete` de tipo em uso responde `409 conflict` com a contagem de vínculos, antes de a FK `Restrict` estourar; `@@unique` violado vira `409` (P2002). Validado por `curl` em 31/jul. |
 | **User** | 🟢 Feito | `routes/user.route.ts`, `services/user.service.ts` | `POST /user` é público (correto, é o registro) mas sem rate-limit. |
 
 ### Front-end
@@ -84,8 +84,8 @@
 
 | Alvo | Cobertura |
 |------|-----------|
-| `backend/tests/` | 9 arquivos, 74 testes passando + 2 `it.todo`. Services de task, finances, bank, types e user; middleware de auth; schemas Zod. Repositórios mockados — **não precisam de banco**, servem de gate de CI. |
-| `it.todo` abertos | corpo vazio no `updateTaskSchema`; `conflict` em vez de `error` na violação de `@@unique` em Types. |
+| `backend/tests/` | 9 arquivos, 85 testes passando + 1 `it.todo`. Services de task, finances, bank, types e user; middleware de auth; schemas Zod. Repositórios mockados — **não precisam de banco**, servem de gate de CI. |
+| `it.todo` aberto | corpo vazio aceito no `updateTaskSchema` (falta `.refine()`). |
 
 ---
 
@@ -102,9 +102,10 @@
    vazamento de `user_id` no `GET /finances` foi corrigido junto. Todo acesso a recurso
    hoje passa por verificação de dono na camada de service, conforme
    [ADR-0007](adr/0007-ownership-e-recorte-de-campos-na-camada-de-service.md).
-3. **Types é o gargalo do front.** É o único módulo do caminho crítico ainda incompleto,
-   e as duas telas principais (Finanças e Tarefas) dependem de listar categorias.
-   Deveria vir antes da primeira tela Angular.
+3. **O caminho crítico do backend está livre.** O CRUD de Types foi concluído em 31/jul,
+   incluindo a listagem de que as telas de Finanças e Tarefas dependem. Todo o backend
+   necessário para as telas do MVP (menos RF008) existe e está testado — o próximo
+   bloqueio é o front em si, não a API.
 4. **Gap resolvido que constava aqui antes:** o `z.email()` em `user.type.ts` **não** é
    inválido — é a API de formatos do Zod 4 e funciona (verificado por `curl`: registro
    e login OK). O apontamento de 15/jul estava errado.

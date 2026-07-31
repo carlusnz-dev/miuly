@@ -28,3 +28,11 @@ export async function findTypeById(id: number, userId: number) {
     where: { id, user_id: userId },
   });
 }
+
+export async function findAllTypesByUserId(userId: number) {
+  return prisma.types.findMany({
+    where: { user_id: userId },
+    omit: { user_id: true },
+    orderBy: { name: 'asc' },
+  });
+}

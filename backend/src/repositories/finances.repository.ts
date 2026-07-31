@@ -37,6 +37,12 @@ export async function findFinanceById(id: number, userId: number) {
   });
 }
 
+export async function countFinancesByTypeId(typeId: number, userId: number) {
+  return prisma.finances.count({
+    where: { type_id: typeId, user_id: userId },
+  });
+}
+
 export async function findAllFinancesByUserId(userId: number) {
   return prisma.finances.findMany({
     where: { user_id: userId },

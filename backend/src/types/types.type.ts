@@ -17,10 +17,17 @@ const updateTypeSchema = z
       .array()
       .min(1, 'O tipo tem que ter pelo menos uma classe.'),
   })
-  .partial();
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'Envie ao menos um campo para atualizar.',
+  });
+
+const typeParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
 
 type CreateTypeInput = z.infer<typeof createTypeSchema>;
 type UpdateTypeInput = z.infer<typeof updateTypeSchema>;
 
 export type { CreateTypeInput, UpdateTypeInput };
-export { createTypeSchema, updateTypeSchema };
+export { createTypeSchema, updateTypeSchema, typeParamsSchema };

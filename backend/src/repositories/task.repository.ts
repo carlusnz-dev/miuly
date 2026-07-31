@@ -42,6 +42,12 @@ export async function findTaskById(id: number, userId: number) {
   });
 }
 
+export async function countTasksByTypeId(typeId: number, userId: number) {
+  return prisma.task.count({
+    where: { type_id: typeId, user_id: userId },
+  });
+}
+
 export async function findAllTasksByUserId(userId: number) {
   return prisma.task.findMany({
     where: { user_id: userId },
