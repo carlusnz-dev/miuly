@@ -6,3 +6,7 @@
 # JetBrains
 .idea/
 .vscode/
+
+# Arquivos que não podem subir
+logs/
+*.log
