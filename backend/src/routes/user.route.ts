@@ -17,7 +17,7 @@ userRouter.get('', authMiddleware, async (req, res) => {
   await findAllUsersController(req, res);
 });
 
-userRouter.post('/', authMiddleware, async (req, res) => {
+userRouter.post('/', async (req, res) => {
   await createUserController(req, res);
 });
 
