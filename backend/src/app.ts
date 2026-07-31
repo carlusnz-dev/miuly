@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import userRouter from './routes/user.route.js';
 import Logger from './lib/logger.js'; // classe Logger para log
 import authRouter from './routes/auth.route.js';
@@ -11,6 +12,13 @@ import taskRouter from './routes/task.route.js';
 const app = express();
 app.use(express.json()); // formato JSON nas requisições
 app.use(cookieParser()); // cookie-parser para leitura dos cookies
+// CORS Aplicado para aceitar req. do front-end
+app.use(
+  cors({
+    origin: ['http://localhost:4200'],
+    credentials: true,
+  }),
+);
 
 app.use('/user', userRouter); // router para User
 app.use('/auth', authRouter); // router para autenticação
