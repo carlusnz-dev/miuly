@@ -9,7 +9,7 @@ import { authMiddleware } from '../middleware/auth.middleware.js';
 const authRouter = express.Router();
 
 authRouter.post('/login', loginController);
-authRouter.post('/logout', logoutController);
+authRouter.post('/logout', authMiddleware, logoutController);
 authRouter.get('/me', authMiddleware, aboutMeController);
 
 export default authRouter;
