@@ -31,3 +31,4 @@ padrões de arquitetura. Decisões pequenas e reversíveis não precisam de ADR.
 | [0006](0006-estrategia-de-jwt.md) | Estratégia de JWT (stateless, cookie httpOnly, login e logout) | Proposto | 2026-07-06 |
 | [0007](0007-ownership-e-recorte-de-campos-na-camada-de-service.md) | Ownership e recorte de campos na camada de Service | Proposto | 2026-07-16 |
 | [0008](0008-modelagem-de-types-por-usuario.md) | Modelagem de Types por usuário com `applies_to` como array de enum | Proposto | 2026-07-23 |
+| [0009](0009-troca-do-framework-de-frontend-para-angular.md) | Troca do framework de front-end de Next.js para Angular | Proposto | 2026-07-31 |
