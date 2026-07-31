@@ -8,6 +8,7 @@ import {
 import Logger from '../lib/logger.js';
 import {
   createFinanceSchema,
+  financeParamsSchema,
   updateFinanceSchema,
 } from '../types/finances.type.js';
 
@@ -73,10 +74,23 @@ export async function updateFinanceController(req: Request, res: Response) {
     });
   }
 
-  // id e userId
-  const rawId = Number(req.params.id);
+  const parsedParams = financeParamsSchema.safeParse(req.params);
+
+  if (!parsedParams.success) {
+    return res.status(400).json({
+      ok: false,
+      reason: 'error',
+      message: 'ID inválido.',
+      error: parsedParams.error.message,
+    });
+  }
+
   const rawUserId = Number(req.userId);
-  const result = await updateFinanceService(rawId, rawUserId, parsed.data);
+  const result = await updateFinanceService(
+    parsedParams.data.id,
+    rawUserId,
+    parsed.data,
+  );
 
   if (!result.ok) {
     if (result.reason == 'not_found') {
@@ -90,9 +104,19 @@ export async function updateFinanceController(req: Request, res: Response) {
 }
 
 export async function deleteFinanceController(req: Request, res: Response) {
-  const rawId = Number(req.params.id);
+  const parsedParams = financeParamsSchema.safeParse(req.params);
+
+  if (!parsedParams.success) {
+    return res.status(400).json({
+      ok: false,
+      reason: 'error',
+      message: 'ID inválido.',
+      error: parsedParams.error.message,
+    });
+  }
+
   const rawUserId = Number(req.userId);
-  const result = await deleteFinanceService(rawId, rawUserId);
+  const result = await deleteFinanceService(parsedParams.data.id, rawUserId);
 
   if (!result.ok) {
     if (result.reason == 'not_found') {
@@ -102,5 +126,5 @@ export async function deleteFinanceController(req: Request, res: Response) {
     }
   }
 
-  res.status(201).json(result);
+  res.status(200).json(result);
 }

@@ -40,5 +40,6 @@ export async function findFinanceById(id: number, userId: number) {
 export async function findAllFinancesByUserId(userId: number) {
   return prisma.finances.findMany({
     where: { user_id: userId },
+    omit: { user_id: true },
   });
 }

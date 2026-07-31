@@ -16,10 +16,17 @@ const updateFinanceSchema = z
     type_id: z.number(),
     bank_id: z.number(),
   })
-  .partial();
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'Envie ao menos um campo para atualizar.',
+  });
+
+const financeParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
 
 type CreateFinanceInput = z.infer<typeof createFinanceSchema>;
 type UpdateFinanceInput = z.infer<typeof updateFinanceSchema>;
 
 export type { CreateFinanceInput, UpdateFinanceInput };
-export { createFinanceSchema, updateFinanceSchema };
+export { createFinanceSchema, updateFinanceSchema, financeParamsSchema };

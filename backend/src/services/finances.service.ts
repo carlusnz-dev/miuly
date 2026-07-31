@@ -44,7 +44,7 @@ export async function createFinancesService(
     // procura do banco e tipo
     const foundBank = await findBankById(data.bank_id);
     const foundType = await findTypeById(data.type_id, userId);
-    if (!foundBank) {
+    if (!foundBank || userId != foundBank.user_id) {
       Logger.error('Banco não encontrado.');
       return {
         ok: false,
@@ -119,7 +119,7 @@ export async function updateFinanceService(
     // valida o banco só se ele estiver sendo alterado
     if (data.bank_id !== undefined) {
       const foundBank = await findBankById(data.bank_id);
-      if (!foundBank) {
+      if (!foundBank || userId != foundBank.user_id) {
         Logger.error('Banco não encontrado.');
         return {
           ok: false,
@@ -187,52 +187,38 @@ export async function deleteFinanceService(
   id: number,
   userId: number,
 ): Promise<ServiceResult<Pick<FinancesModel, 'id' | 'name' | 'created_at'>>> {
-  const foundFinance = await findFinanceById(id, userId);
-  const foundUser = await findUserById(userId);
+  Logger.debug('Iniciado a remoção de Finance.');
 
-  if (!foundFinance || !foundUser) {
-    Logger.error('Não foi encontrado nenhum usuário ou finança.');
-    return {
-      ok: false,
-      reason: 'not_found',
-      message: 'Não foi encontrado finança ou usuário.',
-    };
-  }
+  try {
+    const foundFinance = await findFinanceById(id, userId);
+    const foundUser = await findUserById(userId);
 
-  // Decisão: deixar conflito de userId como status 'not_found'
-  // por questões de segurança e exploração de vulnerabilidades
-  if (foundFinance.user_id != userId) {
-    Logger.error('Erro ao deletar a finança: não pertence ao usuário.');
-    return {
-      ok: false,
-      reason: 'not_found',
-      message: 'Não foi encontrado a finança especificada.',
-    };
-  }
-
-  if (id) {
-    try {
-      const deletedFinance = await deleteFinance(id, userId);
-      Logger.info(`Finança ID ${id} deletada com sucesso!`);
-      return {
-        ok: true,
-        data: deletedFinance,
-      };
-    } catch (error) {
-      Logger.error(`Erro ao deletar a finança: ${error}`);
+    // Decisão: finança de outro usuário responde 'not_found', não 'unauthorized',
+    // para não confirmar a existência do recurso a quem não é dono.
+    if (!foundFinance || !foundUser) {
+      Logger.error('Não foi encontrado nenhum usuário ou finança.');
       return {
         ok: false,
-        reason: 'error',
-        message: 'Erro ao deletar a finança.',
+        reason: 'not_found',
+        message: 'Não foi encontrado finança ou usuário.',
       };
     }
-  }
 
-  return {
-    ok: false,
-    reason: 'error',
-    message: 'Dados inválidos para apagar a finança.',
-  };
+    const deletedFinance = await deleteFinance(id, userId);
+    const { name, created_at } = deletedFinance;
+    Logger.info(`Finança ID ${id} deletada com sucesso!`);
+    return {
+      ok: true,
+      data: { id, name, created_at },
+    };
+  } catch (error) {
+    Logger.error(`Erro ao deletar a finança: ${error}`);
+    return {
+      ok: false,
+      reason: 'error',
+      message: 'Erro ao deletar a finança.',
+    };
+  }
 }
 
 export async function findAllFinancesByUserIdService(
