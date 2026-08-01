@@ -1,6 +1,9 @@
 import { type Request, type Response } from 'express';
 import { loginUserSchema } from '../types/user.type.js';
-import { loginService } from '../services/auth.service.js';
+import {
+  findLoggedUserByIdService,
+  loginService,
+} from '../services/auth.service.js';
 import Logger from '../lib/logger.js';
 
 export async function loginController(req: Request, res: Response) {
@@ -35,7 +38,7 @@ export async function loginController(req: Request, res: Response) {
   return res.status(200).json({ ok: true, message: result.message });
 }
 
-export async function logoutController(req: Request, res: Response) {
+export async function logoutController(_req: Request, res: Response) {
   res.clearCookie('SESSIONID', { httpOnly: true, sameSite: 'strict' });
   return res
     .status(200)
@@ -43,11 +46,15 @@ export async function logoutController(req: Request, res: Response) {
 }
 
 export async function aboutMeController(req: Request, res: Response) {
-  res.status(200).json({
-    ok: true,
-    message: {
-      userId: req.userId,
-      info: 'Usuário possui sessão ativa no sistema.',
-    },
-  });
+  const result = await findLoggedUserByIdService(Number(req.userId));
+
+  if (!result.ok) {
+    if (result.reason == 'not_found') {
+      return res.status(404).json(result);
+    } else {
+      return res.status(500).json(result);
+    }
+  }
+
+  res.status(200).json(result);
 }
