@@ -32,4 +32,5 @@ padrões de arquitetura. Decisões pequenas e reversíveis não precisam de ADR.
 | [0007](0007-ownership-e-recorte-de-campos-na-camada-de-service.md) | Ownership e recorte de campos na camada de Service | Proposto | 2026-07-16 |
 | [0008](0008-modelagem-de-types-por-usuario.md) | Modelagem de Types por usuário com `applies_to` como array de enum | Proposto | 2026-07-23 |
 | [0009](0009-troca-do-framework-de-frontend-para-angular.md) | Troca do framework de front-end de Next.js para Angular | Proposto | 2026-07-31 |
-| [0010](0010-primeng-como-biblioteca-de-ui.md) | PrimeNG como biblioteca de componentes de UI | Proposto | 2026-07-31 |
+| [0010](0010-primeng-como-biblioteca-de-ui.md) | PrimeNG como biblioteca de componentes de UI | Substituído por [0011](0011-taiga-ui-como-biblioteca-de-ui.md) | 2026-07-31 |
+| [0011](0011-taiga-ui-como-biblioteca-de-ui.md) | Taiga UI como biblioteca de componentes de UI | Proposto | 2026-07-31 |

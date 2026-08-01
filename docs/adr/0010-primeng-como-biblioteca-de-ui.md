@@ -1,6 +1,6 @@
 # ADR-0010: PrimeNG como biblioteca de componentes de UI
 
-- **Status:** Proposto
+- **Status:** Substituído por [ADR-0011](0011-taiga-ui-como-biblioteca-de-ui.md)
 - **Data:** 2026-07-31
 - **Decisores:** Carlos (Arquiteto)
 
