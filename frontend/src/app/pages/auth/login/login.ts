@@ -18,6 +18,7 @@ import {
 import { TuiForm } from '@taiga-ui/layout';
 import { Auth } from '../../../core/auth/auth';
 import { HttpErrorResponse } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 
 // validators
 function identifierValidator(field: AbstractControl): ValidationErrors | null {
@@ -41,6 +42,7 @@ function passwordValidator(field: AbstractControl): ValidationErrors | null {
     TuiInputDirective,
     TuiButton,
     TuiError,
+    RouterLink,
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -75,7 +77,7 @@ export class Login {
     const password = this.loginForm.get('password')?.getRawValue() ?? '';
 
     this.auth.login(identifier, password).subscribe({
-      next: (res) => console.log('Login feito com sucesso!'),
+      next: (_res) => console.log('Login feito com sucesso!'),
       error: (err: HttpErrorResponse) => {
         this.erroApi.set(err.error.message);
       },
