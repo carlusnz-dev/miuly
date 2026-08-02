@@ -1,1 +1,90 @@
-<p>signup works!</p>
+<div
+  class="w-full h-full px-6 sm:px-3 md:px-0 min-h-screen flex flex-col justify-center items-center"
+>
+  <h1 class="fixed top-5 text-6xl md:text-4xl font-light text-zinc-300">
+    Miuly
+  </h1>
+
+  <div
+    class="w-full max-w-lg px-5 py-6 space-y-3 flex flex-col border-2 border-zinc-700 rounded-2xl"
+  >
+    <h1 class="text-4xl font-bold text-center">Crie sua conta</h1>
+    <p class="text-lg font-medium text-zinc-600 text-center">
+      e comece hoje a organizar sua vida
+    </p>
+
+    <form
+      class="relative my-3 px-2.5"
+      [formGroup]="signUpForm"
+      tuiForm="l"
+      (ngSubmit)="onSubmit()"
+    >
+      <tui-textfield>
+        <label for="username" tuiLabel>Nome de usuário</label>
+        <input
+          id="username"
+          type="text"
+          placeholder="Insira seu nome de usuário"
+          formControlName="username"
+          tuiInput
+        />
+      </tui-textfield>
+      <tui-error formControlName="username" />
+
+      <tui-textfield>
+        <label for="email" tuiLabel>E-mail</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="Insira seu e-mail"
+          formControlName="email"
+          tuiInput
+        />
+      </tui-textfield>
+      <tui-error formControlName="email" />
+
+      <tui-textfield>
+        <label for="password" tuiLabel>Senha</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Insira sua senha"
+          formControlName="password"
+          tuiInput
+        />
+      </tui-textfield>
+      <tui-error formControlName="password" />
+
+      <tui-textfield>
+        <label for="confirmPassword" tuiLabel>Confirme sua senha</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="Insira novamente sua senha"
+          formControlName="confirmPassword"
+          tuiInput
+        />
+      </tui-textfield>
+      <tui-error formControlName="confirmPassword" />
+
+      <button
+        class="w-full"
+        type="submit"
+        [disabled]="signUpForm.invalid"
+        tuiButton
+      >
+        Criar
+      </button>
+      <tui-error [error]="erroApi()" class="text-center" />
+    </form>
+
+    <p class="text-center font-medium text-zinc-500">
+      Já tem uma conta?
+      <a
+        class="text-blue-700 hover:text-blue-700/50 hover:underline underline-offset-4 transition-colors"
+        routerLink="/login"
+        >Entre aqui</a
+      >
+    </p>
+  </div>
+</div>
