@@ -1,0 +1,6 @@
+*.md
+package*.json
+tsconfig*.json
+dist/
+*.spec.ts
+*.d.ts
