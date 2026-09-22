@@ -4,7 +4,7 @@
 - **LLM:** OpenAI Codex
 - **Modelo:** GPT-5
 - **Reasoning effort:** não disponibilizado ao agente nesta execução
-- **Data:** 2026-09-21 22:25:12 -03
+- **Data:** 2026-09-21 22:29:48 -03
 - **Branch:** `feature/project-foundation`
 
 ## Título
@@ -37,12 +37,22 @@ decisões futuras a estratégia de exclusão nas relações, constraints de isol
 por perfil, retenção da auditoria, conflitos de sincronização e separação entre
 instituição bancária e conta financeira.
 
+Uma auditoria final do worktree identificou ainda arquivos já rastreados com
+alterações pendentes. Eles foram separados entre dependências/configuração do
+Prisma, higiene do backend e guias dos módulos. A diferença entre arquivos não
+rastreados (`??`) e arquivos rastreados modificados (`M`/`D`) foi verificada antes
+dos cortes finais.
+
 ### Commits criados
 
 - `6f06c3c` — `chore(codex): configura governança e agentes`
 - `3baf955` — `chore(prisma): configura Prisma ORM 8`
 - `4028e49` — `feat(prisma): define modelos de dados do domínio`
 - `dd1b287` — `docs(projeto): documenta arquitetura e requisitos`
+- `f9ffe7c` — `docs(relatorios): registra sessão de fundação`
+- `cfa60d3` — `build(prisma): integra dependências ao backend`
+- `b831070` — `chore(backend): remove artefatos locais`
+- `cfc3554` — `docs(projeto): atualiza guias dos módulos`
 
 ### Validações executadas
 
