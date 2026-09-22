@@ -1,0 +1,212 @@
+// use prisma-8
+enum Priority {
+  Low = "low"
+  Medium = "medium"
+  High = "urgent"
+  Archived = "archived"
+}
+
+enum TypeFinance {
+  Outflow = "outflow"
+  Inflow = "inflow"
+  Transfer = "transfer"
+}
+
+enum CalendarEventStatus {
+  Confirmed = "confirmed"
+  Tentative = "tentative"
+  Cancelled = "cancelled"
+}
+
+model User {
+  id           Int                  @id @default(autoincrement())
+  name         VarChar(255)
+  email        VarChar(100)         @unique
+  hashPassword VarChar(255)         @map("hash_password")
+  profile      Profile?
+  auditLogs    AuditLog[]
+  createdAt    temporal.createdAt() @map("created_at")
+  updatedAt    temporal.updatedAt() @map("updated_at")
+
+  @@index([name])
+  @@map("users")
+}
+
+model Profile {
+  id        Uuid                 @id @default(uuid())
+  userId    Int                  @unique @map("user_id")
+  user      User                 @relation(fields:[userId], references:[id])
+  username  VarChar(100)         @unique
+  email     VarChar(100)
+  bio       String?
+  urlPhoto  String?              @map("url_photo")
+  slugUrl   VarChar(30)          @unique @map("slug_url")
+  status    Boolean              @default(true)
+  apis      Api[]
+  tasks     Task[]
+  tags      Tag[]
+  banks     Bank[]
+  finances  Finance[]
+  events    Event[]
+  createdAt temporal.createdAt() @map("created_at")
+  updatedAt temporal.updatedAt() @map("updated_at")
+
+  @@index([email])
+  @@map("profiles")
+}
+
+model Api {
+  id          Uuid                 @id @default(uuid())
+  profileId   Uuid                 @map("profile_id")
+  profile     Profile              @relation(fields:[profileId], references:[id])
+  title       VarChar(50)
+  description String?
+  urlBase     VarChar(100)         @map("url_base")
+  slugUrl     VarChar(30)          @map("slug_url")
+  startTime   Timestamptz?         @map("start_time")
+  endTime     Timestamptz?         @map("end_time")
+  peoples     String[]             @default([])
+  status      Boolean              @default(true)
+  createdAt   temporal.createdAt() @map("created_at")
+  updatedAt   temporal.updatedAt() @map("updated_at")
+
+  @@index([profileId])
+  @@unique([profileId, title])
+  @@unique([urlBase, slugUrl])
+  @@map("apis")
+}
+
+model Task {
+  id           Uuid                 @id @default(uuid())
+  profileId    Uuid                 @map("profile_id")
+  profile      Profile              @relation(fields:[profileId], references:[id])
+  title        VarChar(50)
+  observations String?
+  tags         Tag[]
+  done         Boolean              @default(false)
+  scheduledAt  Timestamptz          @map("scheduled_at")
+  priority     Priority             @default(Medium)
+  startTime    Timestamptz?         @map("start_time")
+  endTime      Timestamptz?         @map("end_time")
+  peoples      String[]             @default([])
+  status       Boolean              @default(true)
+  createdAt    temporal.createdAt() @map("created_at")
+  updatedAt    temporal.updatedAt() @map("updated_at")
+
+  @@index([profileId])
+  @@unique([profileId, title])
+  @@map("tasks")
+}
+
+model Tag {
+  id        Int                  @id @default(autoincrement())
+  profileId Uuid                 @map("profile_id")
+  profile   Profile              @relation(fields:[profileId], references:[id])
+  name      VarChar(30)
+  slugUrl   VarChar(40)          @map("slug_url")
+  tasks     Task[]
+  finances  Finance[]
+  status    Boolean              @default(true)
+  createdAt temporal.createdAt() @map("created_at")
+  updatedAt temporal.updatedAt() @map("updated_at")
+
+  @@index([profileId, status])
+  @@unique([profileId, name])
+  @@unique([profileId, slugUrl])
+  @@map("tags")
+}
+
+model TaskTag {
+  taskId    Uuid                 @map("task_id")
+  tagId     Int                  @map("tag_id")
+  task      Task                 @relation(fields:[taskId], references:[id])
+  tag       Tag                  @relation(fields:[tagId], references:[id])
+  createdAt temporal.createdAt() @map("created_at")
+
+  @@id([taskId, tagId])
+  @@index([tagId])
+  @@map("tasks_tags")
+}
+
+model Bank {
+  id        Int                  @id @default(autoincrement())
+  profileId Uuid                 @map("profile_id")
+  profile   Profile              @relation(fields:[profileId], references:[id])
+  name      VarChar(100)
+  balance   Numeric(10, 2)
+  finances  Finance[]
+  createdAt temporal.createdAt() @map("created_at")
+  updatedAt temporal.updatedAt() @map("updated_at")
+
+  @@index([profileId])
+  @@unique([profileId, name])
+  @@map("banks")
+}
+
+model Finance {
+  id        Int                  @id @default(autoincrement())
+  profileId Uuid                 @map("profile_id")
+  profile   Profile              @relation(fields:[profileId], references:[id])
+  name      VarChar(100)
+  value     Numeric(10, 2)       @default(0)
+  currency  VarChar(3)           @default("BRL")
+  bankId    Int                  @map("bank_id")
+  bank      Bank                 @relation(fields:[bankId], references:[id])
+  tagId     Int?                 @map("tag_id")
+  tag       Tag?                 @relation(fields:[tagId], references:[id])
+  type      TypeFinance          @default(Inflow)
+  paidAt    Timestamptz?         @map("paid_at")
+  url       String?
+  peoples   String[]             @default([])
+  createdAt temporal.createdAt() @map("created_at")
+  updatedAt temporal.updatedAt() @map("updated_at")
+
+  @@index([profileId, name])
+  @@index([bankId, paidAt])
+  @@index([tagId])
+  @@map("finances")
+}
+
+model Event {
+  id               Uuid                 @id @default(uuid())
+  profileId        Uuid                 @map("profile_id")
+  profile          Profile              @relation(fields:[profileId], references:[id])
+  googleCalendarId VarChar(255)         @map("google_calendar_id")
+  googleEventId    VarChar(255)         @map("google_event_id")
+  name             VarChar(255)
+  description      String?
+  location         String?
+  startAt          Timestamptz?         @map("start_at")
+  endAt            Timestamptz?         @map("end_at")
+  startDate        Date?                @map("start_date")
+  endDate          Date?                @map("end_date")
+  timeZone         VarChar(64)?         @map("time_zone")
+  allDay           Boolean              @default(false) @map("all_day")
+  status           CalendarEventStatus  @default(Confirmed)
+  etag             String?
+  htmlLink         String?              @map("html_link")
+  recurringEventId VarChar(255)?        @map("recurring_event_id")
+  recurrence       String[]             @default([])
+  attendees        String[]             @default([])
+  createdAt        temporal.createdAt() @map("created_at")
+  updatedAt        temporal.updatedAt() @map("updated_at")
+
+  @@index([profileId, startAt])
+  @@index([profileId, startDate])
+  @@index([profileId, status])
+  @@unique([profileId, googleCalendarId, googleEventId])
+  @@map("events")
+}
+
+model AuditLog {
+  id          Uuid                 @id @default(uuid())
+  name        VarChar(100)
+  authorId    Int                  @map("author_id")
+  author      User                 @relation(fields:[authorId], references:[id])
+  whatChanged String               @map("what_changed")
+  changedAt   temporal.createdAt() @map("changed_at")
+
+  @@index([authorId, changedAt])
+  @@index([name, changedAt])
+  @@map("audit_logs")
+}
