@@ -5,7 +5,7 @@
     "description": "Plataforma de organização financeira, tarefas e agenda pessoal",
     "environment": "development",
     "orchestration": {
-      "defaultRole": "senior-software-developer",
+      "defaultRole": "documentation-analyst",
       "governanceFile": "AGENTS.md",
       "globalInstructions": "GEMINI.md"
     },

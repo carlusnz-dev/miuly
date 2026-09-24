@@ -35,6 +35,17 @@ pretendido pertencem ao escopo solicitado. Se faltar uma decisão que altere
 materialmente comportamento, dados, segurança ou compatibilidade, deve interromper
 essa parte da implementação e apresentar a decisão necessária ao usuário.
 
+## Papéis dos agentes
+
+O projeto é desenvolvido por mais de uma LLM. O Claude Code é a LLM principal
+(arquitetura, codificação complexa, validação, debug e integração de PRs), o Codex
+atua como desenvolvedor sênior fullstack e o Antigravity (Gemini) cuida da
+documentação, sem alterar código de produção. Cada agente trabalha no próprio
+worktree do Orca e cria uma branch por tarefa a partir de `develop`. Papéis,
+worktrees, fluxo de PR e delegação estão em
+[`docs/organizacao-agentes.md`](docs/organizacao-agentes.md); leia esse documento
+no início de cada sessão.
+
 ## Papéis de revisão
 
 - **Revisor de qualidade:** inspeciona alterações, executa validações e aponta regressões, riscos e violações de contrato; permanece somente leitura quando atuar formalmente como revisor.

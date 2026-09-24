@@ -116,3 +116,15 @@ verificáveis em `specs/`. Dinheiro é sempre decimal + código ISO 4217, nunca 
   diagnósticos complexos podem ser delegados ao Antigravity via MCP `agy-bridge`.
 - O workspace do Antigravity está descrito em `.agents/README.md` e `GEMINI.md`;
   suas regras ficam em `.agents/rules/`.
+
+## Papéis e delegação via Orca
+
+- O Claude é a LLM principal (arquitetura, código complexo, validação, debug, revisão e
+  merge de PRs). O Codex implementa como dev sênior fullstack no worktree
+  `~/orca/workspaces/miuly/Dev-senior`; o Gemini (Antigravity) documenta no worktree
+  `~/orca/workspaces/miuly/Documentação-do-projeto`. Detalhes em
+  `docs/organizacao-agentes.md`.
+- Tarefas que geram commits são delegadas pelo terminal do agente no Orca
+  (`orca terminal list/read/wait/send`, skill `orca-cli`), com briefing autossuficiente
+  no formato do documento acima. Consultas somente leitura ao Gemini vão pelo `agy-bridge`.
+- Não edite os worktrees dos outros agentes; revise o resultado deles antes de PR ou merge.
