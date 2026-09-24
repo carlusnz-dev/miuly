@@ -25,7 +25,8 @@ Foram pesquisadas fontes primárias de interface, CSS, Sass e acessibilidade em 
 
 ### Commits Criados
 
-- `docs(style): documenta direção visual e referências de dashboard` (hash no Git após este commit).
+- `ccf51bf` — `docs(style): documenta direção visual e referências de dashboard`
+- `9f4f099` — `docs(style): atualiza contexto da pesquisa e relatório`
 
 ### Validações Executadas
 
