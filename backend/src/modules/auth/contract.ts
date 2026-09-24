@@ -24,11 +24,7 @@ export const loginBodySchema = z.object({
 export type RegisterInput = z.output<typeof registerBodySchema>;
 export type LoginInput = z.output<typeof loginBodySchema>;
 
-// Identidade do usuário autenticado, anexada à requisição pelo middleware.
-export interface AuthContext {
-  userId: number;
-  profileId: string;
-}
+export type { AuthContext } from '../../core/types/auth';
 
 export interface AuthUser {
   id: number;
