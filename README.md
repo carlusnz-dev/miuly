@@ -6,8 +6,8 @@ com integrações a serviços como Google Calendar e Gmail.
 ## Estado atual
 
 O projeto está em fase de fundação. O backend Express e o contrato de dados com
-Prisma ORM 8 RC estão sendo estruturados; a SPA Angular ainda não está presente
-neste repositório. Consulte a [revisão do modelo de dados](docs/data-model-review.md)
+Prisma ORM 8 RC estão sendo estruturados; a SPA Angular tem uma base inicial,
+sem telas funcionais dos módulos de produto. Consulte a [revisão do modelo de dados](docs/data-model-review.md)
 antes de criar migrações.
 
 ## Módulos
@@ -15,7 +15,7 @@ antes de criar migrações.
 | Módulo | Responsabilidade | Estado |
 | --- | --- | --- |
 | `backend/` | API Express, regras de aplicação, integrações e persistência | Em desenvolvimento |
-| `frontend/` | SPA Angular para finanças e organização pessoal | Planejado |
+| `frontend/` | SPA Angular com shell, página inicial e cliente HTTP de usuários | Base inicial |
 | `docs/` | Arquitetura, requisitos e decisões técnicas | Ativo |
 | `specs/` | Critérios verificáveis e contratos funcionais | Ativo |
 | `infra/` | Ambientes, observabilidade e implantação | Reservado |
@@ -33,6 +33,7 @@ provedores nunca pertencem às entidades centrais.
 
 - [Índice técnico](docs/README.md)
 - [Arquitetura e limites](docs/architecture.md)
+- [Arquitetura do frontend](docs/frontend-architecture.md)
 - [Requisitos de produto](docs/requirements.md)
 - [Revisão do modelo Prisma](docs/data-model-review.md)
 - [Fluxo Git e releases](docs/contributing.md)
@@ -42,6 +43,7 @@ provedores nunca pertencem às entidades centrais.
 
 O backend requer Node.js, npm e PostgreSQL 15 ou superior. Os comandos e as
 variáveis de ambiente estão descritos em [backend/README.md](backend/README.md).
+O frontend pode ser executado separadamente; veja [frontend/README.md](frontend/README.md).
 
 Antes de integrar uma mudança, execute as validações aplicáveis e mantenha os
 documentos afetados no mesmo commit. Agentes automatizados obedecem ao

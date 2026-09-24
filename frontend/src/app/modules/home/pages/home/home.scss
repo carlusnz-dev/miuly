@@ -1,0 +1,24 @@
+section {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: clamp(4rem, 12vw, 9rem) 1.5rem;
+}
+
+.eyebrow {
+  color: #145a60;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 18ch;
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.1;
+}
+
+p {
+  max-width: 42rem;
+  line-height: 1.6;
+}

@@ -1,0 +1,12 @@
+a {
+  color: #145a60;
+  font-size: 1.5rem;
+  font-weight: 750;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}

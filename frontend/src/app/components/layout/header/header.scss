@@ -1,0 +1,19 @@
+header {
+  position: relative;
+  padding: 1.25rem clamp(1rem, 4vw, 3rem);
+  border-bottom: 1px solid #dce5e7;
+  background: #fff;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -5rem;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+  z-index: 1;
+}
