@@ -155,8 +155,6 @@ inteiro preservam sua semântica de data.
 
 ## Decisões pendentes
 
-- remoção de `@@unique([profileId, title])` em `Task` e escopo por perfil da
-  unicidade de `Api` (ver plano do corte 1, seção 2);
 - armazenamento e rotação segura de tokens OAuth;
 - política de sincronização incremental e resolução de conflitos;
 - moeda base, contas compartilhadas e recorrência financeira;

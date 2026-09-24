@@ -38,15 +38,18 @@ As forças em jogo são:
   7 dias, enviado **somente** no cookie `miuly_refresh` com `HttpOnly`,
   `SameSite=Strict`, `Path=/auth` e `Secure` fora de desenvolvimento. O banco guarda
   apenas o hash SHA-256 do refresh token, nunca o valor.
-- **Rotação:** cada `POST /auth/refresh` revoga o token usado e emite outro.
+- **Rotação:** cada `POST /auth/refresh` emite um token novo cujo
+  `previousTokenId` aponta para o token usado. Esse campo é único, então cada token
+  tem no máximo um sucessor, e um token com sucessor já foi usado.
   - **Janela de tolerância:** várias abas podem renovar ao mesmo tempo com o mesmo
-    cookie. Por isso, um token revogado **por rotação** há no máximo 30 segundos
-    ainda gera uma sessão nova, sem revogação em massa.
-  - **Detecção de reuso:** fora dessa janela, ou se o token foi revogado por logout
-    ou troca de senha, a reapresentação revoga todas as sessões do usuário e
-    responde 401.
-- **Logout e troca de senha:** o logout revoga o refresh token atual; a troca de
-  senha revoga todas as sessões do usuário. O access token já emitido continua
+    cookie. Se o sucessor foi criado há no máximo 30 segundos, a API responde 409,
+    sem emitir token nem revogar nada. O navegador já recebeu o cookie novo, e o
+    front repete o refresh uma vez.
+  - **Detecção de reuso:** fora dessa janela, a reapresentação de um token usado
+    revoga todas as sessões do usuário (`revokedReason = reuse`) e responde 401.
+- **Logout e troca de senha:** o logout revoga a sessão atual
+  (`revokedReason = logout`); a troca de senha revoga todas as sessões do usuário
+  (`revokedReason = password`). O access token já emitido continua
   válido até expirar, então o front descarta o token da memória ao concluir
   qualquer um dos dois.
 - **Limpeza:** sessões expiradas ou revogadas há mais de 7 dias são apagadas de
@@ -59,8 +62,14 @@ As forças em jogo são:
   aumentar o custo no futuro. Não há dependência nativa.
 - **Erros:** falha de login responde 401 com mensagem única ("E-mail ou senha
   inválidos"), sem revelar se o e-mail existe.
-- **Persistência:** exige um modelo novo de sessão no contrato Prisma e uma
-  migração. Os dois dependem de autorização separada, conforme o `AGENTS.md`.
+- **Persistência:** duas tabelas no contrato Prisma:
+  - `sessions` tem uma linha por login, com o usuário e a revogação (instante e
+    motivo);
+  - `refresh_tokens` tem uma linha por token emitido, com a sessão, o usuário, o
+    token anterior (`previousTokenId`, único), o hash, a expiração e a data de
+    criação.
+
+  A migração depende de autorização separada, conforme o `AGENTS.md`.
 
 ## 3. Consequências
 
@@ -75,8 +84,9 @@ As forças em jogo são:
 ### Negativas e Riscos
 - Um access token vazado continua válido por até 15 minutos. **Mitigação:** a
   validade é curta, e a troca de senha revoga todas as sessões.
-- Exige uma tabela de sessões e uma migração. **Mitigação:** o modelo é pequeno e
-  isolado do domínio.
+- Exige duas tabelas e uma migração, e a cadeia de tokens cresce com o uso.
+  **Mitigação:** o modelo é isolado do domínio, e a limpeza oportunista remove
+  sessões encerradas.
 - A SPA e a API precisam estar no mesmo site para `SameSite=Strict`. Em
   desenvolvimento, isso vale para `localhost:4200` e `localhost:8080`; a API deve
   habilitar CORS com `credentials` só para a origem configurada.

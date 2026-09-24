@@ -23,13 +23,49 @@ model User {
   name         VarChar(255)
   email        VarChar(100)         @unique
   hashPassword VarChar(255)         @map("hash_password")
-  profile      Profile?
-  auditLogs    AuditLog[]
+  profile       Profile?
+  auditLogs     AuditLog[]
+  sessions      Session[]
+  refreshTokens RefreshToken[]
   createdAt    temporal.createdAt() @map("created_at")
   updatedAt    temporal.updatedAt() @map("updated_at")
 
   @@index([name])
   @@map("users")
+}
+
+// Uma sessão por login; revogada por logout, troca de senha ou reuso de token.
+model Session {
+  id            Uuid                 @id @default(uuid())
+  userId        Int                  @map("user_id")
+  user          User                 @relation(fields:[userId], references:[id])
+  refreshTokens RefreshToken[]
+  revokedAt     Timestamptz?         @map("revoked_at")
+  revokedReason VarChar(20)?         @map("revoked_reason")
+  createdAt     temporal.createdAt() @map("created_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// Cadeia de rotação: cada token aponta para o anterior que substituiu.
+// Um token com sucessor já foi usado; só o último da cadeia é o atual.
+model RefreshToken {
+  id              Uuid                 @id @default(uuid())
+  sessionId       Uuid                 @map("session_id")
+  session         Session              @relation(fields:[sessionId], references:[id])
+  userId          Int                  @map("user_id")
+  user            User                 @relation(fields:[userId], references:[id])
+  previousTokenId Uuid?                @unique @map("previous_token_id")
+  previousToken   RefreshToken?        @relation("RefreshTokenRotation", fields:[previousTokenId], references:[id])
+  nextToken       RefreshToken?        @relation("RefreshTokenRotation")
+  tokenHash       VarChar(64)          @unique @map("token_hash")
+  expiresAt       Timestamptz          @map("expires_at")
+  createdAt       temporal.createdAt() @map("created_at")
+
+  @@index([sessionId])
+  @@index([userId])
+  @@map("refresh_tokens")
 }
 
 model Profile {
@@ -72,7 +108,6 @@ model Api {
 
   @@index([profileId])
   @@unique([profileId, title])
-  @@unique([urlBase, slugUrl])
   @@map("apis")
 }
 
@@ -94,7 +129,6 @@ model Task {
   updatedAt    temporal.updatedAt() @map("updated_at")
 
   @@index([profileId])
-  @@unique([profileId, title])
   @@map("tasks")
 }
 

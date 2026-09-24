@@ -28,37 +28,25 @@ Base compartilhada nova: `core/http/schemas.ts`, com `uuidParamsSchema`,
 
 ## 2. Pré-requisitos que dependem de autorização
 
-Nada abaixo acontece sem o Carlos autorizar explicitamente, porque são mudanças de
-contrato de dados, de banco ou de dependências.
+Mudanças de contrato de dados, banco ou dependências só acontecem com
+autorização explícita do Carlos. O item 1 já está feito; os itens 3 a 5 ainda
+dependem de autorização.
 
-1. **Contrato Prisma: modelo `Session`** (refresh tokens, ADR 0002):
-
-   ```prisma
-   model Session {
-     id        Uuid                 @id @default(uuid())
-     userId    Int                  @map("user_id")
-     user      User                 @relation(fields:[userId], references:[id])
-     tokenHash VarChar(64)          @unique @map("token_hash")
-     expiresAt Timestamptz          @map("expires_at")
-     revokedAt Timestamptz?         @map("revoked_at")
-     // "rotated" | "logout" | "password" | "reuse": só "rotated" tem tolerância
-     revokedReason VarChar(20)?     @map("revoked_reason")
-     createdAt temporal.createdAt() @map("created_at")
-
-     @@index([userId])
-     @@map("sessions")
-   }
-   ```
-
-   `User` ganha `sessions Session[]`. Depois, rodar `npm run contract:emit` e
-   versionar `contract.json` e `contract.d.ts`.
-2. **Decisões de modelagem encontradas ao escrever os contratos:**
-   - `Task` tem `@@unique([profileId, title])`: duas tarefas "Pagar boleto" no
-     mesmo perfil são impossíveis. **Recomendação:** remover a restrição.
-   - `Api` tem `@@unique([urlBase, slugUrl])` **global**: se um perfil cadastra
-     `googleapis.com/google-calendar`, nenhum outro perfil consegue cadastrar o
-     mesmo par, e o 409 revela que outro usuário já o cadastrou.
-     **Recomendação:** trocar por `@@unique([profileId, urlBase, slugUrl])`.
+1. **Contrato Prisma: feito** (autorizado em 2026-09-24, com `contract:emit`):
+   - `Session`: uma linha por login, com `userId`, `revokedAt`, `revokedReason`
+     (`logout`, `password` ou `reuse`) e `createdAt`;
+   - `RefreshToken`: uma linha por token emitido, com `sessionId`, `userId`,
+     `previousTokenId` (**único**, aponta para o token que este substituiu),
+     `tokenHash` (SHA-256, único), `expiresAt` e `createdAt`. A cadeia
+     `previousTokenId` é a rotação: um token que já tem sucessor foi usado, e só o
+     último da cadeia é o atual;
+   - removidos `@@unique([profileId, title])` de `Task` e
+     `@@unique([urlBase, slugUrl])` de `Api`. `Api` mantém o título único por
+     perfil.
+2. **Limpeza da cadeia:** apagar um token antigo exige antes anular o
+   `previousTokenId` do sucessor, por causa da chave estrangeira. Sessões revogadas
+   ou expiradas há mais de 7 dias são apagadas inteiras, com os tokens antes da
+   sessão.
 3. **Primeira migração** (`prisma migrate`), com o banco local em
    `docker compose up -d database`.
 4. **Dependências novas:** `jose` (JWT, ESM e sem dependências nativas) e
@@ -84,7 +72,8 @@ contrato de dados, de banco ou de dependências.
   - 400: validação;
   - 401: sem token, token inválido ou expirado, ou credenciais erradas;
   - 404: recurso inexistente **ou de outro perfil**;
-  - 409: conflito de unicidade.
+  - 409: conflito de unicidade (e-mail, username, título de API no perfil) ou
+    refresh concorrente.
 
 ### `auth`
 
@@ -92,7 +81,7 @@ contrato de dados, de banco ou de dependências.
 | --- | --- | --- | --- |
 | `POST /auth/register` | `{ name, email, username, password }` | `AuthSessionResponse` (201) | Cria `User` e `Profile` na mesma transação. 409 se o e-mail ou o username já estiverem em uso. Define o cookie. |
 | `POST /auth/login` | `{ email, password }` | `AuthSessionResponse` | 401 com mensagem única "E-mail ou senha inválidos". Define o cookie. |
-| `POST /auth/refresh` | — (cookie) | `AuthSessionResponse` | Rotaciona o cookie. Tolera renovações simultâneas por 30 s. 401 se o cookie estiver ausente, inválido, expirado ou reutilizado. |
+| `POST /auth/refresh` | — (cookie) | `AuthSessionResponse` | Rotaciona o cookie. 409 se o token foi renovado por outra aba há menos de 30 s (o front repete uma vez). 401 se o cookie estiver ausente, inválido, expirado ou reutilizado. |
 | `POST /auth/logout` | — (cookie) | `null` | Revoga a sessão e apaga o cookie. Idempotente. O front descarta o access token. |
 | `GET /auth/me` | — (Bearer) | `AuthUserResponse` | Dados do usuário para o front. |
 
@@ -223,6 +212,8 @@ sem esperar o backend:
   única vez e repete a requisição. Se o refresh também der 401, vai para o login;
 - manter **uma única chamada de refresh em andamento** por aba, compartilhando a
   mesma promise/observable entre as requisições que receberem 401;
+- se `POST /auth/refresh` responder 409, outra aba acabou de renovar e o navegador
+  já tem o cookie novo: repetir o refresh **uma vez**;
 - ao abrir o app, chamar `POST /auth/refresh` para restaurar a sessão;
 - depois de logout ou troca de senha, apagar o access token da memória e ir para
   o login: o token antigo continua válido no servidor até expirar;
@@ -338,12 +329,12 @@ Cada etapa termina com `npm run check` e `npm test` verdes e um commit próprio.
 2. **Auth sem banco:**
    - `ScryptPasswordHasher` e `JoseTokenIssuer`;
    - `requireAuth`, com testes de token ausente, inválido, expirado e válido.
-3. **Contrato Prisma e migração:** somente depois da autorização da seção 2.
+3. **Migração:** o contrato já está pronto; a migração só com a autorização da seção 2.
 4. **Auth completo:**
    - repository;
    - service (cadastro transacional de usuário e perfil, login com limpeza
-     oportunista de sessões, rotação com janela de 30 s e detecção de reuso,
-     logout);
+     oportunista de sessões, rotação encadeada por `previousTokenId`, 409 para
+     refresh concorrente em até 30 s, detecção de reuso, logout);
    - controller e rotas;
    - testes com repository e hasher falsos.
 5. **Users:**
