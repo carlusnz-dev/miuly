@@ -52,9 +52,9 @@ As forças em jogo são:
   (`revokedReason = password`). O access token já emitido continua
   válido até expirar, então o front descarta o token da memória ao concluir
   qualquer um dos dois.
-- **Limpeza:** sessões expiradas ou revogadas há mais de 7 dias são apagadas de
-  forma oportunista a cada login do usuário. Um job periódico fica para quando
-  houver agendador.
+- **Limpeza:** a cada login do usuário, são apagadas de forma oportunista as
+  sessões revogadas há mais de 7 dias e as sessões cujo token atual expirou há
+  mais de 7 dias. Um job periódico fica para quando houver agendador.
 - **Senhas:** hash com `scrypt` de `node:crypto`, com os parâmetros
   `N=2^15`, `r=8`, `p=1`, chave de 64 bytes e `maxmem` de 64 MiB. O salt é
   aleatório (16 bytes) por senha, e a comparação é feita em tempo constante
@@ -90,6 +90,13 @@ As forças em jogo são:
 - A SPA e a API precisam estar no mesmo site para `SameSite=Strict`. Em
   desenvolvimento, isso vale para `localhost:4200` e `localhost:8080`; a API deve
   habilitar CORS com `credentials` só para a origem configurada.
+- Se a resposta de um refresh se perder na rede, o navegador fica com o cookie
+  antigo, que já tem sucessor. Nos 30 s seguintes as tentativas recebem 409, e
+  depois disso a reapresentação conta como reuso e revoga todas as sessões do
+  usuário, que precisa entrar de novo. **Mitigação:** a validade curta do access
+  token e a repetição única do front tornam o caso raro. Recuperar o token
+  perdido exigiria guardar o valor em claro ou permitir mais de um sucessor, e as
+  duas opções enfraquecem a detecção de reuso.
 - O scrypt custa CPU e memória a cada login, e o corte 1 ainda não limita
   tentativas. **Mitigação:** o limite de tentativas é obrigatório antes de qualquer
   deploy público.

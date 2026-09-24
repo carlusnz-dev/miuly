@@ -116,3 +116,83 @@ describe('PrismaAuthRepository', () => {
     expect(include.mock.calls).toEqual([['session'], ['nextToken']]);
   });
 });
+
+describe('PrismaAuthRepository.deleteStaleSessions', () => {
+  function fakeCleanup(options: {
+    revoked: { id: string }[];
+    expired: { sessionId: string; nextToken: unknown }[];
+  }) {
+    const unlink = vi.fn(async () => 0);
+    const deleteTokens = vi.fn(async () => 0);
+    const deleteSessions = vi.fn(async () => 0);
+    let tokenWhereCalls = 0;
+    const orm = {
+      public: {
+        Session: {
+          where: (filter: unknown) =>
+            typeof filter === 'function'
+              ? { deleteAndCount: deleteSessions }
+              : {
+                  where: () => ({
+                    select: () => ({ all: async () => options.revoked }),
+                  }),
+                },
+        },
+        RefreshToken: {
+          where: (filter: unknown) => {
+            if (typeof filter !== 'function') {
+              return {
+                where: () => ({
+                  include: () => ({ all: async () => options.expired }),
+                }),
+              };
+            }
+
+            tokenWhereCalls += 1;
+            return tokenWhereCalls === 1
+              ? { updateAndCount: unlink }
+              : { deleteAndCount: deleteTokens };
+          },
+        },
+      },
+    };
+    const database = {
+      transaction: async (fn: (tx: { orm: typeof orm }) => unknown) =>
+        fn({ orm }),
+    } as unknown as Database;
+
+    return { database, unlink, deleteTokens, deleteSessions };
+  }
+
+  it('apaga sessões revogadas e sessões cujo token atual expirou', async () => {
+    const { database, unlink, deleteTokens, deleteSessions } = fakeCleanup({
+      revoked: [{ id: 's-revogada' }],
+      expired: [
+        { sessionId: 's-expirada', nextToken: null },
+        // Token antigo de uma cadeia ainda ativa: tem sucessor, não conta.
+        { sessionId: 's-ativa', nextToken: { id: 'x' } },
+      ],
+    });
+
+    await new PrismaAuthRepository(database).deleteStaleSessions(
+      1,
+      new Date('2026-09-17T00:00:00Z'),
+    );
+
+    expect(unlink).toHaveBeenCalledWith({ previousTokenId: null });
+    expect(deleteTokens).toHaveBeenCalledOnce();
+    expect(deleteSessions).toHaveBeenCalledOnce();
+  });
+
+  it('não apaga nada quando não há sessões antigas', async () => {
+    const { database, unlink, deleteSessions } = fakeCleanup({
+      revoked: [],
+      expired: [{ sessionId: 's-ativa', nextToken: { id: 'x' } }],
+    });
+
+    await new PrismaAuthRepository(database).deleteStaleSessions(1, new Date());
+
+    expect(unlink).not.toHaveBeenCalled();
+    expect(deleteSessions).not.toHaveBeenCalled();
+  });
+});

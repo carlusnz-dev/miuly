@@ -35,7 +35,7 @@ export interface AuthServiceDeps {
 // Renovações simultâneas de abas diferentes dentro desta janela recebem 409
 // em vez de disparar a detecção de reuso.
 export const ROTATION_GRACE_MS = 30_000;
-// Sessões revogadas há mais tempo que isto são apagadas no login.
+// Sessões revogadas ou expiradas há mais tempo que isto são apagadas no login.
 export const STALE_SESSION_MS = 7 * 24 * 60 * 60 * 1000;
 
 const INVALID_CREDENTIALS = 'E-mail ou senha inválidos';
@@ -82,10 +82,7 @@ export class AuthServiceImpl
     }
 
     const cutoff = new Date(this.now().getTime() - STALE_SESSION_MS);
-    await this.repository.deleteSessionsRevokedBefore(
-      credentials.user.id,
-      cutoff,
-    );
+    await this.repository.deleteStaleSessions(credentials.user.id, cutoff);
 
     return this.startSession(credentials.user);
   }

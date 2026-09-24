@@ -26,7 +26,7 @@ function setup(overrides: Partial<AuthRepository> = {}) {
     rotateRefreshToken: vi.fn(async () => true),
     revokeSession: vi.fn(async () => {}),
     revokeAllSessions: vi.fn(async () => {}),
-    deleteSessionsRevokedBefore: vi.fn(async () => {}),
+    deleteStaleSessions: vi.fn(async () => {}),
     ...overrides,
   };
   const passwords: PasswordHasher = {
@@ -100,7 +100,7 @@ describe('AuthServiceImpl.register', () => {
 });
 
 describe('AuthServiceImpl.login', () => {
-  it('inicia a sessão e apaga sessões revogadas antigas', async () => {
+  it('inicia a sessão e apaga sessões revogadas ou expiradas antigas', async () => {
     const { service, repository } = setup();
 
     const session = await service.login({
@@ -109,7 +109,7 @@ describe('AuthServiceImpl.login', () => {
     });
 
     expect(session.refreshToken).toBe('refresh-novo');
-    expect(repository.deleteSessionsRevokedBefore).toHaveBeenCalledWith(
+    expect(repository.deleteStaleSessions).toHaveBeenCalledWith(
       1,
       new Date(NOW.getTime() - STALE_SESSION_MS),
     );

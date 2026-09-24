@@ -58,7 +58,9 @@ export interface AuthRepository {
     reason: RevokeReason,
     at: Date,
   ): Promise<void>;
-  deleteSessionsRevokedBefore(userId: number, before: Date): Promise<void>;
+  // Apaga sessões revogadas antes de `before` e as que têm o token atual
+  // (último da cadeia) expirado antes de `before`.
+  deleteStaleSessions(userId: number, before: Date): Promise<void>;
 }
 
 interface UserWithProfileRow {
@@ -242,16 +244,27 @@ export class PrismaAuthRepository
 
   // Os tokens de uma sessão se encadeiam por previousTokenId (FK); a cadeia é
   // desfeita antes de apagar tokens e, por fim, a sessão.
-  async deleteSessionsRevokedBefore(
-    userId: number,
-    before: Date,
-  ): Promise<void> {
+  async deleteStaleSessions(userId: number, before: Date): Promise<void> {
+    const cutoff = toInstant(before);
+
     await this.db.transaction(async (tx) => {
-      const sessions = await tx.orm.public.Session.where({ userId })
-        .where((session) => session.revokedAt.lt(toInstant(before)))
+      const revoked = await tx.orm.public.Session.where({ userId })
+        .where((session) => session.revokedAt.lt(cutoff))
         .select('id')
         .all();
-      const ids = sessions.map((session) => session.id);
+      // Token expirado sem sucessor é o atual da sessão: a sessão morreu.
+      const expired = await tx.orm.public.RefreshToken.where({ userId })
+        .where((token) => token.expiresAt.lt(cutoff))
+        .include('nextToken')
+        .all();
+      const ids = [
+        ...new Set([
+          ...revoked.map((session) => session.id),
+          ...expired
+            .filter((token) => token.nextToken === null)
+            .map((token) => token.sessionId),
+        ]),
+      ];
 
       if (ids.length === 0) {
         return;
