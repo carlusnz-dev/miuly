@@ -138,6 +138,16 @@ não existe e nunca inclui `hashPassword`. O adaptador Prisma converte os
 apresenta em ISO 8601. Contrato, repository, service, controller, rota e o app
 montado têm testes unitários com Vitest (`npm test`), usando um `db` falso.
 
+### Corte 1: `auth`, `users`, `tasks` e `apis`
+
+Os contratos dos quatro módulos estão definidos em `modules/<modulo>/contract.ts`,
+com schemas compartilhados em `core/http/schemas.ts` (UUID, instante ISO 8601 com
+fuso, lista de pessoas, "ao menos um campo" e intervalo de tempo). Os schemas de
+identidade (e-mail, username e senha) pertencem a `users`, e `auth` os importa.
+A autenticação segue o [ADR 0002](adr/0002-autenticacao-access-refresh-token.md).
+A implementação e o contrato HTTP estão no
+[plano do corte 1](plano-corte-1-backend.md).
+
 Integrações externas devem ser idempotentes, observáveis e tolerantes a retry.
 O identificador do provedor não substitui o identificador interno. Datas são
 persistidas com fuso/offset quando representam um instante; eventos de dia
@@ -145,7 +155,8 @@ inteiro preservam sua semântica de data.
 
 ## Decisões pendentes
 
-- estratégia de autenticação e propriedade dos dados;
+- remoção de `@@unique([profileId, title])` em `Task` e escopo por perfil da
+  unicidade de `Api` (ver plano do corte 1, seção 2);
 - armazenamento e rotação segura de tokens OAuth;
 - política de sincronização incremental e resolução de conflitos;
 - moeda base, contas compartilhadas e recorrência financeira;
