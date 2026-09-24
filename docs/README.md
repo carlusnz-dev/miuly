@@ -12,6 +12,8 @@ atualizar o documento correspondente no mesmo commit.
   desenho recomendado para os novos domínios.
 - [Contribuição](contributing.md): branches, commits, revisão e releases.
 - [Decisões arquiteturais](adr/): ADRs aceitos, substituídos ou rejeitados.
+- [Relatórios de sessão](relatorios/): histórico das mudanças e template de
+  registro.
 
 As especificações verificáveis ficam em [`specs/`](../specs/README.md). Quando
 documentação e implementação divergirem, registre a divergência explicitamente;
