@@ -4,17 +4,22 @@ import { Logger } from './core/logger';
 import { BadRequestError } from './core/error';
 import { errorHandler, notFoundHandler } from './core/error.middleware';
 import type { SuccessResponse } from './core/types/response';
+import { apisModule } from './modules/apis';
+import { authModule, type AuthModuleOptions } from './modules/auth';
+import { tasksModule } from './modules/tasks';
 import { usersModule } from './modules/users';
-import type { Database } from './modules/users/repository';
+import type { Database } from './prisma/database';
 
 export interface appDeps {
   database: Database;
+  auth: AuthModuleOptions;
   enableLogging?: boolean;
   debugMode?: boolean;
 }
 
 export function app({
   database,
+  auth: authOptions,
   enableLogging = false,
   debugMode = false,
 }: appDeps): Express {
@@ -41,7 +46,19 @@ export function app({
     });
   }
 
-  app.use('/users', usersModule(database));
+  const auth = authModule(database, authOptions);
+  app.use('/auth', auth.router);
+  app.use(
+    '/users',
+    auth.requireAuth,
+    usersModule(database, {
+      passwords: auth.passwords,
+      sessions: auth.sessions,
+    }),
+  );
+
+  app.use('/tasks', auth.requireAuth, tasksModule(database));
+  app.use('/apis', auth.requireAuth, apisModule(database));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

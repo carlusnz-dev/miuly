@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import * as z from 'zod';
+import { UnauthorizedError } from '../../core/error';
 import {
   asResponse,
   fakeNext,
@@ -7,26 +8,33 @@ import {
   fakeResponse,
 } from '../../test/http';
 import { UserController } from './controller';
-import { makeUser } from './fixtures';
+import { makeProfile, makeUser } from './fixtures';
 import type { UserService } from './service';
 
-function makeController(findById: UserService['findById']) {
-  return new UserController({ findById } as UserService);
+const auth = { userId: 8, profileId: '0f8fad5b-d9cb-469f-a165-70867728950e' };
+
+function authenticated() {
+  const res = fakeResponse();
+  res.locals['auth'] = auth;
+  return res;
 }
 
-describe('UserController.findById', () => {
-  it('converte o id, chama o service e responde o DTO', async () => {
-    const findById = vi.fn(async () => makeUser({ id: 8 }));
-    const res = fakeResponse();
+function makeController(service: Partial<UserService>) {
+  return new UserController(service as UserService);
+}
 
-    await makeController(findById).findById(
-      fakeRequest({ params: { id: '8' } }),
+describe('UserController', () => {
+  it('findMe usa o usuário autenticado e responde o DTO', async () => {
+    const findMe = vi.fn(async () => makeUser({ id: 8 }));
+    const res = authenticated();
+
+    await makeController({ findMe }).findMe(
+      fakeRequest(),
       asResponse(res),
       fakeNext(),
     );
 
-    expect(findById).toHaveBeenCalledWith(8);
-    expect(res.statusCode).toBe(200);
+    expect(findMe).toHaveBeenCalledWith(8);
     expect(res.body).toEqual({
       ok: true,
       message: 'Usuário encontrado',
@@ -40,16 +48,52 @@ describe('UserController.findById', () => {
     });
   });
 
-  it('não chama o service quando o id é inválido', async () => {
-    const findById = vi.fn(async () => makeUser());
+  it('recusa requisição sem autenticação', async () => {
+    const findMe = vi.fn(async () => makeUser());
 
     await expect(
-      makeController(findById).findById(
-        fakeRequest({ params: { id: 'abc' } }),
+      makeController({ findMe }).findMe(
+        fakeRequest(),
         asResponse(fakeResponse()),
         fakeNext(),
       ),
+    ).rejects.toBeInstanceOf(UnauthorizedError);
+    expect(findMe).not.toHaveBeenCalled();
+  });
+
+  it('updateMyProfile valida o corpo antes de chamar o service', async () => {
+    const updateMyProfile = vi.fn(async () => makeProfile());
+
+    await expect(
+      makeController({ updateMyProfile }).updateMyProfile(
+        fakeRequest({ body: {} }),
+        asResponse(authenticated()),
+        fakeNext(),
+      ),
     ).rejects.toBeInstanceOf(z.ZodError);
-    expect(findById).not.toHaveBeenCalled();
+    expect(updateMyProfile).not.toHaveBeenCalled();
+  });
+
+  it('changePassword responde sem dados', async () => {
+    const changePassword = vi.fn(async () => {});
+    const res = authenticated();
+
+    await makeController({ changePassword }).changePassword(
+      fakeRequest({
+        body: { currentPassword: 'senha-atual', newPassword: 'senha-nova-1' },
+      }),
+      asResponse(res),
+      fakeNext(),
+    );
+
+    expect(changePassword).toHaveBeenCalledWith(8, {
+      currentPassword: 'senha-atual',
+      newPassword: 'senha-nova-1',
+    });
+    expect(res.body).toEqual({
+      ok: true,
+      message: 'Senha alterada; entre novamente',
+      data: null,
+    });
   });
 });

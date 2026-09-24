@@ -83,6 +83,30 @@ somente existem quando houver comportamento real no módulo. Controllers recebem
 service do módulo; routes recebem controllers. Somente o `index.ts` instancia
 implementações concretas.
 
+### Service: contrato e implementação
+
+O service segue o par `Service`/`ServiceImpl` do Java. Em `service.ts`, a
+interface declara os métodos do módulo, e a classe concreta herda a base e
+implementa essa interface:
+
+```ts
+export interface UserService {
+  findMe(userId: number): Promise<User>;
+}
+
+export class UserServiceImpl
+  extends BaseService<UserRepository>
+  implements UserService { ... }
+```
+
+- o controller e os outros módulos dependem só da interface (`UserService`);
+- o `index.ts` exporta apenas tipos (a interface e as portas) e a fábrica do
+  módulo. `UserServiceImpl` e o adaptador Prisma nunca são exportados para fora
+  do módulo;
+- quando um módulo precisa de outro, declara a porta mínima de que precisa
+  (por exemplo, `SessionRevoker` em `users`), e o módulo fornecedor a satisfaz
+  pela sua interface pública. A composição acontece no `app.ts`.
+
 ```text
 routes -> controller -> service -> repository (porta)
                                   ^
@@ -134,12 +158,71 @@ validação do Zod usam o locale `pt` (`src/core/zod.ts`).
 
 ### Módulo `users`
 
-Recriado sobre as classes-base e o handler HTTP. Expõe `GET /users/:id`, que
-valida `id` como inteiro positivo dentro de `int4`, responde 404 quando o usuário
-não existe e nunca inclui `hashPassword`. O adaptador Prisma converte os
-`Temporal.Instant` do codec `pg/timestamptz-temporal@1` para `Date`; o DTO os
-apresenta em ISO 8601. Contrato, repository, service, controller, rota e o app
-montado têm testes unitários com Vitest (`npm test`), usando um `db` falso.
+Rotas do usuário autenticado: `GET`/`PATCH /users/me`, `PUT /users/me/password` e
+`GET`/`PATCH /users/me/profile`. `GET /users/:id` foi removido, porque expunha o
+e-mail de qualquer usuário. A troca de senha verifica a senha atual, grava o novo
+hash e revoga todas as sessões pela porta `SessionRevoker`. O username alterado
+também vira o `slugUrl`, e o conflito de unicidade responde 409. O adaptador
+Prisma mapeia cada linha explicitamente (`toUser`, `toProfile`), então
+`hashPassword` nunca sai dele. Instantes são convertidos por `prisma/instant.ts`,
+e colunas `VarChar(n)` recebem a marca de tipo por `prisma/varchar.ts`.
+
+### Módulo `auth`
+
+Implementa o [ADR 0002](adr/0002-autenticacao-access-refresh-token.md):
+`POST /auth/register`, `/login`, `/refresh` e `/logout` são públicos, e
+`GET /auth/me` exige o access token. Peças:
+
+- `tokens.ts`: `TokenService` (porta) e `JoseTokenService`, que emite e valida o
+  JWT HS256 com algoritmo, emissor e audiência fixos, gera o refresh token opaco e
+  calcula seu SHA-256;
+- `middleware.ts`: `requireAuth`, que valida o `Bearer` e grava o `AuthContext`
+  em `res.locals.auth`, lido pelas rotas declaradas com `auth: true` no `handler`;
+- `service.ts`: `AuthService`/`AuthServiceImpl`, com cadastro transacional de
+  usuário e perfil, login com mensagem única e hash de referência para e-mail
+  inexistente, rotação encadeada por `previousTokenId`, 409 para renovação
+  concorrente em até 30 s, revogação de todas as sessões em caso de reuso e
+  limpeza das sessões revogadas há mais de 7 dias a cada login;
+- `controller.ts`: declara o cookie `miuly_refresh` (`HttpOnly`,
+  `SameSite=Strict`, `Path=/auth`, `Secure` em produção) como instrução para o
+  `handler`, sem manipular `Response`.
+
+O `app.ts` compõe os módulos: `authModule` devolve o router, o `requireAuth`, o
+`PasswordHasher` e o revogador de sessões usado por `users`. O segredo vem de
+`JWT_SECRET`, validado no `env.ts` com pelo menos 32 caracteres, e é repassado
+pelo `server.ts`.
+
+### Módulo `apis`
+
+CRUD das conexões com APIs externas (`ApiConnectionService`), montado em `/apis`
+atrás do `requireAuth`. Toda consulta filtra por `profileId` do token, então a
+conexão de outro perfil responde 404. A listagem é paginada, em ordem decrescente
+de criação, com filtro opcional por `status`. Título duplicado no perfil
+responde 409. No `PATCH` com só um extremo do intervalo, o service compara com o
+valor salvo. `DELETE` remove a linha; desativar é `PATCH { status: false }`.
+
+### Módulo `tasks`
+
+CRUD de tarefas (`TaskService`) em `/tasks`, atrás do `requireAuth` e sempre
+filtrado por `profileId`. A listagem é paginada, em ordem crescente de
+`scheduledAt`, com filtros `done`, `priority` e intervalo `from`/`to`. A
+prioridade pública `high` é persistida como `urgent`, valor do enum do contrato,
+e a tradução fica no adaptador. As tags chegam como nomes na criação e na
+edição:
+- o repository reaproveita as tags do perfil pelo slug, cria as que faltam e grava
+  os vínculos em `tasks_tags`, tudo na mesma transação da tarefa;
+- a resposta traz o DTO simples `{ id, name, slugUrl }`;
+- `DELETE` remove os vínculos e a tarefa, sem apagar as tags.
+
+### Corte 1: `auth`, `users`, `tasks` e `apis`
+
+Os contratos dos quatro módulos estão definidos em `modules/<modulo>/contract.ts`,
+com schemas compartilhados em `core/http/schemas.ts` (UUID, instante ISO 8601 com
+fuso, lista de pessoas, "ao menos um campo" e intervalo de tempo). Os schemas de
+identidade (e-mail, username e senha) pertencem a `users`, e `auth` os importa.
+A autenticação segue o [ADR 0002](adr/0002-autenticacao-access-refresh-token.md).
+A implementação e o contrato HTTP estão no
+[plano do corte 1](plano-corte-1-backend.md).
 
 Integrações externas devem ser idempotentes, observáveis e tolerantes a retry.
 O identificador do provedor não substitui o identificador interno. Datas são
@@ -148,7 +231,6 @@ inteiro preservam sua semântica de data.
 
 ## Decisões pendentes
 
-- estratégia de autenticação e propriedade dos dados;
 - armazenamento e rotação segura de tokens OAuth;
 - política de sincronização incremental e resolução de conflitos;
 - moeda base, contas compartilhadas e recorrência financeira;

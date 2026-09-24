@@ -45,7 +45,13 @@ Testes usam **Vitest**, com arquivos `*.test.ts` ao lado do código e fakes em
   `exactOptionalPropertyTypes` e `noUncheckedIndexedAccess`. Não leia `process.env`
   direto: use `env` de `src/core/env.ts`, validado por Zod na inicialização.
 - `tsc --noEmit` no `tsconfig.json` raiz (composite) pode aprovar código com erro por
-  causa do `tsconfig.tsbuildinfo`; valide sempre com `npm run check`.
+  causa do `tsconfig.tsbuildinfo`; valide sempre com `npm run check`. Mesmo o `check`
+  pode repetir diagnósticos antigos guardados em `dist/*.tsbuildinfo` depois de mudar
+  o tsconfig; se o resultado não fizer sentido, apague esses arquivos (ignorados pelo
+  Git) e rode de novo.
+- `lib` inclui `esnext.temporal`: o codec `timestamptz` do Prisma usa `Temporal.Instant`.
+  Converta com `src/prisma/instant.ts`; colunas `VarChar(n)` exigem `varchar(valor, n)`
+  de `src/prisma/varchar.ts`.
 - **Prisma ORM 8 RC**, que difere bastante do Prisma 5/6 conhecido: não há `schema.prisma`
   nem `PrismaClient`. O contrato é `backend/src/prisma/contract.prisma`, configurado em
   `backend/prisma.config.ts`; o cliente é `db` em `backend/src/prisma/db.ts`
@@ -65,10 +71,11 @@ entram nas entidades centrais. A SPA Angular (`frontend/`) ainda não existe.
 Composição atual:
 
 - `src/server.ts` — processo: cria o app, conecta ao banco (`core/db.ts`) e escuta.
-- `src/app.ts` — fábrica `app({ enableLogging, debugMode })`; rotas são registradas antes
-  do `errorHandler` global.
+- `src/app.ts` — fábrica `app({ database, auth, enableLogging, debugMode })`: monta
+  `/auth` e, atrás do `requireAuth`, `/users`, `/tasks` e `/apis`, antes do
+  `errorHandler` global.
 - `src/core/error.ts` + `error.middleware.ts` — hierarquia `ApiError`
-  (`BadRequestError`, `NotFoundError`, `UnauthorizedError`) convertida em
+  (`BadRequestError`, `NotFoundError`, `UnauthorizedError`, `ConflictError`) convertida em
   `{ ok: false, message }`. Erros de domínio não dependem de `Request`/`Response`.
 - `src/core/base/` — classes abstratas mínimas (`BaseContract`, `BaseRepository`,
   `BaseService`, `BaseController`, `BaseRoutes`). Cada uma guarda privada só sua
@@ -80,18 +87,21 @@ Padrão de módulo (`src/modules/<modulo>/`, descrito em `docs/architecture.md`)
 ```text
 contract.ts   schemas Zod, DTOs e tipos públicos (sem tipos do ORM)
 repository.ts porta de persistência + adaptador Prisma
-service.ts    um único service por módulo, métodos só para comportamento real
+service.ts    interface <Modulo>Service + classe <Modulo>ServiceImpl (extends BaseService)
 controller.ts HTTP <-> service (handlers como arrow function)
 routes.ts     registro das rotas no router
-index.ts      composition root: único lugar que instancia implementações concretas
+index.ts      composition root: único lugar que instancia implementações concretas;
+              exporta só tipos (interface do service, portas) e a fábrica do módulo
 ```
 
 Fluxo: `routes -> controller -> service -> repository (porta) <- adaptador Prisma`.
 Entidades persistidas e respostas HTTP são tipos distintos; datas HTTP em ISO 8601.
 Controllers declaram handlers com `handler`/`paginatedHandler` de
 `src/core/http/handler.ts` (validação Zod de params/query/body, `present` para DTO e
-envelope `{ ok, message, data }`). `modules/users` é o módulo de referência;
-`modules/auth` está vazio.
+envelope `{ ok, message, data }`); rotas protegidas usam `auth: true` e recebem o
+`AuthContext` (`userId`, `profileId`). Todo repository de dados do perfil filtra por
+`profileId`. Módulos do corte 1: `auth`, `users`, `tasks` (com tags) e `apis`; o plano
+e o contrato HTTP estão em `docs/plano-corte-1-backend.md`.
 
 Domínios previstos (`specs/README.md`): identity, tasks, finance, calendar, audit,
 notifications. Requisitos e critérios em `docs/requirements.md`; especificações

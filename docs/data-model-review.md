@@ -15,11 +15,22 @@ emitido possui os modelos `User`, `Profile`, `Api`, `Task`, `Tag`, `TaskTag`,
 - tipos PostgreSQL usam a grafia do Prisma 8, como `VarChar` e `Numeric(10, 2)`;
 - IDs inteiros usam `autoincrement()` e IDs UUID usam `uuid()`;
 - `TaskTag` possui FKs, relações e chave primária composta;
-- títulos de tarefas e APIs são únicos dentro do perfil, não globalmente;
+- títulos de APIs são únicos dentro do perfil; títulos de tarefas podem se repetir,
+  porque tarefas cotidianas se repetem (restrição removida em 2026-09-24);
+- `Api` não tem mais unicidade global de `urlBase` + `slugUrl`, que impedia
+  perfis diferentes de cadastrar a mesma API (removida em 2026-09-24);
 - tags pertencem a um perfil e possuem nome/slug únicos nesse escopo;
 - campos booleanos com padrão não são anuláveis;
 - artefatos gerados acompanham o contrato atual;
 - o projeto TypeScript inclui o `contract.json` importado pelo cliente.
+
+## Autenticação
+
+`Session` e `RefreshToken` sustentam o [ADR 0002](adr/0002-autenticacao-access-refresh-token.md).
+Cada login cria uma sessão, e cada renovação cria um `RefreshToken` cujo
+`previousTokenId`, que é único, aponta para o token substituído. Assim, cada token
+tem no máximo um sucessor e a cadeia registra a rotação. O banco guarda apenas o
+hash SHA-256 do token. A revogação fica na sessão (`revokedAt` e `revokedReason`).
 
 ## Finanças
 

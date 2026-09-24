@@ -6,6 +6,7 @@ import {
   fakeRequest,
   fakeResponse,
 } from '../../test/http';
+import { UnauthorizedError } from '../error';
 import { handler, paginatedHandler } from './handler';
 
 describe('handler', () => {
@@ -36,6 +37,8 @@ describe('handler', () => {
       params: { id: 7 },
       query: { q: 'x' },
       body: { name: 'a' },
+      cookies: {},
+      auth: undefined,
     });
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
@@ -74,6 +77,8 @@ describe('handler', () => {
       params: undefined,
       query: undefined,
       body: undefined,
+      cookies: {},
+      auth: undefined,
     });
   });
 
@@ -95,6 +100,77 @@ describe('handler', () => {
     ).rejects.toBeInstanceOf(z.ZodError);
     expect(execute).not.toHaveBeenCalled();
     expect(res.body).toBeUndefined();
+  });
+});
+
+describe('handler com autenticação e cookies', () => {
+  const auth = { userId: 1, profileId: '0f8fad5b-d9cb-469f-a165-70867728950e' };
+
+  it('entrega o AuthContext gravado pelo middleware', async () => {
+    const execute = vi.fn(async () => null);
+    const route = handler({ auth: true, execute, present: () => null });
+    const res = fakeResponse();
+    res.locals['auth'] = auth;
+
+    await route(fakeRequest(), asResponse(res), fakeNext());
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ auth }));
+  });
+
+  it('recusa com 401 quando a rota exige autenticação e não há contexto', async () => {
+    const execute = vi.fn(async () => null);
+    const route = handler({ auth: true, execute, present: () => null });
+
+    await expect(
+      route(fakeRequest(), asResponse(fakeResponse()), fakeNext()),
+    ).rejects.toBeInstanceOf(UnauthorizedError);
+    expect(execute).not.toHaveBeenCalled();
+  });
+
+  it('não repassa contexto a rotas públicas', async () => {
+    const execute = vi.fn(async () => null);
+    const route = handler({ execute, present: () => null });
+    const res = fakeResponse();
+    res.locals['auth'] = auth;
+
+    await route(fakeRequest(), asResponse(res), fakeNext());
+
+    expect(execute).toHaveBeenCalledWith(
+      expect.objectContaining({ auth: undefined }),
+    );
+  });
+
+  it('lê cookies da requisição e aplica as instruções do resultado', async () => {
+    const execute = vi.fn(async () => 'novo');
+    const options = {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict' as const,
+      path: '/auth',
+    };
+    const route = handler({
+      execute,
+      present: () => null,
+      cookies: (value) => [
+        { name: 'a', value, options },
+        { name: 'b', clear: true, options },
+      ],
+    });
+    const res = fakeResponse();
+
+    await route(
+      fakeRequest({ headers: { cookie: 'a=antigo; x=%E0' } }),
+      asResponse(res),
+      fakeNext(),
+    );
+
+    expect(execute).toHaveBeenCalledWith(
+      expect.objectContaining({ cookies: { a: 'antigo' } }),
+    );
+    expect(res.cookies).toEqual([
+      { name: 'a', value: 'novo', cleared: false, options },
+      { name: 'b', cleared: true, options },
+    ]);
   });
 });
 

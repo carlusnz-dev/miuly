@@ -14,7 +14,7 @@
       "node"
     ],
     // For nodejs:
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "ESNext.Temporal"],
     // "types": ["node"],
     // and npm install -D @types/node
 
