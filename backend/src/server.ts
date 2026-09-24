@@ -1,17 +1,19 @@
 import { app } from './app';
-import express from 'express';
+import { env } from './core/env';
 import { Logger } from './core/logger';
-import { errorHandler } from './core/error.middleware';
-
-const PORT = 8080;
-const DEBUG = true;
+import { connectDatabase } from './core/db';
+import { db } from './prisma/db';
 
 const server = app({
+  database: db,
   enableLogging: true,
-  debugMode: DEBUG,
+  debugMode: env.NODE_ENV === 'development',
 });
+
 const logger = new Logger();
 
-server.listen(PORT, () => {
-  logger.info(`Servidor funcionando na porta ${PORT}`);
+await connectDatabase();
+
+server.listen(env.PORT, () => {
+  logger.info(`Servidor funcionando na porta ${env.PORT}`);
 });

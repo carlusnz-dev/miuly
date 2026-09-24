@@ -45,5 +45,6 @@ variáveis de ambiente estão descritos em [backend/README.md](backend/README.md
 
 Antes de integrar uma mudança, execute as validações aplicáveis e mantenha os
 documentos afetados no mesmo commit. Agentes automatizados obedecem ao
-[`AGENTS.md`](AGENTS.md): revisam, diagnosticam, testam e documentam, mas não
-implementam código de produto do backend ou frontend.
+[`AGENTS.md`](AGENTS.md): revisam, diagnosticam, testam e documentam, e só
+implementam código de produto quando solicitado explicitamente e com escopo
+claro, conforme o [ADR 0001](docs/adr/0001-uso-de-llm-para-codificacao.md).

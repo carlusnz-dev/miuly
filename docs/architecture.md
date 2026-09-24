@@ -97,18 +97,46 @@ routes -> controller -> service -> repository (porta)
 - handlers preservam `this` por arrow function ou binding explícito;
 - a montagem do módulo registra as rotas antes do middleware global de erro.
 
-### Recriação planejada de `users`
+### Camada HTTP compartilhada
 
-O esboço anterior do módulo foi removido para que `users` seja recriado sobre as
-classes-base em uma mudança posterior e testada. A sequência prevista é:
+`src/core/http/handler.ts` traduz HTTP para o service sem que controller, service
+ou domínio tratem `Request`/`Response` diretamente:
 
-1. remover `Varchar` dos DTOs e definir identificador, datas e respostas próprios;
-2. separar a porta `UserRepository` do adaptador Prisma;
-3. criar um único `UserService`, com um método para cada operação do módulo;
-4. validar o parâmetro `id` na borda e mapear ausência para erro tipado;
-5. tipar o handler e registrar `GET /users/:id` no router do módulo;
-6. compor repository, service, controller e routes no `index.ts`;
-7. adicionar testes unitários do service, controller e registro de rota.
+```ts
+findById = handler({
+  schemas: { params: userIdParamsSchema }, // params, query e body opcionais
+  message: 'Usuário encontrado',
+  execute: ({ params }) => this.service.findById(params.id),
+  present: toUserResponse, // entidade -> DTO
+});
+```
+
+- `handler` valida a entrada com Zod, chama `execute`, aplica `present` e responde
+  `{ ok: true, message, data }`; `data` pode ser objeto ou lista;
+- `paginatedHandler` recebe de `execute` um `Page<T>` (`core/types/pagination.ts`),
+  aplica `present` a cada item e acrescenta
+  `pagination: { page, pageSize, totalItems, totalPages }`;
+  `paginationQuerySchema` (`core/http/pagination.ts`) valida `page` (padrão 1) e
+  `pageSize` (padrão 20, máximo 100);
+- erros respondem `{ ok: false, message, issues? }`: `ApiError` usa seu status;
+  `ZodError` vira 400 com `issues` (`path`, `message`); JSON malformado vira 400;
+  rota inexistente vira 404; qualquer outro erro vira 500 com mensagem genérica e
+  detalhes somente no log;
+- os tipos dos envelopes ficam em `core/types/response.ts`.
+
+Variáveis de ambiente são validadas por Zod em `src/core/env.ts` ao iniciar o
+processo (`NODE_ENV`, `PORT`, `DATABASE_URL`); valores inválidos interrompem a
+inicialização. O código lê `env`, nunca `process.env` diretamente. Mensagens de
+validação do Zod usam o locale `pt` (`src/core/zod.ts`).
+
+### Módulo `users`
+
+Recriado sobre as classes-base e o handler HTTP. Expõe `GET /users/:id`, que
+valida `id` como inteiro positivo dentro de `int4`, responde 404 quando o usuário
+não existe e nunca inclui `hashPassword`. O adaptador Prisma converte os
+`Temporal.Instant` do codec `pg/timestamptz-temporal@1` para `Date`; o DTO os
+apresenta em ISO 8601. Contrato, repository, service, controller, rota e o app
+montado têm testes unitários com Vitest (`npm test`), usando um `db` falso.
 
 Integrações externas devem ser idempotentes, observáveis e tolerantes a retry.
 O identificador do provedor não substitui o identificador interno. Datas são
