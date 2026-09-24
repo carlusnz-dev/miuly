@@ -21,7 +21,7 @@ repositórios, services, controllers, rotas e a infraestrutura de autenticação
 | `auth` | Pronto | **Implementado** (etapas 2 e 4), sem migração aplicada |
 | `users` | Pronto | **Implementado** (etapa 5); `GET /users/:id` removido |
 | `tasks` | Pronto: criação, edição, listagem com filtros e prioridades | A fazer |
-| `apis` | Pronto: criação, edição, listagem e ativação da conexão | A fazer |
+| `apis` | Pronto | **Implementado** (etapa 7) |
 
 Base compartilhada nova: `core/http/schemas.ts`, com `uuidParamsSchema`,
 `isoInstantSchema`, `peoplesSchema`, `hasAnyField` e `endNotBeforeStart`.

@@ -189,6 +189,15 @@ O `app.ts` compõe os módulos: `authModule` devolve o router, o `requireAuth`, 
 `JWT_SECRET`, validado no `env.ts` com pelo menos 32 caracteres, e é repassado
 pelo `server.ts`.
 
+### Módulo `apis`
+
+CRUD das conexões com APIs externas (`ApiConnectionService`), montado em `/apis`
+atrás do `requireAuth`. Toda consulta filtra por `profileId` do token, então a
+conexão de outro perfil responde 404. A listagem é paginada, em ordem decrescente
+de criação, com filtro opcional por `status`. Título duplicado no perfil
+responde 409. No `PATCH` com só um extremo do intervalo, o service compara com o
+valor salvo. `DELETE` remove a linha; desativar é `PATCH { status: false }`.
+
 ### Corte 1: `auth`, `users`, `tasks` e `apis`
 
 Os contratos dos quatro módulos estão definidos em `modules/<modulo>/contract.ts`,

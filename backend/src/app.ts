@@ -4,6 +4,7 @@ import { Logger } from './core/logger';
 import { BadRequestError } from './core/error';
 import { errorHandler, notFoundHandler } from './core/error.middleware';
 import type { SuccessResponse } from './core/types/response';
+import { apisModule } from './modules/apis';
 import { authModule, type AuthModuleOptions } from './modules/auth';
 import { usersModule } from './modules/users';
 import type { Database } from './prisma/database';
@@ -54,6 +55,8 @@ export function app({
       sessions: auth.sessions,
     }),
   );
+
+  app.use('/apis', auth.requireAuth, apisModule(database));
 
   app.use(notFoundHandler);
   app.use(errorHandler);
