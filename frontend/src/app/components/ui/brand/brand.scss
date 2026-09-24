@@ -1,0 +1,12 @@
+a {
+  color: var(--miuly-text);
+  font-size: 1.5rem;
+  font-weight: 750;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--miuly-accent);
+  outline-offset: 4px;
+}

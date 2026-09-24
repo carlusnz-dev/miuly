@@ -1,0 +1,122 @@
+.auth-page {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  padding: clamp(2rem, 6vw, 5rem) 1rem;
+}
+
+.auth-card {
+  width: min(100%, 29rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--miuly-border);
+  border-radius: 0.75rem;
+  background: var(--miuly-surface);
+  animation: appear 180ms ease-out both;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--miuly-accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+.intro {
+  margin: 0.75rem 0 1.75rem;
+  color: var(--miuly-text-muted);
+  line-height: 1.5;
+}
+
+form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+label {
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--miuly-control-border);
+  border-radius: 0.4rem;
+  background: var(--miuly-bg);
+  color: var(--miuly-text);
+  font: inherit;
+  transition: border-color 160ms ease;
+}
+
+input:hover {
+  border-color: var(--miuly-accent);
+}
+input[aria-invalid='true'] {
+  border-color: var(--miuly-error);
+}
+
+small {
+  color: var(--miuly-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.field-error,
+.form-error {
+  color: var(--miuly-error);
+}
+
+.form-error {
+  margin: 1rem 0 0;
+}
+
+button {
+  min-height: 2.75rem;
+  margin-top: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  background: var(--miuly-accent);
+  color: var(--miuly-bg);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition: background-color 160ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: #a9d8ff;
+}
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.switch {
+  margin: 1.5rem 0 0;
+  color: var(--miuly-text-muted);
+  text-align: center;
+}
+
+.switch a {
+  color: var(--miuly-accent);
+  font-weight: 600;
+  text-underline-offset: 0.2em;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

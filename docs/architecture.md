@@ -7,6 +7,9 @@ independente, mantendo regras de negócio testáveis e integrações substituív
 
 ## Limites
 
+A organização detalhada da SPA e sua borda HTTP está em
+[Arquitetura do frontend](frontend-architecture.md).
+
 ```text
 Angular SPA -> HTTP/Express -> casos de uso -> domínio
                                       |-> persistência/Prisma

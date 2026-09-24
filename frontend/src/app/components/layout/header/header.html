@@ -1,0 +1,22 @@
+<header>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+  <app-brand />
+  <nav aria-label="Conta">
+    @if (session.status() === 'checking') {
+      <span role="status">Verificando sessão…</span>
+    } @else if (session.isAuthenticated()) {
+      <span class="user-name">{{ session.user()?.name }}</span>
+      <button type="button" [disabled]="signingOut()" (click)="logout()">Sair</button>
+      @if (logoutError()) {
+        <span class="logout-error" role="alert">Não foi possível sair. Tente novamente.</span>
+      }
+    } @else if (session.status() === 'unavailable') {
+      <span role="status">Sem conexão com a sessão.</span>
+      <button type="button" (click)="session.retryRestore()">Tentar novamente</button>
+      <a routerLink="/login">Entrar</a>
+    } @else {
+      <a routerLink="/login">Entrar</a>
+      <a routerLink="/cadastro">Criar conta</a>
+    }
+  </nav>
+</header>
