@@ -55,3 +55,13 @@ convenções de crescimento e configuração de desenvolvimento.
 - A configuração de hospedagem em produção deverá encaminhar `/users/**` para
   a API e entregar a SPA nas rotas de navegação.
 - O backend não foi iniciado e nenhum comando de banco de dados foi executado.
+
+## 4. Ajuste posterior de permissão do Codex
+
+A pedido do usuário, foi adicionada em `.codex/rules/git-context.rules` uma
+regra `allow` para `git commit -m`. Ela libera o comando convencional fora do
+sandbox em sessões futuras do Codex com o projeto confiável, sem alterar a
+permissão de `git push`. A regra foi verificada com
+`codex execpolicy check`: `git commit -m` retornou `allow`, e
+`git commit --amend` não encontrou regra correspondente. A mudança exige
+reiniciar o Codex para carregar a regra atualizada.
