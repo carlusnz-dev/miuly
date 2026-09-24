@@ -8,8 +8,8 @@
 | **Data** | 2026-09-24 -03 |
 | **Autor** | Codex, worker do Orca |
 | **LLM Utilizada** | OpenAI Codex |
-| **Modelo** | GPT-6 |
-| **Reasoning Effort** | N/A |
+| **Modelo** | GPT-6 Sol |
+| **Reasoning Effort** | Médio |
 | **Branch de Trabalho** | `feature/pesquisa-estilo-miuly` |
 
 ## 1. Resumo Executivo
@@ -37,5 +37,5 @@ Foram pesquisadas fontes primárias de interface, CSS, Sass e acessibilidade em 
 ## 3. Observações, Riscos e Próximos Passos
 
 - **Riscos Residuais:** valores de cor ainda são proposta e devem ser avaliados no produto real, inclusive em monitores e estados dinâmicos. As capturas das fontes não têm licença explícita para redistribuição e ficaram apenas como links.
-- **Pendências:** publicar a branch base para permitir abrir o PR direcionado a `feature/frontend-angular-sass`, caso ainda não esteja no remoto.
+- **Pendências:** a branch base `feature/frontend-angular-sass` já foi publicada; o PR #5 foi aberto para essa base e aguarda revisão.
 - **Próximos Passos:** revisar as diretrizes com o responsável pelo frontend e aplicar somente quando houver tela funcional autorizada.

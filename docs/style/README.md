@@ -1,6 +1,6 @@
 # Direção visual para dashboards Miuly
 
-**Pesquisa verificada em 24/09/2026.** Esta é uma proposta de design para telas futuras; a fundação Angular 22 ainda tem apenas a página inicial. Não cria requisitos funcionais para finanças, tarefas, calendário ou identidade. A arquitetura vigente mantém base global em `frontend/src/styles.scss` e estilos locais junto de cada componente; veja [arquitetura do frontend](../frontend-architecture.md).
+**Pesquisa verificada em 24/09/2026.** Esta é uma proposta de design para dashboards do frontend Angular 22, que está em evolução e já inclui telas de login/cadastro em desenvolvimento. Não cria requisitos funcionais para finanças, tarefas, calendário ou identidade. A arquitetura vigente mantém base global em `frontend/src/styles.scss` e estilos locais junto de cada componente; veja [arquitetura do frontend](../frontend-architecture.md).
 
 ## Decisões aplicáveis
 
