@@ -5,7 +5,7 @@
 | Campo | Valor |
 | --- | --- |
 | **Título** | Fundação Angular com Sass e estrutura modular do frontend |
-| **Data** | 2026-09-24 12:12:49 -03 |
+| **Data** | 2026-09-24 12:22:53 -03 |
 | **Autor** | OpenAI Codex |
 | **LLM Utilizada** | OpenAI Codex |
 | **Modelo** | GPT-6 |
@@ -19,7 +19,11 @@ Sass, sem Tailwind. A estrutura usa rotas explícitas, páginas por funcionalida
 componentes compartilhados de UI e layout, e clientes HTTP em `api/`. A página
 inicial é apenas uma base visual; as funcionalidades de produto ainda não foram
 implementadas. A arquitetura foi documentada com limites de dependência,
-convenções de crescimento e configuração de desenvolvimento.
+convenções de crescimento e configuração de desenvolvimento. A leitura dos
+relatórios anteriores confirmou a governança vigente: agentes podem implementar
+código de produção mediante pedido explícito e escopo claro, com validação
+proporcional; operações de banco exigem autorização separada. Ao final, foi
+configurada a permissão local do Codex para `git commit -m`, a pedido do usuário.
 
 ## 2. Detalhamento das Alterações Realizadas
 
@@ -30,12 +34,15 @@ convenções de crescimento e configuração de desenvolvimento.
 - `api/`: serviço tipado para o endpoint existente `GET /users/:id`, sem uso
   pela tela inicial; proxy local para a porta 8080 do backend;
 - `docs/frontend-architecture.md`, `frontend/README.md` e índices: estrutura,
-  execução, convenções e pendências de integração.
+  execução, convenções e pendências de integração;
+- `.codex/rules/git-context.rules`: regra `allow` para `git commit -m`, sem
+  alterar a permissão de `git push`.
 
 ### Commits Criados
 
 - `029244b` — `feat(frontend): inicia Angular com Sass e estrutura modular`.
-- Este relatório será registrado em commit próprio.
+- `b8e24c5` — `docs(frontend): registra fundação Angular e validações`.
+- `995f36b` — `chore(codex): libera commits convencionais no projeto`.
 
 ### Validações Executadas
 
@@ -46,6 +53,8 @@ convenções de crescimento e configuração de desenvolvimento.
 - `prettier --check` dos arquivos de código e configuração do frontend:
   aprovado;
 - `git diff --cached --check`: aprovado antes do commit.
+- `codex execpolicy check`: `git commit -m` retornou `allow`;
+  `git commit --amend` não encontrou regra correspondente.
 
 ## 3. Observações, Riscos e Próximos Passos
 
@@ -55,13 +64,6 @@ convenções de crescimento e configuração de desenvolvimento.
 - A configuração de hospedagem em produção deverá encaminhar `/users/**` para
   a API e entregar a SPA nas rotas de navegação.
 - O backend não foi iniciado e nenhum comando de banco de dados foi executado.
-
-## 4. Ajuste posterior de permissão do Codex
-
-A pedido do usuário, foi adicionada em `.codex/rules/git-context.rules` uma
-regra `allow` para `git commit -m`. Ela libera o comando convencional fora do
-sandbox em sessões futuras do Codex com o projeto confiável, sem alterar a
-permissão de `git push`. A regra foi verificada com
-`codex execpolicy check`: `git commit -m` retornou `allow`, e
-`git commit --amend` não encontrou regra correspondente. A mudança exige
-reiniciar o Codex para carregar a regra atualizada.
+- A regra de projeto do Codex é carregada em uma nova sessão confiável.
+- Próximos passos: decidir autenticação e propriedade antes de exibir usuários;
+  implementar as áreas de produto apenas com requisitos e contratos aprovados.
