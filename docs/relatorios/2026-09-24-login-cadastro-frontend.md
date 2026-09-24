@@ -29,6 +29,7 @@ Foram criadas as telas Angular de login e cadastro a partir dos DTOs de `feature
 
 - `224c1e2` — merge do PR #5, `docs(style): documenta direção visual e referências de dashboard`.
 - `df72cd4` — `feat(frontend): adiciona login cadastro e sessão com tema escuro`.
+- `62ef3e0` — `docs(relatorios): registra login cadastro e pesquisa visual`.
 
 ### Validações Executadas
 
@@ -45,4 +46,4 @@ Foram criadas as telas Angular de login e cadastro a partir dos DTOs de `feature
 
 - **Riscos residuais:** as rotas de autenticação do backend ainda não estão integradas a esta branch. Sem backend ativo, a verificação inicial mostra o estado de indisponibilidade; login/cadastro não puderam ser exercitados ponta a ponta.
 - **Pendências:** integrar `feature/modulos-corte-1` e validar a UI com as rotas reais. O cliente legado `GET /users/:id` da fundação ainda não é usado e deve ser atualizado quando o novo contrato de `users` for integrado.
-- **Próximos passos:** revisar esta branch em PR para `develop`, repetir o teste de integração quando o backend estiver disponível e validar acessibilidade responsiva com dados e erros reais.
+- **Próximos passos:** revisar o [PR #6](https://github.com/carlusnz-dev/miuly/pull/6), aberto como draft para `develop`; repetir o teste de integração quando o backend estiver disponível e validar acessibilidade responsiva com dados e erros reais.
