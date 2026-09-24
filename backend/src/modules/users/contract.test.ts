@@ -5,7 +5,6 @@ import {
   toUserResponse,
   updateProfileBodySchema,
   updateUserBodySchema,
-  userIdParamsSchema,
 } from './contract';
 import { makeUser } from './fixtures';
 
@@ -66,22 +65,6 @@ describe('toProfileResponse', () => {
 
     expect(response).not.toHaveProperty('userId');
     expect(response.createdAt).toBe('2026-09-23T12:00:00.000Z');
-  });
-});
-
-describe('userIdParamsSchema', () => {
-  it('converte o id da URL para número', () => {
-    expect(userIdParamsSchema.parse({ id: '15' })).toEqual({ id: 15 });
-  });
-
-  it('aceita o maior valor de int4', () => {
-    expect(userIdParamsSchema.safeParse({ id: '2147483647' }).success).toBe(
-      true,
-    );
-  });
-
-  it.each(['abc', '0', '-1', '1.5', '2147483648'])('rejeita "%s"', (id) => {
-    expect(userIdParamsSchema.safeParse({ id }).success).toBe(false);
   });
 });
 

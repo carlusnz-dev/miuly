@@ -1,8 +1,6 @@
 import * as z from 'zod';
 import { ANY_FIELD_MESSAGE, hasAnyField } from '../../core/http/schemas';
 
-const MAX_INT4 = 2_147_483_647;
-
 // Normaliza antes de validar: " Ana@Example.com " vira "ana@example.com".
 export const emailSchema = z
   .string()
@@ -21,11 +19,6 @@ export const usernameSchema = z
   });
 
 export const passwordSchema = z.string().min(8).max(128);
-
-// Usado por GET /users/:id, que sai no corte 1 em favor de /users/me.
-export const userIdParamsSchema = z.object({
-  id: z.coerce.number().int().positive().max(MAX_INT4),
-});
 
 export const updateUserBodySchema = z
   .object({

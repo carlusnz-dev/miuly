@@ -80,6 +80,30 @@ somente existem quando houver comportamento real no módulo. Controllers recebem
 service do módulo; routes recebem controllers. Somente o `index.ts` instancia
 implementações concretas.
 
+### Service: contrato e implementação
+
+O service segue o par `Service`/`ServiceImpl` do Java. Em `service.ts`, a
+interface declara os métodos do módulo, e a classe concreta herda a base e
+implementa essa interface:
+
+```ts
+export interface UserService {
+  findMe(userId: number): Promise<User>;
+}
+
+export class UserServiceImpl
+  extends BaseService<UserRepository>
+  implements UserService { ... }
+```
+
+- o controller e os outros módulos dependem só da interface (`UserService`);
+- o `index.ts` exporta apenas tipos (a interface e as portas) e a fábrica do
+  módulo. `UserServiceImpl` e o adaptador Prisma nunca são exportados para fora
+  do módulo;
+- quando um módulo precisa de outro, declara a porta mínima de que precisa
+  (por exemplo, `SessionRevoker` em `users`), e o módulo fornecedor a satisfaz
+  pela sua interface pública. A composição acontece no `app.ts`.
+
 ```text
 routes -> controller -> service -> repository (porta)
                                   ^
@@ -131,12 +155,14 @@ validação do Zod usam o locale `pt` (`src/core/zod.ts`).
 
 ### Módulo `users`
 
-Recriado sobre as classes-base e o handler HTTP. Expõe `GET /users/:id`, que
-valida `id` como inteiro positivo dentro de `int4`, responde 404 quando o usuário
-não existe e nunca inclui `hashPassword`. O adaptador Prisma converte os
-`Temporal.Instant` do codec `pg/timestamptz-temporal@1` para `Date`; o DTO os
-apresenta em ISO 8601. Contrato, repository, service, controller, rota e o app
-montado têm testes unitários com Vitest (`npm test`), usando um `db` falso.
+Rotas do usuário autenticado: `GET`/`PATCH /users/me`, `PUT /users/me/password` e
+`GET`/`PATCH /users/me/profile`. `GET /users/:id` foi removido, porque expunha o
+e-mail de qualquer usuário. A troca de senha verifica a senha atual, grava o novo
+hash e revoga todas as sessões pela porta `SessionRevoker`. O username alterado
+também vira o `slugUrl`, e o conflito de unicidade responde 409. O adaptador
+Prisma mapeia cada linha explicitamente (`toUser`, `toProfile`), então
+`hashPassword` nunca sai dele. Instantes são convertidos por `prisma/instant.ts`,
+e colunas `VarChar(n)` recebem a marca de tipo por `prisma/varchar.ts`.
 
 ### Corte 1: `auth`, `users`, `tasks` e `apis`
 
