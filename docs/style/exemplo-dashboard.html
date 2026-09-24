@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exemplo de dashboard Miuly</title>
+  <!-- Compile exemplo-dashboard.scss para exemplo-dashboard.css antes de abrir. -->
+  <link rel="stylesheet" href="exemplo-dashboard.css">
+</head>
+<body>
+  <main class="dashboard">
+    <header class="dashboard__header">
+      <h1 class="dashboard__title">Visão geral</h1>
+      <button class="dashboard__action" type="button">Atualizar dados</button>
+    </header>
+    <section class="dashboard__cards" aria-label="Indicadores">
+      <article class="dashboard__card"><h2>Saldo atual</h2><p class="dashboard__value">R$ 12.450,00</p></article>
+      <article class="dashboard__card"><h2>Tarefas abertas</h2><p class="dashboard__value">7</p></article>
+    </section>
+    <section class="dashboard__panel" aria-labelledby="activity-title">
+      <h2 id="activity-title">Atividade recente</h2>
+      <p class="dashboard__status" role="status">Nenhuma atividade neste período.</p>
+    </section>
+  </main>
+</body>
+</html>
