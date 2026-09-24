@@ -4,24 +4,28 @@
   "description": "Miully Backend",
   "main": "./src/server.ts",
   "scripts": {
-    "dev": "tsx ./src/server.ts --watch",
+    "dev": "tsx watch ./src/server.ts",
     "fmt": "prettier --write .",
-    "check": "tsc --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "check": "tsc -p tsconfig.app.json --noEmit",
+    "test": "vitest run",
+    "contract:emit": "prisma contract emit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
+    "@prisma/cli-engine": "^0.4.0",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.2",
     "prisma": "^8.0.0-rc.15",
     "tsx": "^4.23.13",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
   },
   "dependencies": {
-    "dotenv": "^18.0.1",
+    "@prisma/orm-postgres": "^8.0.0-rc.11",
+    "dotenv": "^18.0.2",
     "express": "^5.2.1",
     "zod": "^4.6.5"
   }

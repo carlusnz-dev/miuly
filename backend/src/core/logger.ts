@@ -13,7 +13,7 @@ export interface logsMeta {
 
 const schemaMessage = z.object({
   method: z.string().uppercase().min(3).optional(),
-  path: z.string().max(150).optional(),
+  path: z.string().max(2048).optional(),
   timestamp: z.string().optional(),
 });
 

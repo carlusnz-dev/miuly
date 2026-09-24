@@ -1,0 +1,18 @@
+services:
+  database:
+    image: postgres:17.11
+    container_name: postgres17
+
+    environment:
+      - POSTGRES_USER=miuly
+      - POSTGRES_PASSWORD=miuly
+      - POSTGRES_DB=miuly
+
+    ports:
+      - "5436:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:
