@@ -6,6 +6,7 @@ Este diretório é a fonte de contexto técnico e funcional do **Miuly**. Toda m
 
 ## Índice Técnico
 
+- **[Organização dos Agentes](organizacao-agentes.md):** papéis das LLMs, worktrees do Orca, fluxo de PR e delegação. Comece por aqui.
 - **[Arquitetura](architecture.md):** limites, dependências, injeção e isolamento de camadas.
 - **[Requisitos](requirements.md):** Requisitos Funcionais (`RF-xxx`) e Não-Funcionais (`RNF-xxx`) padronizados.
 - **[Modelo de Dados](data-model-review.md):** diagnóstico do contrato Prisma 8 e desenho dos domínios.
