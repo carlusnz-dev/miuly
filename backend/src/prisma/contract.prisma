@@ -182,7 +182,7 @@ model Finance {
   profileId Uuid                 @map("profile_id")
   profile   Profile              @relation(fields:[profileId], references:[id])
   name      VarChar(100)
-  value     Numeric(10, 2)       @default(0)
+  value     Numeric(10, 2)       @default(dbgenerated("'0'::numeric(10,2)"))
   currency  VarChar(3)           @default("BRL")
   bankId    Int                  @map("bank_id")
   bank      Bank                 @relation(fields:[bankId], references:[id])
