@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './components/layout/header/header';
 import { Footer } from './components/layout/footer/footer';
+import { useSession } from './modules/auth/session';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,6 @@ import { Footer } from './components/layout/footer/footer';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  private readonly session = useSession();
+}

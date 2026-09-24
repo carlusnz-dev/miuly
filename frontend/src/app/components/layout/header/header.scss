@@ -1,8 +1,56 @@
 header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   position: relative;
-  padding: 1.25rem clamp(1rem, 4vw, 3rem);
-  border-bottom: 1px solid #dce5e7;
-  background: #fff;
+  min-height: 4.5rem;
+  padding: 1rem clamp(1rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--miuly-border);
+  background: var(--miuly-surface);
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: var(--miuly-text-muted);
+}
+nav a {
+  color: var(--miuly-text);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 160ms ease;
+}
+nav a:hover {
+  color: var(--miuly-accent);
+}
+nav button {
+  border: 0;
+  background: transparent;
+  color: var(--miuly-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition: color 160ms ease;
+}
+nav button:hover {
+  color: var(--miuly-accent);
+}
+nav :is(a, button):focus-visible {
+  outline: 2px solid var(--miuly-accent);
+  outline-offset: 3px;
+}
+.user-name {
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.logout-error {
+  color: var(--miuly-error);
+  font-size: 0.85rem;
 }
 
 .skip-link {
@@ -10,10 +58,22 @@ header {
   left: 1rem;
   top: -5rem;
   padding: 0.5rem 0.75rem;
-  background: #fff;
+  border: 1px solid var(--miuly-control-border);
+  border-radius: 0.4rem;
+  background: var(--miuly-surface-raised);
+  color: var(--miuly-text);
 }
 
 .skip-link:focus {
   top: 0.5rem;
   z-index: 1;
+}
+
+@media (max-width: 32rem) {
+  header {
+    flex-wrap: wrap;
+  }
+  nav {
+    width: 100%;
+  }
 }

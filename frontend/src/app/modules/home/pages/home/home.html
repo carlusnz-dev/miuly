@@ -2,4 +2,12 @@
   <p class="eyebrow">Miuly</p>
   <h1 id="home-title">Seu espaço para organizar o dia.</h1>
   <p>Estamos preparando as áreas de finanças, tarefas e calendário.</p>
+  @if (session.isAuthenticated()) {
+    <p class="session-note">Sessão ativa para {{ session.user()?.name }}.</p>
+  } @else if (session.status() !== 'checking') {
+    <div class="actions">
+      <a class="primary-action" routerLink="/cadastro">Criar conta</a>
+      <a class="secondary-action" routerLink="/login">Já tenho conta</a>
+    </div>
+  }
 </section>

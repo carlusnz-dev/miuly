@@ -1,5 +1,5 @@
 a {
-  color: #145a60;
+  color: var(--miuly-text);
   font-size: 1.5rem;
   font-weight: 750;
   letter-spacing: -0.05em;
@@ -7,6 +7,6 @@ a {
 }
 
 a:focus-visible {
-  outline: 2px solid currentColor;
+  outline: 2px solid var(--miuly-accent);
   outline-offset: 4px;
 }
