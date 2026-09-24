@@ -18,7 +18,7 @@ repositórios, services, controllers, rotas e a infraestrutura de autenticação
 
 | Módulo | Contrato (`contract.ts`) | Repository / service / controller / rotas |
 | --- | --- | --- |
-| `auth` | Pronto | **Implementado** (etapas 2 e 4), sem migração aplicada |
+| `auth` | Pronto | **Implementado** (etapas 2 e 4), validado contra o PostgreSQL real |
 | `users` | Pronto | **Implementado** (etapa 5); `GET /users/:id` removido |
 | `tasks` | Pronto, com tags | **Implementado** (etapa 6) |
 | `apis` | Pronto | **Implementado** (etapa 7) |
@@ -47,8 +47,14 @@ dependem de autorização.
    `previousTokenId` do sucessor, por causa da chave estrangeira. Sessões revogadas
    ou expiradas há mais de 7 dias são apagadas inteiras, com os tokens antes da
    sessão.
-3. **Primeira migração** (`prisma migrate`), com o banco local em
-   `docker compose up -d database`.
+3. **Primeira migração: feita** (autorizada em 2026-09-24), em
+   `backend/migrations/app/20260924T2350_corte_1_inicial`. Fluxo com o banco local
+   em `docker compose up -d database`: `npx prisma contract emit`,
+   `npx prisma migration plan --name <slug>` (offline) e `npx prisma db migrate`.
+   O RC do Prisma 8 recusa `Numeric @default(0)` (o plano exige string decimal e a
+   verificação pós-migração lê o default como função), então `Finance.value` usa
+   `@default(dbgenerated("'0'::numeric(10,2)"))`; `contract.test.ts` impede a volta
+   do literal em colunas `numeric`.
 4. **Dependências novas:** `jose` (JWT, ESM e sem dependências nativas) e
    `cookie-parser` com `@types/cookie-parser`. O hash de senha usa `scrypt` de
    `node:crypto`, então não precisa de pacote. Só será preciso `cors` se o front não
@@ -338,7 +344,7 @@ Cada etapa termina com `npm run check` e `npm test` verdes e um commit próprio.
 2. **Auth sem banco:**
    - `ScryptPasswordHasher` e `JoseTokenIssuer`;
    - `requireAuth`, com testes de token ausente, inválido, expirado e válido.
-3. **Migração:** o contrato já está pronto; a migração só com a autorização da seção 2.
+3. **Migração:** feita e aplicada no banco local (seção 2).
 4. **Auth completo:**
    - repository;
    - service (cadastro transacional de usuário e perfil, login com limpeza
