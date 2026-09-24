@@ -1,51 +1,45 @@
-# Relatório da sessão
+# Modelo de Relatório de Sessão / Execução por LLM
 
-- **Autor:** NOME `<EMAIL>`
-- **LLM:** FERRAMENTA OU AGENTE
-- **Modelo:** MODELO
-- **Reasoning effort:** NÍVEL OU `não disponibilizado ao agente nesta execução`
-- **Data:** AAAA-MM-DD HH:MM:SS -03
-- **Branch:** `TIPO/SLUG`
+Este arquivo é o modelo oficial (`template.md`) que define a estrutura padrão para a geração de relatórios de sessão e tarefas executadas por agentes LLM ou desenvolvedores no projeto **Miuly**.
 
-## Título
+---
 
-Título objetivo da sessão
+## Metadata da Sessão
 
-## Corpo
+| Campo | Valor |
+| --- | --- |
+| **Título** | [Título Resumido da Sessão / Funcionalidade Executada] |
+| **Data** | AAAA-MM-DD HH:MM:SS -03 |
+| **Autor** | [Nome do Agente ou Desenvolvedor] |
+| **LLM Utilizada** | [Nome da LLM / Provedor ou N/A] |
+| **Modelo** | [Nome Exato do Modelo ou N/A] |
+| **Reasoning Effort** | [Alto \| Médio \| Baixo \| N/A] |
+| **Branch de Trabalho** | `[nome-da-branch]` |
 
-Descreva o contexto, o objetivo e o resultado observado da sessão. Diferencie
-comportamento implementado de funcionalidade apenas planejada. Registre impactos
-em arquitetura, contratos, segurança, operação e documentação quando existirem.
+---
 
-Explique mudanças relevantes e seus motivos. Não atribua ao agente modificações
-preexistentes ou realizadas em paralelo por outra pessoa ou ferramenta.
+## 1. Resumo Executivo
 
-### Decisões registradas
+Apresente um resumo conciso do objetivo principal da sessão, o contexto da demanda, as decisões de alto nível tomadas e o resultado final alcançado.
 
-- DECISÃO E JUSTIFICATIVA;
-- ADR OU DOCUMENTO RELACIONADO, quando aplicável.
+---
 
-### Arquivos ou áreas afetadas
+## 2. Detalhamento das Alterações Realizadas
 
-- `CAMINHO/OU/MÓDULO`: efeito da mudança;
-- `OUTRO/CAMINHO`: efeito da mudança.
+Descreva minuciosamente as alterações efetuadas nos arquivos do projeto, organizando por categorias (código de produção, contratos, testes, documentação, configurações de agentes).
 
-### Commits criados
+### Commits Criados
+- `[hash]` — `tipo(modulo): descrição do commit`
+- `[hash]` — `tipo(modulo): descrição do commit`
 
-- `HASH` — `tipo(modulo): descrição`
+### Validações Executadas
+- `[comando 1]`: [resultado e evidência obtida];
+- `[comando 2]`: [resultado e evidência obtida];
 
-Se nenhum commit foi criado, registre explicitamente: **Nenhum commit criado.**
+---
 
-### Validações executadas
+## 3. Observações, Riscos e Próximos Passos
 
-- `COMANDO`: aprovado, reprovado ou não executado, com o motivo;
-- `OUTRO COMANDO`: resultado objetivo.
-
-### Limitações e pendências
-
-- validações que não puderam ser executadas e o motivo;
-- riscos residuais, decisões futuras e trabalho ainda não commitado;
-- mudanças paralelas preservadas no worktree, sem assumir sua autoria.
-
-Declare explicitamente se houve migração ou comando contra banco de dados. Não
-declare sucesso sem a evidência correspondente.
+- **Riscos Residuais:** [Identificação de riscos ou pontos de atenção não completamente mitigados nesta sessão]
+- **Pendências:** [Decisões arquiteturais ou funcionais pendentes de aprovação humana]
+- **Próximos Passos:** [Recomendações técnicas para as próximas tarefas do projeto]

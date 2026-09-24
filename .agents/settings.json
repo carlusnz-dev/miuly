@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/partial-tsconfig.json",
+  "workspace": {
+    "name": "Miuly Workspace",
+    "description": "Plataforma de organização financeira, tarefas e agenda pessoal",
+    "environment": "development",
+    "orchestration": {
+      "defaultRole": "senior-software-developer",
+      "governanceFile": "AGENTS.md",
+      "globalInstructions": "GEMINI.md"
+    },
+    "customizations": {
+      "rulesDirectory": ".agents/rules",
+      "skillsDirectory": ".agents/skills",
+      "codexAgentsDirectory": ".codex/agents"
+    },
+    "validation": {
+      "backendCheckCommand": "npm --prefix backend run check",
+      "prismaEmitCommand": "npm --prefix backend run contract:emit",
+      "autoRunVerification": true
+    },
+    "conventions": {
+      "commitFormat": "conventional-commits",
+      "architecture": "clean-architecture",
+      "dateFormat": "ISO-8601"
+    }
+  }
+}

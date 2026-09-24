@@ -31,9 +31,9 @@ Regras:
    **Reasoning effort:** o nível definido por `/effort` nesta conversa, se tiver
    aparecido; caso contrário, `não disponibilizado ao agente nesta execução`.
 2. Relate só o que foi feito nesta conversa. Commits, arquivos e relatórios de
-   outras ferramentas (Codex, Agy) ou do usuário entram em "Limitações e
-   pendências" como trabalho paralelo preservado, sem assumir a autoria.
-3. Liste em "Commits criados" apenas hashes de commits feitos nesta sessão; sem
+   outras ferramentas (Codex, Agy) ou do usuário entram em "3. Observações, Riscos e
+   Próximos Passos" como trabalho paralelo preservado, sem assumir a autoria.
+3. Liste em "Commits Criados" apenas hashes de commits feitos nesta sessão; sem
    commits, escreva **Nenhum commit criado.**
 4. Validações: só comandos realmente executados na conversa, com o resultado
    observado. Declare de forma explícita se houve migração ou comando contra o banco.

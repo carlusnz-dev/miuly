@@ -107,4 +107,12 @@ verificáveis em `specs/`. Dinheiro é sempre decimal + código ISO 4217, nunca 
 - Agentes especializados do Codex ficam em `.codex/agents/` (revisor e guardião de
   integridade).
 - Relatórios de sessão ficam em `docs/relatorios/AAAA-MM-DD-<slug>.md`, no formato de
-  `docs/relatorios/template.md` (mantido pelo Codex). Gere com `/relatorio [slug]`.
+  `docs/relatorios/template.md`; modelo de ADR em `docs/adr/template.md`. Gere relatórios
+  com `/relatorio [slug]`.
+
+## Integração com o Antigravity (`agy-bridge`)
+
+- Varreduras pesadas de código, revisões adversárias de segurança/arquitetura e
+  diagnósticos complexos podem ser delegados ao Antigravity via MCP `agy-bridge`.
+- O workspace do Antigravity está descrito em `.agents/README.md` e `GEMINI.md`;
+  suas regras ficam em `.agents/rules/`.
