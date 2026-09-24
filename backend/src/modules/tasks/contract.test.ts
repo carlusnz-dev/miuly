@@ -2,10 +2,39 @@ import { describe, expect, it } from 'vitest';
 import {
   createTaskBodySchema,
   listTasksQuerySchema,
+  taskTagsSchema,
+  toTagSlug,
   toTaskResponse,
   updateTaskBodySchema,
   type Task,
 } from './contract';
+
+describe('toTagSlug', () => {
+  it.each([
+    ['Casa', 'casa'],
+    ['Saúde & Bem-estar', 'saude-bem-estar'],
+    ['  Trabalho  2026 ', 'trabalho-2026'],
+  ])('"%s" vira "%s"', (name, slug) => {
+    expect(toTagSlug(name)).toBe(slug);
+  });
+});
+
+describe('taskTagsSchema', () => {
+  it('descarta repetições pelo slug mantendo a primeira', () => {
+    expect(taskTagsSchema.parse(['Casa', ' casa ', 'Mercado'])).toEqual([
+      'Casa',
+      'Mercado',
+    ]);
+  });
+
+  it.each([
+    ['nome sem letra ou número', ['!!!']],
+    ['nome acima de 30', ['a'.repeat(31)]],
+    ['mais de 20 tags', Array.from({ length: 21 }, (_, i) => `t${i}`)],
+  ])('rejeita %s', (_caso, tags) => {
+    expect(taskTagsSchema.safeParse(tags).success).toBe(false);
+  });
+});
 
 describe('createTaskBodySchema', () => {
   it('aplica padrões e converte datas', () => {
@@ -19,6 +48,7 @@ describe('createTaskBodySchema', () => {
       scheduledAt: new Date('2026-09-25T12:00:00.000Z'),
       priority: 'medium',
       peoples: [],
+      tags: [],
     });
   });
 
@@ -91,6 +121,7 @@ describe('toTaskResponse', () => {
       startTime: null,
       endTime: null,
       peoples: ['Ana'],
+      tags: [{ id: 3, name: 'Casa', slugUrl: 'casa' }],
       status: true,
       createdAt: new Date('2026-09-24T12:00:00.000Z'),
       updatedAt: new Date('2026-09-24T12:00:00.000Z'),
@@ -106,6 +137,7 @@ describe('toTaskResponse', () => {
       startTime: null,
       endTime: null,
       peoples: ['Ana'],
+      tags: [{ id: 3, name: 'Casa', slugUrl: 'casa' }],
       createdAt: '2026-09-24T12:00:00.000Z',
       updatedAt: '2026-09-24T12:00:00.000Z',
     });

@@ -198,6 +198,19 @@ de criação, com filtro opcional por `status`. Título duplicado no perfil
 responde 409. No `PATCH` com só um extremo do intervalo, o service compara com o
 valor salvo. `DELETE` remove a linha; desativar é `PATCH { status: false }`.
 
+### Módulo `tasks`
+
+CRUD de tarefas (`TaskService`) em `/tasks`, atrás do `requireAuth` e sempre
+filtrado por `profileId`. A listagem é paginada, em ordem crescente de
+`scheduledAt`, com filtros `done`, `priority` e intervalo `from`/`to`. A
+prioridade pública `high` é persistida como `urgent`, valor do enum do contrato,
+e a tradução fica no adaptador. As tags chegam como nomes na criação e na
+edição:
+- o repository reaproveita as tags do perfil pelo slug, cria as que faltam e grava
+  os vínculos em `tasks_tags`, tudo na mesma transação da tarefa;
+- a resposta traz o DTO simples `{ id, name, slugUrl }`;
+- `DELETE` remove os vínculos e a tarefa, sem apagar as tags.
+
 ### Corte 1: `auth`, `users`, `tasks` e `apis`
 
 Os contratos dos quatro módulos estão definidos em `modules/<modulo>/contract.ts`,

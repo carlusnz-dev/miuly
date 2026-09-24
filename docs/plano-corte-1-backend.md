@@ -20,7 +20,7 @@ repositórios, services, controllers, rotas e a infraestrutura de autenticação
 | --- | --- | --- |
 | `auth` | Pronto | **Implementado** (etapas 2 e 4), sem migração aplicada |
 | `users` | Pronto | **Implementado** (etapa 5); `GET /users/:id` removido |
-| `tasks` | Pronto: criação, edição, listagem com filtros e prioridades | A fazer |
+| `tasks` | Pronto, com tags | **Implementado** (etapa 6) |
 | `apis` | Pronto | **Implementado** (etapa 7) |
 
 Base compartilhada nova: `core/http/schemas.ts`, com `uuidParamsSchema`,
@@ -124,15 +124,24 @@ Regras de entrada:
 | Método e rota | Entrada | Resposta (`data`) |
 | --- | --- | --- |
 | `GET /tasks` | query `page`, `pageSize`, `done`, `priority`, `from`, `to` | `TaskResponse[]` paginado, em ordem crescente de `scheduledAt` |
-| `POST /tasks` | `{ title, scheduledAt, observations?, priority?, startTime?, endTime?, peoples? }` | `TaskResponse` (201) |
+| `POST /tasks` | `{ title, scheduledAt, observations?, priority?, startTime?, endTime?, peoples?, tags? }` | `TaskResponse` (201) |
 | `GET /tasks/:id` | — | `TaskResponse` |
-| `PATCH /tasks/:id` | qualquer subconjunto, mais `done` | `TaskResponse` |
+| `PATCH /tasks/:id` | qualquer subconjunto, mais `done` e `tags` | `TaskResponse` |
 | `DELETE /tasks/:id` | — | `null` |
 
 - `priority` aceita `low`, `medium` (padrão), `high` ou `archived`.
 - `from` é inclusivo e `to` é exclusivo, ambos sobre `scheduledAt`.
 - `endTime` não pode ser anterior a `startTime`. Em um `PATCH` com só um dos dois,
   a comparação é feita com o valor já salvo.
+- `tags` é uma lista de nomes (até 20, cada um com até 30 caracteres):
+  - nomes novos viram tags do perfil, e nomes já existentes são reaproveitados
+    pelo slug, então "Casa" e "casa" são a mesma tag;
+  - no `PATCH`, enviar `tags` substitui o conjunto (`[]` remove todas), e omitir
+    mantém as atuais;
+  - a resposta traz `tags: { id, name, slugUrl }[]`;
+  - 409 raro indica que outra requisição criou a mesma tag ao mesmo tempo: basta
+    repetir.
+- `DELETE` remove a tarefa e seus vínculos; as tags continuam no perfil.
 
 ### `apis` (Bearer)
 

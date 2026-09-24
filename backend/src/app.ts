@@ -6,6 +6,7 @@ import { errorHandler, notFoundHandler } from './core/error.middleware';
 import type { SuccessResponse } from './core/types/response';
 import { apisModule } from './modules/apis';
 import { authModule, type AuthModuleOptions } from './modules/auth';
+import { tasksModule } from './modules/tasks';
 import { usersModule } from './modules/users';
 import type { Database } from './prisma/database';
 
@@ -56,6 +57,7 @@ export function app({
     }),
   );
 
+  app.use('/tasks', auth.requireAuth, tasksModule(database));
   app.use('/apis', auth.requireAuth, apisModule(database));
 
   app.use(notFoundHandler);
