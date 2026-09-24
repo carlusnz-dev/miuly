@@ -11,6 +11,7 @@ atualizar o documento correspondente no mesmo commit.
 - [Modelo de dados](data-model-review.md): diagnóstico do contrato Prisma e
   desenho recomendado para os novos domínios.
 - [Contribuição](contributing.md): branches, commits, revisão e releases.
+- [Decisões arquiteturais](adr/): ADRs aceitos, substituídos ou rejeitados.
 
 As especificações verificáveis ficam em [`specs/`](../specs/README.md). Quando
 documentação e implementação divergirem, registre a divergência explicitamente;

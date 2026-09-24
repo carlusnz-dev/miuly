@@ -1,29 +1,43 @@
 # Governança de agentes
 
-Este arquivo se aplica a todo o repositório. Instruções mais específicas só podem restringir este escopo; nunca podem autorizar implementação de produto por agentes.
+Este arquivo se aplica a todo o repositório. Instruções mais específicas podem
+restringir este escopo para tarefas ou papéis especializados.
 
 ## Limites de atuação
 
-Agentes **não devem implementar, codificar ou alterar código de produção do backend ou do frontend**. Isso inclui novas funcionalidades, correções funcionais, refatorações, migrações, integrações, componentes de interface, APIs e configurações que mudem o comportamento da aplicação.
+Agentes podem implementar, codificar e alterar código de produção do backend e
+do frontend quando o usuário solicitar explicitamente a mudança e o escopo estiver
+claro. Isso inclui funcionalidades, correções, refatorações, integrações,
+componentes de interface, APIs e configurações necessárias à tarefa autorizada.
 
-Exceção: contratos Prisma, seus artefatos gerados e a documentação diretamente
-relacionada podem ser alterados quando o usuário autorizar explicitamente esse
-escopo. A alteração deve passar por `prisma contract emit`, e nenhuma migração ou
-comando contra banco de dados pode ser executado sem autorização separada.
+A autorização para implementar não permite ampliar silenciosamente o produto nem
+alterar requisitos, contratos públicos ou decisões de segurança sem registrar a
+decisão correspondente. O agente deve preferir mudanças pequenas e reversíveis,
+preservar limites de dependência e adicionar ou manter testes proporcionais ao
+risco.
 
-A atuação permitida limita-se a:
+Contratos Prisma, seus artefatos gerados e a documentação diretamente relacionada
+podem ser alterados quando o usuário autorizar explicitamente esse escopo. A
+alteração deve passar por `prisma contract emit`. Migrações e comandos que leiam
+ou alterem um banco de dados exigem autorização separada e nunca são consequência
+implícita de uma autorização para editar código.
+
+A atuação permitida inclui:
 
 - validar código, arquitetura, contratos e critérios de aceite;
-- depurar e produzir diagnóstico, reprodução e recomendação, sem aplicar a correção no código de produção;
-- criar ou manter testes unitários, sem adaptar a implementação apenas para fazer o teste passar;
+- depurar, reproduzir, recomendar e, quando solicitado, aplicar correções;
+- criar ou manter testes unitários, sem enfraquecer a implementação ou o teste apenas para obter aprovação;
 - validar UX por meio de MCP, registrando evidências e problemas, sem editar a interface;
 - criar ou atualizar documentação e requisitos quando solicitado.
 
-Antes de qualquer alteração, o agente deve confirmar que o arquivo e o efeito pretendido pertencem a esse escopo. Se uma solicitação exigir código de produção, deve interromper a implementação e entregar análise, requisitos, casos de teste ou recomendação para execução humana.
+Antes de qualquer alteração, o agente deve confirmar que o arquivo e o efeito
+pretendido pertencem ao escopo solicitado. Se faltar uma decisão que altere
+materialmente comportamento, dados, segurança ou compatibilidade, deve interromper
+essa parte da implementação e apresentar a decisão necessária ao usuário.
 
 ## Papéis de revisão
 
-- **Revisor de qualidade:** inspeciona alterações, executa validações e aponta regressões, riscos e violações de contrato; não corrige código de produção.
+- **Revisor de qualidade:** inspeciona alterações, executa validações e aponta regressões, riscos e violações de contrato; permanece somente leitura quando atuar formalmente como revisor.
 - **Especialista de testes:** define cenários e mantém testes unitários determinísticos, cobrindo comportamento e casos-limite.
 - **Validador de UX:** usa MCP para verificar fluxos, estados, acessibilidade e aderência aos requisitos, anexando evidências reproduzíveis.
 - **Analista de requisitos e documentação:** elimina ambiguidades, mantém critérios de aceite e registra decisões sem inventar escopo de produto.
