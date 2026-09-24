@@ -18,8 +18,8 @@ repositórios, services, controllers, rotas e a infraestrutura de autenticação
 
 | Módulo | Contrato (`contract.ts`) | Repository / service / controller / rotas |
 | --- | --- | --- |
-| `auth` | Pronto: cadastro, login, sessão, `AuthContext`, constantes do cookie | A fazer, junto com hash de senha, tokens e middleware |
-| `users` | Pronto: usuário, perfil, troca de senha e schemas de identidade | Só `GET /users/:id`, que será substituído por `/users/me` |
+| `auth` | Pronto | **Implementado** (etapas 2 e 4), sem migração aplicada |
+| `users` | Pronto | **Implementado** (etapa 5); `GET /users/:id` removido |
 | `tasks` | Pronto: criação, edição, listagem com filtros e prioridades | A fazer |
 | `apis` | Pronto: criação, edição, listagem e ativação da conexão | A fazer |
 

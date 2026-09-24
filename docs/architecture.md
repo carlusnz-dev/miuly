@@ -164,6 +164,31 @@ Prisma mapeia cada linha explicitamente (`toUser`, `toProfile`), então
 `hashPassword` nunca sai dele. Instantes são convertidos por `prisma/instant.ts`,
 e colunas `VarChar(n)` recebem a marca de tipo por `prisma/varchar.ts`.
 
+### Módulo `auth`
+
+Implementa o [ADR 0002](adr/0002-autenticacao-access-refresh-token.md):
+`POST /auth/register`, `/login`, `/refresh` e `/logout` são públicos, e
+`GET /auth/me` exige o access token. Peças:
+
+- `tokens.ts`: `TokenService` (porta) e `JoseTokenService`, que emite e valida o
+  JWT HS256 com algoritmo, emissor e audiência fixos, gera o refresh token opaco e
+  calcula seu SHA-256;
+- `middleware.ts`: `requireAuth`, que valida o `Bearer` e grava o `AuthContext`
+  em `res.locals.auth`, lido pelas rotas declaradas com `auth: true` no `handler`;
+- `service.ts`: `AuthService`/`AuthServiceImpl`, com cadastro transacional de
+  usuário e perfil, login com mensagem única e hash de referência para e-mail
+  inexistente, rotação encadeada por `previousTokenId`, 409 para renovação
+  concorrente em até 30 s, revogação de todas as sessões em caso de reuso e
+  limpeza das sessões revogadas há mais de 7 dias a cada login;
+- `controller.ts`: declara o cookie `miuly_refresh` (`HttpOnly`,
+  `SameSite=Strict`, `Path=/auth`, `Secure` em produção) como instrução para o
+  `handler`, sem manipular `Response`.
+
+O `app.ts` compõe os módulos: `authModule` devolve o router, o `requireAuth`, o
+`PasswordHasher` e o revogador de sessões usado por `users`. O segredo vem de
+`JWT_SECRET`, validado no `env.ts` com pelo menos 32 caracteres, e é repassado
+pelo `server.ts`.
+
 ### Corte 1: `auth`, `users`, `tasks` e `apis`
 
 Os contratos dos quatro módulos estão definidos em `modules/<modulo>/contract.ts`,

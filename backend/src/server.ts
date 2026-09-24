@@ -6,6 +6,10 @@ import { db } from './prisma/db';
 
 const server = app({
   database: db,
+  auth: {
+    jwtSecret: env.JWT_SECRET,
+    secureCookies: env.NODE_ENV === 'production',
+  },
   enableLogging: true,
   debugMode: env.NODE_ENV === 'development',
 });
