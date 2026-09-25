@@ -1,23 +1,52 @@
 # Direção visual para dashboards Miuly
 
-**Pesquisa verificada em 24/09/2026.** Esta é uma proposta de design para dashboards do frontend Angular 22, que está em evolução e já inclui telas de login/cadastro em desenvolvimento. Não cria requisitos funcionais para finanças, tarefas, calendário ou identidade. A arquitetura vigente mantém base global em `frontend/src/styles.scss` e estilos locais junto de cada componente; veja [arquitetura do frontend](../frontend-architecture.md).
+**Atualizado em 24/09/2026.** Direção visual do frontend Angular 22 para autenticação e shell. Não cria requisitos funcionais para finanças, tarefas, calendário ou identidade. A base global fica em `frontend/src/styles.scss` e os estilos locais junto de cada componente; veja [arquitetura do frontend](../frontend-architecture.md).
 
 ## Decisões aplicáveis
 
-1. **Escuro como padrão:** fundo `#101216`, superfície `#191d23`, texto principal `#f6f7f9`. Usar o branco para texto e controles de maior prioridade; evitar grandes blocos brancos sobre fundo preto. Cor de destaque proposta: `#7cc4ff`. São valores iniciais, sujeitos à validação visual no produto, não cores oficiais preexistentes.
+1. **Escuro com verde como primária:** fundo `#101612`, superfície `#18211b`, texto principal `#f2f7f2` e primária `#91dfaa`. Evitar azul em qualquer estado.
 2. **Hierarquia calma:** título da página, resumo, ação principal e conteúdo em ordem de leitura. Cabeçalho e navegação lateral somente quando houver função. Limitar a largura de leitura a `80rem` e usar espaço entre grupos antes de acrescentar cartões. O [Primer Layout](https://primer.style/product/getting-started/foundations/layout/) recomenda regiões claras e simplificação de colunas em telas estreitas.
-3. **Bordas finas:** 1 px para separar superfícies; `#303843` é divisória decorativa, não o único contorno de um controle. Para campo cujo contorno identifica a área clicável, usar `#687481` sobre `#191d23` (contraste calculado de ~3,55:1) ou outra combinação aferida. Evitar sombra e gradiente como separadores principais.
+3. **Bordas finas:** 1 px para separar superfícies; `#2b3a30` é divisória decorativa. Para campos, usar `#698371` sobre `#1b261f` (contraste calculado de ~3,78:1). Bordas do menu lateral são suaves.
 4. **Tipografia:** fonte de sistema, título entre `1.5rem` e `2rem`, corpo `1rem`, metadados no mínimo `0.875rem` quando legíveis. Usar tabulares (`font-variant-numeric: tabular-nums`) em valores alinhados. Reservar negrito para títulos, totais e ação principal.
-5. **Movimento:** transições discretas de cor ou opacidade, `120–180ms`, sem movimento contínuo em dados ou painéis. Desabilitar transições e animações não essenciais em `prefers-reduced-motion: reduce` ([MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion)).
+5. **Movimento:** transições de `180ms` em controles. O mesh decorativo pode se mover lentamente; `prefers-reduced-motion: reduce` o torna estático e remove transições não essenciais ([MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion)).
 6. **Tokens semânticos:** nomes como `--miuly-surface` e `--miuly-text-muted` em vez de `--gray-900`. [Primer Color Usage](https://primer.style/product/getting-started/foundations/color-usage/) usa tokens por função para manter coerência entre estados e temas. Sass `@use` serve para mixins e constantes de compilação, enquanto propriedades CSS permitem trocar valores em tempo de execução ([Sass](https://sass-lang.com/documentation/at-rules/use/)).
 
 ## Referências visuais e decisão de uso
 
-| Fonte primária | O que observar | Aplicação no Miuly | Imagem local |
-| --- | --- | --- | --- |
-| [Orca IDE — site oficial](https://www.onorca.dev/) | Áreas de trabalho em painéis, navegação densa, superfícies escuras e divisórias discretas | Manter contexto e ações visíveis sem sobrecarregar o painel principal. É inspiração de composição, não identidade visual a copiar. | Capturas oficiais não foram copiadas: a página não oferece licença de redistribuição explícita para elas. |
-| [Primer — Layout](https://primer.style/product/getting-started/foundations/layout/) e [PageLayout](https://primer.style/product/components/page-layout/) | Cabeçalho, conteúdo, painel auxiliar e separação por linhas | Usar painel lateral só com finalidade clara; empilhar em telas estreitas. | Não copiadas; licença das imagens não foi confirmada. |
-| [Primer — Color usage](https://primer.style/product/getting-started/foundations/color-usage/) | Tema escuro com cores semânticas | Mapear texto, superfície, borda e estados por função. | Não copiadas; licença das imagens não foi confirmada. |
+As referências específicas desta remodelação e suas limitações estão em
+[referencias/README.md](referencias/README.md). As imagens fornecidas pelo
+produto ainda não estavam disponíveis na pasta na implementação inicial.
+
+### Tokens e componentes desta remodelação
+
+| Token                                                     | Uso                                                |
+| --------------------------------------------------------- | -------------------------------------------------- |
+| `--miuly-bg`, `--miuly-surface`, `--miuly-surface-raised` | Fundo único e níveis discretos de superfície.      |
+| `--miuly-field`, `--miuly-control-border`                 | Campo de baixo contraste com limite identificável. |
+| `--miuly-text`, `--miuly-text-muted`                      | Texto principal e apoio.                           |
+| `--miuly-primary`, `--miuly-primary-hover`                | Ação, foco, seleção e links.                       |
+| `--miuly-error`, `--miuly-error-border`                   | Mensagem e foco de campo inválido.                 |
+
+O campo reutilizável põe a label dentro do input e a move quando ele recebe
+foco ou tem valor. A mensagem de erro cresce abaixo do campo com deslocamento
+vertical e preserva `aria-invalid` e `aria-describedby`; dicas permanecem
+associadas. O botão reutilizável é um `button` real, desabilitado quando o
+formulário é inválido ou está enviando, com brilho radial sob o ponteiro,
+transição de entrada e saída e foco visível. Links de entrada e cadastro não
+têm sublinhado; no hover, ficam mais claros.
+
+Login e cadastro ocupam a viewport sem cabeçalho ou rodapé. O painel esquerdo
+usa gradientes verdes e textura granulada; o formulário de login não tem card.
+Cadastro usa duas colunas no desktop e uma em telas estreitas. O shell principal
+usa menu lateral arredondado com oito áreas previstas, todas desabilitadas, e
+cabeçalho no conteúdo com a ação de sair e seu erro. As páginas entram por rota
+na área de conteúdo. O shell ainda não representa dados reais das áreas futuras.
+
+| Fonte primária                                                                                                                                           | O que observar                                                                            | Aplicação no Miuly                                                                                                                 | Imagem local                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [Orca IDE — site oficial](https://www.onorca.dev/)                                                                                                       | Áreas de trabalho em painéis, navegação densa, superfícies escuras e divisórias discretas | Manter contexto e ações visíveis sem sobrecarregar o painel principal. É inspiração de composição, não identidade visual a copiar. | Capturas oficiais não foram copiadas: a página não oferece licença de redistribuição explícita para elas. |
+| [Primer — Layout](https://primer.style/product/getting-started/foundations/layout/) e [PageLayout](https://primer.style/product/components/page-layout/) | Cabeçalho, conteúdo, painel auxiliar e separação por linhas                               | Usar painel lateral só com finalidade clara; empilhar em telas estreitas.                                                          | Não copiadas; licença das imagens não foi confirmada.                                                     |
+| [Primer — Color usage](https://primer.style/product/getting-started/foundations/color-usage/)                                                            | Tema escuro com cores semânticas                                                          | Mapear texto, superfície, borda e estados por função.                                                                              | Não copiadas; licença das imagens não foi confirmada.                                                     |
 
 Os exemplos de interface no site Orca são materiais promocionais e podem mudar. Registrar a URL e a data, sem extrair cores exatas por captura. A ilustração [`wireframe-dashboard.svg`](wireframe-dashboard.svg) é desenho **original desta pesquisa**, inspirado apenas na ideia geral de painéis; não contém imagem nem marca de terceiros. Pode ser usada no projeto Miuly, sujeita à licença do repositório.
 
@@ -32,7 +61,7 @@ Os exemplos de interface no site Orca são materiais promocionais e podem mudar.
 
 ## Acessibilidade e estados
 
-- **Contraste:** texto normal >= 4,5:1, texto grande >= 3:1 e indicadores visuais essenciais de controle/estado >= 3:1, conforme [WCAG 2.2](https://www.w3.org/TR/wcag/). Os pares propostos foram calculados: `#f6f7f9`/`#101216` ~17,49:1, `#aeb7c2`/`#191d23` ~8,34:1, `#7cc4ff`/`#191d23` ~9,02:1, `#687481`/`#191d23` ~3,55:1. Recalcular quando uma cor mudar.
+- **Contraste:** texto normal >= 4,5:1, texto grande >= 3:1 e indicadores visuais essenciais de controle/estado >= 3:1, conforme [WCAG 2.2](https://www.w3.org/TR/wcag/). Pares calculados: `#f2f7f2`/`#101612` ~16,90:1, `#b5c4b7`/`#18211b` ~9,07:1, `#91dfaa`/`#18211b` ~10,49:1, `#698371`/`#1b261f` ~3,78:1.
 - **Foco:** aplicar `:focus-visible` com contorno sólido de 2 px e afastamento de 2 px; preservar a visibilidade com cabeçalhos fixos e rolagem. [WCAG 2.4.11](https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/) exige que foco não fique totalmente oculto; [WCAG 2.4.13](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance) é nível AAA e orienta o tamanho do indicador. Nunca usar `outline: none` sem substituto.
 - **Alvos:** preferir área interativa >= 44×44 CSS px no móvel; o mínimo do [WCAG 2.5.8 AA](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum) é 24×24 CSS px ou uma exceção aplicável. Ícone sozinho precisa de nome acessível.
 - **Loading:** reservar altura da região para evitar salto; mostrar texto “Carregando…” em `role="status"` ou região `aria-live="polite"`. Skeleton é decorativo; não animar sem fim em movimento reduzido. Desabilitar só a ação que não pode ser repetida; manter navegação disponível.
@@ -42,13 +71,13 @@ Os exemplos de interface no site Orca são materiais promocionais e podem mudar.
 
 ## Bons e maus exemplos
 
-| Fazer | Evitar | Motivo |
-| --- | --- | --- |
-| Um título, resumo curto e ação principal identificável | Cinco cartões com igual peso visual e ações concorrentes | Leitura e prioridade ficam claras. |
-| Divisória sutil entre regiões e contorno contrastante em campos | Usar o mesmo cinza escuro em todas as bordas | Campo precisa ser percebido como controle. |
-| Botão com texto “Atualizar dados” e foco visível | Ícone sem rótulo e `outline: none` | Navegação por teclado e leitor de tela. |
-| Região de conteúdo estável com `Carregando…`, depois dados ou erro | Spinner isolado que substitui a página e nunca explica falha | Evita salto e estados ambíguos. |
-| Cards fluídos e tabela com rolagem local identificada | `width: 1200px` na página toda | Evita overflow em 320 CSS px. |
+| Fazer                                                              | Evitar                                                       | Motivo                                     |
+| ------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------ |
+| Um título, resumo curto e ação principal identificável             | Cinco cartões com igual peso visual e ações concorrentes     | Leitura e prioridade ficam claras.         |
+| Divisória sutil entre regiões e contorno contrastante em campos    | Usar o mesmo cinza escuro em todas as bordas                 | Campo precisa ser percebido como controle. |
+| Botão com texto “Atualizar dados” e foco visível                   | Ícone sem rótulo e `outline: none`                           | Navegação por teclado e leitor de tela.    |
+| Região de conteúdo estável com `Carregando…`, depois dados ou erro | Spinner isolado que substitui a página e nunca explica falha | Evita salto e estados ambíguos.            |
+| Cards fluídos e tabela com rolagem local identificada              | `width: 1200px` na página toda                               | Evita overflow em 320 CSS px.              |
 
 ## Exemplo executável de Sass
 

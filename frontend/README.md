@@ -1,7 +1,7 @@
 # Frontend Miuly
 
 SPA Angular standalone com TypeScript, roteamento explícito e estilos Sass
-(`.scss`). O tema padrão é escuro e segue as [diretrizes de estilo](../docs/style/README.md).
+(`.scss`). O tema padrão é escuro com verde como primária e segue as [diretrizes de estilo](../docs/style/README.md).
 Não usa Tailwind. A organização de módulos é descrita em
 [docs/frontend-architecture.md](../docs/frontend-architecture.md).
 
@@ -34,8 +34,8 @@ npm test
 ## Organização
 
 - `src/app/modules/`: funcionalidades e páginas agrupadas por área;
-- `src/app/components/ui/`: componentes visuais reutilizados entre áreas;
-- `src/app/components/layout/`: estrutura persistente da aplicação;
+- `src/app/components/ui/`: marca, campo, botão e mesh visual reutilizáveis;
+- `src/app/components/layout/`: menu lateral e cabeçalho do shell;
 - `src/app/api/`: clientes HTTP e DTOs públicos do backend;
 - `src/app/app.routes.ts`: registro explícito de rotas com carregamento tardio;
 - `src/styles.scss`: estilos globais mínimos; estilos locais ficam com cada
@@ -44,3 +44,7 @@ npm test
 Para produzir a aplicação fora do servidor de desenvolvimento, o servidor web
 deve entregar a SPA nas rotas de navegação e encaminhar `/auth/**` e `/users/**` à API.
 Novas rotas de API exigem atualizar essa configuração.
+
+O shell de início lista as áreas planejadas como opções desabilitadas. Login e
+cadastro são páginas sem cabeçalho nem rodapé; o cadastro usa duas colunas no
+desktop. A navegação usa ícones de `@lucide/angular`.
