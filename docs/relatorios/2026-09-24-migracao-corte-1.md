@@ -131,12 +131,11 @@ sem captura de tela.
 
 ## 3. Observações, Riscos e Próximos Passos
 
-- **`JWT_SECRET` ausente no ambiente:** apesar de a tarefa dizer que estava em
-  `backend/.env`, `npm run dev` falhou com `JWT_SECRET` `undefined`. O `.env` não
-  pôde ser lido pela sessão (leitura negada), então a causa não foi confirmada
-  (chave ausente, com outro nome ou vazia). A validação usou um segredo descartável
-  passado só no ambiente do processo; o `.env` não foi alterado. **Ação:** conferir
-  `backend/.env`.
+- **`JWT_SECRET`:** na primeira tentativa, `npm run dev` falhou por a variável
+  estar ausente do `.env`, e a validação usou um segredo descartável passado só no
+  ambiente do processo. O usuário depois adicionou a chave ao `.env`; a sessão não
+  lê nem exibe o valor. Com o `.env` atual, o backend sobe, conecta ao banco e
+  responde `/health` com 200. O `.env` não foi alterado pela sessão.
 - **409 em criação concorrente de tag nova:** 1 de 8 `POST /tasks` simultâneos com a
   mesma tag nova respondeu 409 (a transação foi revertida, sem tarefa órfã; ficaram
   as 7 tarefas dos requests com 201). É o comportamento documentado no plano. Uma
@@ -147,5 +146,5 @@ sem captura de tela.
 - **Limite de tentativas de login** continua obrigatório antes de deploy público.
 - **Trabalho paralelo preservado, sem autoria desta sessão:** `.angular/` e o
   relatório `2026-09-24-corte-1-backend-modulos.md`, ambos não rastreados.
-- **Próximos passos:** conferir o `.env`; decidir sobre a repetição de tags
+- **Próximos passos:** decidir sobre a repetição de tags
   concorrentes; seguir para o próximo corte (finanças ou calendário).
