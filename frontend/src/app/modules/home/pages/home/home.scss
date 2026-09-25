@@ -1,73 +1,126 @@
 section {
   width: 100%;
-  max-width: 58rem;
+  max-width: 86rem;
   margin: 0 auto;
-  padding: clamp(4rem, 12vw, 9rem) 1.5rem;
+  padding: clamp(1.5rem, 4vw, 4rem);
 }
-
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 23rem;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  border: 1px solid var(--miuly-border);
+  border-radius: 1.25rem;
+  background: radial-gradient(circle at 90% 10%, #244b31 0, transparent 36%), var(--miuly-surface);
+}
+.hero::after {
+  position: absolute;
+  right: -7rem;
+  bottom: -12rem;
+  width: 27rem;
+  height: 27rem;
+  border: 1px solid #91dfaa38;
+  border-radius: 50%;
+  content: '';
+  pointer-events: none;
+}
 .eyebrow {
-  color: var(--miuly-accent);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  margin: 0 0 1.3rem;
+  color: var(--miuly-primary);
+  font-size: 0.8rem;
+  font-weight: 750;
+  letter-spacing: 0.13em;
 }
-
 h1 {
-  max-width: 18ch;
-  margin: 0 0 1.5rem;
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  line-height: 1.1;
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(2.5rem, 5vw, 4.75rem);
+  line-height: 1.06;
+  letter-spacing: -0.06em;
 }
-
-p {
-  max-width: 42rem;
-  line-height: 1.6;
+.lead {
+  max-width: 35rem;
+  margin: 1.4rem 0 0;
   color: var(--miuly-text-muted);
+  line-height: 1.6;
 }
-
 .session-note {
-  color: var(--miuly-accent);
+  margin: 1.5rem 0 0;
+  color: var(--miuly-primary);
 }
-
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 2rem;
 }
-
 .actions a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 2.75rem;
-  padding: 0.65rem 1rem;
+  padding: 0.7rem 1rem;
   border: 1px solid var(--miuly-control-border);
-  border-radius: 0.4rem;
-  font-weight: 600;
+  border-radius: 0.65rem;
+  font-weight: 650;
   text-decoration: none;
   transition:
-    background-color 160ms ease,
-    border-color 160ms ease;
+    background-color 180ms ease,
+    color 180ms ease;
 }
-
 .primary-action {
-  background: var(--miuly-accent);
+  background: var(--miuly-primary);
   color: var(--miuly-bg);
 }
 .secondary-action {
   color: var(--miuly-text);
 }
 .primary-action:hover {
-  background: #a9d8ff;
+  background: var(--miuly-primary-hover);
 }
 .secondary-action:hover {
-  border-color: var(--miuly-accent);
   background: var(--miuly-surface-raised);
+  color: var(--miuly-primary-hover);
 }
-
-@media (max-width: 26rem) {
-  .actions a {
-    width: 100%;
+.preview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.preview > div {
+  min-width: 0;
+  padding: 1.5rem;
+  border: 1px solid var(--miuly-border);
+  border-radius: 1rem;
+}
+.preview-mark {
+  display: block;
+  width: 2rem;
+  height: 0.3rem;
+  border-radius: 1rem;
+  background: var(--miuly-primary);
+}
+h2 {
+  margin: 1.5rem 0 0.5rem;
+  font-size: 1.1rem;
+}
+.preview p {
+  min-height: 3rem;
+  margin: 0;
+  color: var(--miuly-text-muted);
+  line-height: 1.5;
+}
+.preview small {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--miuly-primary);
+}
+@media (max-width: 900px) {
+  .preview {
+    grid-template-columns: 1fr;
+  }
+  .preview p {
+    min-height: 0;
   }
 }

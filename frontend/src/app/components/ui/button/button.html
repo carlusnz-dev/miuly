@@ -1,0 +1,9 @@
+<button
+  [type]="type()"
+  [disabled]="disabled()"
+  [style.--pointer-x]="pointerX()"
+  [style.--pointer-y]="pointerY()"
+  (pointermove)="move($event)"
+>
+  <span><ng-content /></span>
+</button>

@@ -1,122 +1,124 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
 .auth-page {
   display: grid;
-  flex: 1;
-  place-items: center;
-  padding: clamp(2rem, 6vw, 5rem) 1rem;
+  grid-template-columns: minmax(19rem, 0.9fr) minmax(0, 1.1fr);
+  min-height: 100vh;
 }
-
-.auth-card {
-  width: min(100%, 29rem);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  border: 1px solid var(--miuly-border);
-  border-radius: 0.75rem;
-  background: var(--miuly-surface);
-  animation: appear 180ms ease-out both;
+.visual-panel {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  border-radius: 0 1.5rem 1.5rem 0;
 }
-
+.visual-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(2rem, 4vw, 4rem);
+  color: #fff;
+}
+.visual-content p {
+  max-width: 17ch;
+  margin: 0;
+  font-size: clamp(2.2rem, 4.5vw, 4.6rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  text-shadow: 0 2px 16px #173b2380;
+}
+.visual-content app-brand {
+  width: max-content;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.65rem;
+  background: #101b12c9;
+  color: #fff;
+}
+.auth-content {
+  display: grid;
+  align-items: center;
+  padding: 2rem clamp(1.5rem, 5vw, 5rem);
+}
+.auth-inner {
+  width: min(100%, 35rem);
+  margin: auto;
+}
+.register .auth-inner {
+  width: min(100%, 46rem);
+}
 .eyebrow {
-  margin: 0 0 0.75rem;
-  color: var(--miuly-accent);
+  margin: 0 0 0.7rem;
+  color: var(--miuly-primary);
   font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 750;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-
 h1 {
   margin: 0;
-  font-size: clamp(1.75rem, 4vw, 2rem);
-  line-height: 1.2;
+  font-size: clamp(2.25rem, 4vw, 3.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.055em;
 }
-
 .intro {
-  margin: 0.75rem 0 1.75rem;
+  margin: 0.75rem 0 2rem;
   color: var(--miuly-text-muted);
   line-height: 1.5;
 }
-
 form {
   display: grid;
-  gap: 0.5rem;
+  gap: 1.1rem;
 }
-
-label {
-  margin-top: 0.75rem;
-  font-weight: 600;
+.register-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
 }
-
-input {
-  width: 100%;
-  min-height: 2.75rem;
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--miuly-control-border);
-  border-radius: 0.4rem;
-  background: var(--miuly-bg);
-  color: var(--miuly-text);
-  font: inherit;
-  transition: border-color 160ms ease;
-}
-
-input:hover {
-  border-color: var(--miuly-accent);
-}
-input[aria-invalid='true'] {
-  border-color: var(--miuly-error);
-}
-
-small {
-  color: var(--miuly-text-muted);
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
-
-.field-error,
 .form-error {
+  margin: 0;
   color: var(--miuly-error);
 }
-
-.form-error {
-  margin: 1rem 0 0;
-}
-
-button {
-  min-height: 2.75rem;
-  margin-top: 1rem;
-  border: 1px solid transparent;
-  border-radius: 0.4rem;
-  background: var(--miuly-accent);
-  color: var(--miuly-bg);
-  cursor: pointer;
-  font: inherit;
-  font-weight: 700;
-  transition: background-color 160ms ease;
-}
-
-button:hover:not(:disabled) {
-  background: #a9d8ff;
-}
-button:disabled {
-  cursor: wait;
-  opacity: 0.65;
-}
-
 .switch {
   margin: 1.5rem 0 0;
   color: var(--miuly-text-muted);
   text-align: center;
 }
-
 .switch a {
-  color: var(--miuly-accent);
-  font-weight: 600;
-  text-underline-offset: 0.2em;
+  color: var(--miuly-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 180ms ease;
 }
-
-@keyframes appear {
-  from {
-    opacity: 0;
+.switch a:hover {
+  color: var(--miuly-primary-hover);
+}
+@media (max-width: 900px) {
+  .auth-page {
+    grid-template-columns: 1fr;
   }
-  to {
-    opacity: 1;
+  .visual-panel {
+    min-height: 11rem;
+    height: 11rem;
+    border-radius: 0 0 1.5rem 1.5rem;
+  }
+  .visual-content {
+    padding: 1.5rem;
+  }
+  .visual-content p {
+    max-width: none;
+    font-size: 1.15rem;
+    letter-spacing: 0;
+  }
+  .auth-content {
+    padding: 2.5rem 1.5rem;
+  }
+}
+@media (max-width: 560px) {
+  .register-fields {
+    grid-template-columns: 1fr;
   }
 }
