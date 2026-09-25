@@ -4,15 +4,18 @@
 
 :root {
   color-scheme: dark;
-  --miuly-bg: #101216;
-  --miuly-surface: #191d23;
-  --miuly-surface-raised: #20252c;
-  --miuly-border: #303843;
-  --miuly-control-border: #687481;
-  --miuly-text: #f6f7f9;
-  --miuly-text-muted: #aeb7c2;
-  --miuly-accent: #7cc4ff;
-  --miuly-error: #ff9e9e;
+  --miuly-bg: #101612;
+  --miuly-surface: #18211b;
+  --miuly-surface-raised: #213026;
+  --miuly-field: #1b261f;
+  --miuly-border: #2b3a30;
+  --miuly-control-border: #698371;
+  --miuly-text: #f2f7f2;
+  --miuly-text-muted: #b5c4b7;
+  --miuly-primary: #91dfaa;
+  --miuly-primary-hover: #c4f5d0;
+  --miuly-error: #f0a2a2;
+  --miuly-error-border: #de8181;
 }
 
 html {
@@ -20,18 +23,20 @@ html {
   color: var(--miuly-text);
   background: var(--miuly-bg);
 }
-
 body {
   margin: 0;
+  min-width: 320px;
 }
-
 a {
   color: inherit;
 }
-
+::selection {
+  background: #397a4d;
+  color: #fff;
+}
 :where(a, button, input):focus-visible {
-  outline: 2px solid var(--miuly-accent);
-  outline-offset: 2px;
+  outline: 2px solid var(--miuly-primary);
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {

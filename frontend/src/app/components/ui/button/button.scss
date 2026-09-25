@@ -1,0 +1,81 @@
+:host {
+  display: block;
+}
+button {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 3.25rem;
+  overflow: hidden;
+  border: 1px solid #b5eec3;
+  border-radius: 0.75rem;
+  background: var(--miuly-primary);
+  color: #101b12;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+button::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(
+    11rem circle at var(--pointer-x) var(--pointer-y),
+    #effff0b3,
+    transparent 70%
+  );
+  content: '';
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+button::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(
+    4rem circle at var(--pointer-x) var(--pointer-y),
+    #ffffffb3,
+    transparent 76%
+  );
+  content: '';
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+button:hover:not(:disabled) {
+  background: var(--miuly-primary-hover);
+  box-shadow: 0 0 1.5rem #91dfaa55;
+  transform: translateY(-1px);
+}
+button:hover:not(:disabled)::before {
+  opacity: 1;
+}
+button:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 0 0.75rem #91dfaa66;
+}
+button:active:not(:disabled)::before {
+  opacity: 0.35;
+}
+button:active:not(:disabled)::after {
+  opacity: 1;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  button:hover:not(:disabled) {
+    transform: none;
+  }
+  button:active:not(:disabled) {
+    transform: none;
+  }
+  button::before,
+  button::after {
+    transition: none;
+  }
+}

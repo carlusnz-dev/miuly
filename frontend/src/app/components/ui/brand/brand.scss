@@ -1,12 +1,24 @@
-a {
+:host {
   color: var(--miuly-text);
+}
+a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: inherit;
   font-size: 1.5rem;
   font-weight: 750;
   letter-spacing: -0.05em;
   text-decoration: none;
 }
 
+svg {
+  width: 1.55rem;
+  height: 1.55rem;
+  flex: none;
+}
+
 a:focus-visible {
-  outline: 2px solid var(--miuly-accent);
+  outline: 2px solid var(--miuly-primary);
   outline-offset: 4px;
 }

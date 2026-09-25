@@ -1,0 +1,27 @@
+<div class="field">
+  <div class="input-wrap">
+    <input
+      [id]="inputId()"
+      [type]="type()"
+      [formControl]="control()"
+      [autocomplete]="autocomplete()"
+      [attr.maxlength]="maxlength()"
+      [attr.aria-invalid]="invalid"
+      [attr.aria-describedby]="
+        (hint() ? inputId() + '-hint' : '') +
+          (invalid ? (hint() ? ' ' : '') + inputId() + '-error' : '') || null
+      "
+      placeholder=" "
+      required
+    />
+    <label [for]="inputId()">{{ label() }}</label>
+  </div>
+  @if (hint()) {
+    <small class="hint" [id]="inputId() + '-hint'">{{ hint() }}</small>
+  }
+  <div class="error-space" [class.visible]="invalid">
+    <small class="error" [id]="inputId() + '-error'" [attr.aria-hidden]="!invalid">{{
+      error()
+    }}</small>
+  </div>
+</div>
