@@ -32,11 +32,16 @@ foco ou tem valor. A mensagem de erro cresce abaixo do campo com deslocamento
 vertical e preserva `aria-invalid` e `aria-describedby`; dicas permanecem
 associadas. O botão reutilizável é um `button` real, desabilitado quando o
 formulário é inválido ou está enviando, com brilho radial sob o ponteiro,
-transição de entrada e saída e foco visível. Links de entrada e cadastro não
+transição de entrada e saída, press com escala discreta e brilho concentrado,
+e foco visível. Links de entrada e cadastro não
 têm sublinhado; no hover, ficam mais claros.
 
 Login e cadastro ocupam a viewport sem cabeçalho ou rodapé. O painel esquerdo
-usa gradientes verdes e textura granulada; o formulário de login não tem card.
+usa gradientes verdes e textura granulada, com margem pequena e todos os cantos
+arredondados. Ele permanece montado ao alternar login e cadastro, enquanto
+eyebrow, título, introdução, campos, botão e link entram em sequência com
+deslocamento vertical e opacidade. Movimento reduzido mostra esses elementos
+imediatamente, sem deslocamento. O formulário de login não tem card.
 Cadastro usa duas colunas no desktop e uma em telas estreitas. O shell principal
 usa menu lateral arredondado com oito áreas previstas, todas desabilitadas, e
 cabeçalho no conteúdo com a ação de sair e seu erro. As páginas entram por rota
