@@ -15,11 +15,11 @@ antes de criar migrações.
 | Módulo | Responsabilidade | Estado |
 | --- | --- | --- |
 | `backend/` | API Express, regras de aplicação, integrações e persistência | Em desenvolvimento |
-| `frontend/` | SPA Angular com shell, página inicial e cliente HTTP de usuários | Base inicial |
-| `docs/` | Arquitetura, requisitos e decisões técnicas | Ativo |
+| `frontend/` | SPA Angular com shell, autenticação (login/cadastro), sessão e remodelação visual em andamento | Em desenvolvimento |
+| `docs/` | Arquitetura, diretrizes de estilo, requisitos e decisões técnicas | Ativo |
 | `specs/` | Critérios verificáveis e contratos funcionais | Ativo |
 | `infra/` | Ambientes, observabilidade e implantação | Reservado |
-| `.agents/` | Skills e regras locais dos agentes Codex | Ativo |
+| `.agents/` | Skills e regras locais dos agentes (Codex, Antigravity, Claude) | Ativo |
 | `.codex/agents/` | Agentes especializados de revisão e integridade | Ativo |
 
 ## Arquitetura pretendida
@@ -34,6 +34,7 @@ provedores nunca pertencem às entidades centrais.
 - [Índice técnico](docs/README.md)
 - [Arquitetura e limites](docs/architecture.md)
 - [Arquitetura do frontend](docs/frontend-architecture.md)
+- [Diretrizes de estilo](docs/style/README.md)
 - [Requisitos de produto](docs/requirements.md)
 - [Revisão do modelo Prisma](docs/data-model-review.md)
 - [Fluxo Git e releases](docs/contributing.md)
