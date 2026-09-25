@@ -52,7 +52,7 @@ Foram aplicadas as correções de integridade imediatas que não dependem do có
 2. **`docs/README.md`:**
    - Adicionada entrada no índice técnico para as Diretrizes de Estilo (`style/README.md`).
 3. **`docs/requirements.md`:**
-   - Esclarecido em `RF-008` que os valores de prioridade de tarefas na API pública (`low`, `medium`, `high`, `archived`) são traduzidos no banco/Prisma para (`Low`, `Medium`, `Urgent`, `Archived`), evitando discrepâncias interpretativas.
+   - Esclarecido em `RF-008` que os valores de prioridade de tarefas na API pública são `low`, `medium`, `high`, `archived`, enquanto os valores armazenados no banco são `low`, `medium`, `urgent`, `archived` (o membro `High` do enum Prisma `Priority` é persistido como `"urgent"` e traduzido no repositório).
    - Mapeados os requisitos `RF-001` a `RF-004` para seus respectivos módulos no backend (`auth`, `users`, `apis`).
 4. **`README.md` (Raiz):**
    - Atualizado o status do módulo `frontend/` na tabela de arquitetura para refletir a existência da autenticação e a remodelação visual em andamento.
@@ -64,7 +64,8 @@ Foram aplicadas as correções de integridade imediatas que não dependem do có
 
 ### Commits Criados
 
-- `docs(core): corrige links e esclarece mapeamentos de requisitos na fase 1`
+- `6d9116e` — `docs(requirements): corrige links e esclarece mapeamentos na fase 1`
+- `[novo]` — `docs(requirements): refina valores de prioridade em RF-008`
 
 ### Validações Executadas
 
