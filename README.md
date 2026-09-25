@@ -15,7 +15,7 @@ antes de criar migrações.
 | Módulo | Responsabilidade | Estado |
 | --- | --- | --- |
 | `backend/` | API Express, regras de aplicação, integrações e persistência | Em desenvolvimento |
-| `frontend/` | SPA Angular com shell, autenticação (login/cadastro), sessão e remodelação visual em andamento | Em desenvolvimento |
+| `frontend/` | SPA Angular com tema verde escuro, shell SaaS (sidebar com @lucide/angular), autenticação remodelada (login/cadastro sem card/footer) e sessão reativa | Em desenvolvimento |
 | `docs/` | Arquitetura, diretrizes de estilo, requisitos e decisões técnicas | Ativo |
 | `specs/` | Critérios verificáveis e contratos funcionais | Ativo |
 | `infra/` | Ambientes, observabilidade e implantação | Reservado |

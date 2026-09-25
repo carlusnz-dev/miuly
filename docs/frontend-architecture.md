@@ -20,7 +20,7 @@ frontend/
   src/
     index.html                documento HTML e idioma
     main.ts                   bootstrap da aplicação
-    proxy.conf.json           /users/** -> backend local
+    proxy.conf.json           /auth/**, /users/**, /tasks/**, /apis/** -> backend local
     styles.scss               base visual global
     app/
       app.ts|html|scss        shell com layout e router-outlet
@@ -113,7 +113,7 @@ preferência por movimento reduzido; estilos de componentes ficam próximos do
 HTML/TypeScript correspondente. A direção está em [docs/style](style/README.md).
 Ícones da navegação usam `@lucide/angular` standalone. Não adicionar Tailwind.
 
-Em desenvolvimento, a SPA chama `/auth/**` e `/users/**` na mesma origem. O proxy
+Em desenvolvimento, a SPA chama `/auth/**`, `/users/**`, `/tasks/**` e `/apis/**` na mesma origem. O proxy
 do Angular encaminha essas rotas para `localhost:8080`. Em implantação,
 configurar o servidor da SPA para encaminhá-las à API e servir `index.html` nas
 rotas de navegação.
