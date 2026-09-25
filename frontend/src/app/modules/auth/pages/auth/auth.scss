@@ -1,42 +1,11 @@
 :host {
   display: block;
-  min-height: 100vh;
+  min-width: 0;
 }
 .auth-page {
   display: grid;
-  grid-template-columns: minmax(19rem, 0.9fr) minmax(0, 1.1fr);
-  min-height: 100vh;
-}
-.visual-panel {
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  border-radius: 0 1.5rem 1.5rem 0;
-}
-.visual-content {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: clamp(2rem, 4vw, 4rem);
-  color: #fff;
-}
-.visual-content p {
-  max-width: 17ch;
-  margin: 0;
-  font-size: clamp(2.2rem, 4.5vw, 4.6rem);
-  font-weight: 650;
-  line-height: 1.1;
-  letter-spacing: -0.05em;
-  text-shadow: 0 2px 16px #173b2380;
-}
-.visual-content app-brand {
-  width: max-content;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.65rem;
-  background: #101b12c9;
-  color: #fff;
+  min-height: calc(100vh - 1.25rem);
+  align-items: center;
 }
 .auth-content {
   display: grid;
@@ -96,25 +65,39 @@ form {
 .switch a:hover {
   color: var(--miuly-primary-hover);
 }
+.reveal {
+  animation: rise-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    visibility: hidden;
+  }
+  1% {
+    visibility: visible;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+  }
+}
 @media (max-width: 900px) {
   .auth-page {
-    grid-template-columns: 1fr;
-  }
-  .visual-panel {
-    min-height: 11rem;
-    height: 11rem;
-    border-radius: 0 0 1.5rem 1.5rem;
-  }
-  .visual-content {
-    padding: 1.5rem;
-  }
-  .visual-content p {
-    max-width: none;
-    font-size: 1.15rem;
-    letter-spacing: 0;
+    min-height: 0;
   }
   .auth-content {
     padding: 2.5rem 1.5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    visibility: visible;
   }
 }
 @media (max-width: 560px) {

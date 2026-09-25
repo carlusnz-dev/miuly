@@ -4,11 +4,13 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { Header } from './components/layout/header/header';
 import { Sidebar } from './components/layout/sidebar/sidebar';
+import { Brand } from './components/ui/brand/brand';
+import { MeshGradient } from './components/ui/mesh-gradient/mesh-gradient';
 import { useSession } from './modules/auth/session';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Sidebar],
+  imports: [RouterOutlet, Header, Sidebar, Brand, MeshGradient],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

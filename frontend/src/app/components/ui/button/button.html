@@ -4,6 +4,7 @@
   [style.--pointer-x]="pointerX()"
   [style.--pointer-y]="pointerY()"
   (pointermove)="move($event)"
+  (pointerdown)="move($event)"
 >
   <span><ng-content /></span>
 </button>

@@ -5,12 +5,19 @@ import { App } from './app';
 
 @Component({ template: 'Login' })
 class LoginStub {}
+@Component({ template: 'Cadastro' })
+class RegisterStub {}
 
 describe('App', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([{ path: 'login', component: LoginStub }])],
+      providers: [
+        provideRouter([
+          { path: 'login', component: LoginStub },
+          { path: 'cadastro', component: RegisterStub },
+        ]),
+      ],
     });
   });
 
@@ -39,5 +46,18 @@ describe('App', () => {
     expect(compiled.querySelector('app-sidebar')).toBeNull();
     expect(compiled.querySelector('header')).toBeNull();
     expect(compiled.querySelector('main')?.textContent).toContain('Login');
+  });
+
+  it('keeps the mesh mounted while switching between login and registration', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    fixture.detectChanges();
+    await router.navigateByUrl('/login');
+    fixture.detectChanges();
+    const mesh = fixture.nativeElement.querySelector('app-mesh-gradient');
+    await router.navigateByUrl('/cadastro');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-mesh-gradient')).toBe(mesh);
+    expect(fixture.nativeElement.querySelector('main')?.textContent).toContain('Cadastro');
   });
 });

@@ -3,21 +3,18 @@
   [class.register]="mode === 'register'"
   [attr.aria-labelledby]="mode === 'login' ? 'login-title' : 'register-title'"
 >
-  <div class="visual-panel">
-    <app-mesh-gradient />
-    <div class="visual-content">
-      <app-brand />
-      <p>Um espaço mais claro para tudo o que importa.</p>
-    </div>
-  </div>
   <div class="auth-content">
     <div class="auth-inner">
-      <p class="eyebrow">{{ mode === 'login' ? 'Boas-vindas de volta' : 'Comece por aqui' }}</p>
+      <p class="eyebrow reveal" style="--i: 0">
+        {{ mode === 'login' ? 'Boas-vindas de volta' : 'Comece por aqui' }}
+      </p>
       @if (mode === 'login') {
-        <h1 id="login-title">Entrar no Miuly</h1>
-        <p class="intro">Acesse seu espaço para organizar o dia.</p>
+        <h1 id="login-title" class="reveal" style="--i: 1">Entrar no Miuly</h1>
+        <p class="intro reveal" style="--i: 2">Acesse seu espaço para organizar o dia.</p>
         <form [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
           <app-field
+            class="reveal"
+            style="--i: 3"
             inputId="login-email"
             label="E-mail"
             type="email"
@@ -27,6 +24,8 @@
             error="Informe um e-mail válido."
           />
           <app-field
+            class="reveal"
+            style="--i: 4"
             inputId="login-password"
             label="Senha"
             type="password"
@@ -38,17 +37,25 @@
           @if (errorMessage()) {
             <p class="form-error" role="alert">{{ errorMessage() }}</p>
           }
-          <app-button type="submit" [disabled]="loginForm.invalid || pending()">{{
-            pending() ? 'Entrando…' : 'Entrar'
-          }}</app-button>
+          <app-button
+            class="reveal"
+            style="--i: 5"
+            type="submit"
+            [disabled]="loginForm.invalid || pending()"
+            >{{ pending() ? 'Entrando…' : 'Entrar' }}</app-button
+          >
         </form>
-        <p class="switch">Ainda não tem conta? <a routerLink="/cadastro">Criar conta</a></p>
+        <p class="switch reveal" style="--i: 6">
+          Ainda não tem conta? <a routerLink="/cadastro">Criar conta</a>
+        </p>
       } @else {
-        <h1 id="register-title">Criar conta</h1>
-        <p class="intro">Seus dados ficam vinculados ao seu perfil.</p>
+        <h1 id="register-title" class="reveal" style="--i: 1">Criar conta</h1>
+        <p class="intro reveal" style="--i: 2">Seus dados ficam vinculados ao seu perfil.</p>
         <form [formGroup]="registerForm" (ngSubmit)="submit()" novalidate>
           <div class="register-fields">
             <app-field
+              class="reveal"
+              style="--i: 3"
               inputId="register-name"
               label="Nome"
               autocomplete="name"
@@ -57,6 +64,8 @@
               error="Informe seu nome."
             />
             <app-field
+              class="reveal"
+              style="--i: 4"
               inputId="register-email"
               label="E-mail"
               type="email"
@@ -66,6 +75,8 @@
               error="Informe um e-mail válido."
             />
             <app-field
+              class="reveal"
+              style="--i: 5"
               inputId="register-username"
               label="Nome de usuário"
               autocomplete="username"
@@ -75,6 +86,8 @@
               error="Use um nome de usuário válido."
             />
             <app-field
+              class="reveal"
+              style="--i: 6"
               inputId="register-password"
               label="Senha"
               type="password"
@@ -88,11 +101,15 @@
           @if (errorMessage()) {
             <p class="form-error" role="alert">{{ errorMessage() }}</p>
           }
-          <app-button type="submit" [disabled]="registerForm.invalid || pending()">{{
-            pending() ? 'Criando conta…' : 'Criar conta'
-          }}</app-button>
+          <app-button
+            class="reveal"
+            style="--i: 7"
+            type="submit"
+            [disabled]="registerForm.invalid || pending()"
+            >{{ pending() ? 'Criando conta…' : 'Criar conta' }}</app-button
+          >
         </form>
-        <p class="switch">Já tem conta? <a routerLink="/login">Entrar</a></p>
+        <p class="switch reveal" style="--i: 8">Já tem conta? <a routerLink="/login">Entrar</a></p>
       }
     </div>
   </div>

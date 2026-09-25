@@ -1,5 +1,14 @@
 @if (authPage()) {
-  <main id="conteudo"><router-outlet /></main>
+  <div class="auth-shell">
+    <div class="visual-panel">
+      <app-mesh-gradient />
+      <div class="visual-content">
+        <app-brand />
+        <p>Um espaço mais claro para tudo o que importa.</p>
+      </div>
+    </div>
+    <main id="conteudo" class="auth-main"><router-outlet /></main>
+  </div>
 } @else {
   <div class="app-shell">
     <app-sidebar />

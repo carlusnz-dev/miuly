@@ -32,12 +32,35 @@ button::before {
   opacity: 0;
   transition: opacity 180ms ease;
 }
+button::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(
+    4rem circle at var(--pointer-x) var(--pointer-y),
+    #ffffffb3,
+    transparent 76%
+  );
+  content: '';
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
 button:hover:not(:disabled) {
   background: var(--miuly-primary-hover);
   box-shadow: 0 0 1.5rem #91dfaa55;
   transform: translateY(-1px);
 }
 button:hover:not(:disabled)::before {
+  opacity: 1;
+}
+button:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 0 0.75rem #91dfaa66;
+}
+button:active:not(:disabled)::before {
+  opacity: 0.35;
+}
+button:active:not(:disabled)::after {
   opacity: 1;
 }
 button:disabled {
@@ -48,7 +71,11 @@ button:disabled {
   button:hover:not(:disabled) {
     transform: none;
   }
-  button::before {
+  button:active:not(:disabled) {
+    transform: none;
+  }
+  button::before,
+  button::after {
     transition: none;
   }
 }
