@@ -101,7 +101,9 @@ tentar novamente sem afirmar que a sessão no servidor foi encerrada.
 
 O `app.routes.ts` registra `home`, `login` e `cadastro` com `loadComponent`. O `App` mostra
 o shell (menu lateral e cabeçalho) somente fora das rotas de autenticação;
-as páginas entram no `router-outlet`. O menu lista as áreas previstas
+nas rotas de autenticação, mantém o painel mesh fora do `router-outlet` para
+que ele não reinicie ao alternar login e cadastro. As páginas entram no
+`router-outlet`. O menu lista as áreas previstas
 como botões desabilitados, sem rotas ou dados simulados. A rota curinga redireciona
 para a página inicial enquanto não houver tela de 404 definida.
 
