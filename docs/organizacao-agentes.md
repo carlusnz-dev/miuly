@@ -47,9 +47,23 @@ receber uma tarefa, o agente garante que sua branch de trabalho foi criada a
 partir de `origin/develop`:
 
 ```bash
-git fetch origin
 git switch -c feature/<slug> origin/develop   # ou fix/<slug>
 ```
+
+Os terminais dos agentes não têm a chave SSH do GitHub carregada: `git fetch` e
+`git push` por SSH falham com `Permission denied (publickey)`, e o Antigravity
+chega a travar esperando o `fetch`. Por isso, os agentes usam o `origin/develop`
+local e não fazem `fetch` nem `push`. Antes de delegar, o Claude atualiza as refs
+por HTTPS com a credencial do `gh`; push e PR também ficam com ele:
+
+```bash
+git -c url."https://github.com/".insteadOf=git@github.com: \
+  -c credential.helper= -c credential.helper='!gh auth git-credential' fetch origin
+```
+
+As refs `origin/*` são compartilhadas por todos os worktrees. Um `fetch` durante
+uma tarefa move o `origin/develop` que o agente usou como base; isso não é motivo
+para `git reset` na branch da tarefa.
 
 **Exceção de empilhamento:** como exceção possível (e não como regra), uma branch
 de documentação pode ser criada tendo como base uma branch de funcionalidade ainda
@@ -156,6 +170,12 @@ orca-ide terminal read --terminal <handle> --json
 ```
 
 O `<handle>` do terminal vem do comando de criação (`terminal create`) ou da listagem (`terminal list`, caso o terminal já esteja aberto ou o Orca tenha sido reiniciado).
+
+Num worktree novo, o `agy` pergunta primeiro se a pasta é confiável; o `wait`
+volta com `blockedReason: "agent-trust-workspace"`. Confirme com
+`terminal send --terminal <handle> --enter` e repita o `wait`. Sem `--agent`, o
+`worktree create` também abre um shell vazio; ele pode ficar ou ser fechado depois
+de conferido.
 
 Só envie o briefing quando o `wait` retornar `satisfied: true`: texto digitado
 enquanto a TUI ainda inicia é perdido. Nunca reenvie por falta de resposta; use
