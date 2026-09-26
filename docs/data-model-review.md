@@ -34,17 +34,23 @@ hash SHA-256 do token. A revogação fica na sessão (`revokedAt` e `revokedReas
 
 ## Finanças
 
-`Finance` representa um lançamento associado a perfil, banco e categoria
-opcional. O valor usa decimal exato, e a moeda é persistida como código de três
-caracteres. `TypeFinance` diferencia entrada, saída e transferência.
+`Finance` representa um lançamento associado a perfil, conta bancária e
+categoria opcional. O valor usa decimal exato (`Numeric(10, 2)`). A moeda (código
+ISO 4217 de três caracteres) pertence à conta (`Bank`); os lançamentos usam a
+moeda da conta de origem, e transferências só ocorrem entre contas da mesma
+moeda. `TypeFinance` diferencia entrada, saída e transferência, sendo a
+transferência representada em uma única linha com conta de origem e de destino.
+Lançamentos sem data de pagamento (`paidAt`) são considerados previstos e não
+entram no cálculo do saldo.
 
 `Bank` resolve a relação anteriormente inexistente e mantém os lançamentos
-separados por perfil. Em decisão de 2026-09-26 tomada por Carlos, ficou
+separados por perfil. Em decisões de 2026-09-26 tomadas por Carlos, ficou
 definido que `Bank` representa uma conta concreta do usuário (ex.: "Nubank
-corrente", "Carteira"), com saldo próprio (`balance`) e nome único por perfil;
-não haverá modelo separado de instituição nem de conta financeira. O próximo
-corte do backend é finanças (`Bank` e `Finance`), cuja especificação e plano
-serão elaborados separadamente.
+corrente", "Carteira"), com saldo inicial (`balance`) e nome único por perfil;
+não haverá modelo separado de instituição nem de conta financeira. O saldo atual
+da conta não é gravado, sendo calculado a partir dos lançamentos pagos. O próximo
+corte do backend é finanças (`Bank` e `Finance`), conforme detalhado no
+[plano do corte 2](plano-corte-2-financas.md).
 
 ## Google Calendar
 
