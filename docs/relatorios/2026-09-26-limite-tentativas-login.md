@@ -41,13 +41,32 @@ migração, acesso ao banco, dependência npm ou push.
 
 - `169d594865ed7dd0aa4d12e518df521b8755510b` — `feat(auth): limita tentativas de login e cadastro`
 - `db9a58d420eeac57f198ec8e3faa7c64544ed3f6` — `docs(auth): registra limite de tentativas`
+- `ce95663` — `docs(auth): registra hash do relatório`
+- `4a49eab91b81a66680393e871d28e1b5b1c32f62` — `fix(auth): reserva tentativas e limita limpeza`
+
+### Revisão de segurança e correções
+
+- Reservada cada tentativa de e-mail com `consume` antes de consultar credenciais
+  e executar scrypt, tornando o limite síncrono frente a logins concorrentes.
+- As reservas por e-mail acontecem de forma síncrona antes do verify: chamadas
+  concorrentes excedentes recebem 429 antes do scrypt. Um login bem-sucedido
+  apaga as reservas do e-mail.
+- A limpeza global de expirados ocorre no máximo a cada 60 segundos; o mapa tem
+  teto de 50.000 chaves e remove expirados e, se necessário, as chaves mais
+  antigas por ordem de inserção.
+- A porta de rate limiter usa `consume`, `check` e `reset`; somente o middleware
+  global define `Retry-After`.
+- O ADR registra o risco de lockout do e-mail provocado por terceiros e sua
+  mitigação pela janela de 15 minutos.
+- Teste de concorrência: 10 logins paralelos com verify de 50 ms produzem no
+  máximo 5 verificações, 5 erros 401 e 5 erros 429.
 
 ### Validações Executadas
 
 - `npm ci`: dependências declaradas instaladas; sem alterações em manifest ou
   lockfile. O npm reportou vulnerabilidades no conjunto de dependências instalado.
-- `npm run check`: aprovado.
-- `npm test`: 35 arquivos e 237 testes aprovados.
+- `npm run check`: aprovado após a revisão de segurança.
+- `npm test`: 35 arquivos e 238 testes aprovados após a revisão de segurança.
 - `npx prettier --check` nos arquivos tocados: aprovado.
 - `git diff --check`: aprovado.
 - Nenhum comando de banco de dados foi executado.
