@@ -14,6 +14,7 @@ Este diretório é a fonte de contexto técnico e funcional do **Miuly**. Toda m
 - **[Modelo de Dados](data-model-review.md):** diagnóstico do contrato Prisma 8 e desenho dos domínios.
 - **[Contribuição e Versionamento](contributing.md):** branches, Conventional Commits e releases.
 - **[Plano do Corte 1 do Backend](plano-corte-1-backend.md):** módulos `auth`, `users`, `tasks` e `apis`, contrato HTTP para o front-end e ordem de implementação.
+- **[Plano do Corte 2 do Backend](plano-corte-2-financas.md):** finanças (`banks` e `finances`), decisões de saldo, moeda e transferência, contrato HTTP e mudanças de contrato pendentes de autorização.
 - **[Decisões Arquiteturais (ADRs)](adr/):** histórico de decisões aceitas ou substituídas ([Modelo de ADR](adr/template.md)).
 - **[Relatórios de Sessões](relatorios/):** registros de execuções efetuadas por LLMs e desenvolvedores ([Modelo de Relatório](relatorios/template.md)).
 
