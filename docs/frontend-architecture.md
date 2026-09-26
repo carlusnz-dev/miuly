@@ -30,7 +30,7 @@ frontend/
         http-response.ts      envelope HTTP compartilhado
         auth.api.ts            DTOs e chamadas de identidade
         auth.interceptor.ts    Bearer e tentativa única de renovação após 401
-        users.api.ts          cliente e DTO de GET /users/:id
+        users.api.ts          cliente e DTOs das rotas /users/me
         users.api.spec.ts     contrato de requisição testado
       components/
         ui/
@@ -68,7 +68,8 @@ app shell -> components/layout -> components/ui
 - `api/` concentra URL, método HTTP e DTOs de transporte. O código de páginas
   consome serviços dessa pasta, sem espalhar `HttpClient` ou caminhos de API.
 - DTOs refletem o contrato público, não os tipos Prisma. O envelope atual de
-  sucesso é `{ ok, message, data }`; datas de `UserDto` são strings ISO 8601.
+  sucesso é `{ ok, message, data }`; datas de `UserResponse` e `ProfileResponse`
+  são strings ISO 8601.
   Os tipos TypeScript não fazem validação em tempo de execução.
 - Regras de domínio, autorização e propriedade dos dados permanecem no backend.
   O frontend pode controlar apresentação e navegação, mas não substitui
@@ -76,9 +77,9 @@ app shell -> components/layout -> components/ui
 - `AuthApi` espelha os DTOs de `backend/src/modules/auth/contract.ts` da branch
   `feature/modulos-corte-1` e o contrato HTTP em `docs/plano-corte-1-backend.md`.
   O backend ainda precisa publicar as rotas para integração ponta a ponta.
-- `UsersApi` é um cliente da fundação anterior para `GET /users/:id`, sem uso nas
-  telas. O corte 1 do backend remove essa rota; atualizá-lo quando o novo
-  contrato de `users` for integrado.
+- `UsersApi` espelha as rotas autenticadas `GET/PATCH /users/me`,
+  `PUT /users/me/password` e `GET/PATCH /users/me/profile` do contrato de `users`.
+  Nenhuma tela consome esse cliente ainda.
 
 ## Sessão e autenticação
 
