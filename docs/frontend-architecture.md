@@ -73,9 +73,10 @@ app shell -> components/layout -> components/ui
 - Regras de domínio, autorização e propriedade dos dados permanecem no backend.
   O frontend pode controlar apresentação e navegação, mas não substitui
   verificações de segurança da API.
-- `AuthApi` espelha os DTOs de `backend/src/modules/auth/contract.ts` da branch
-  `feature/modulos-corte-1` e o contrato HTTP em `docs/plano-corte-1-backend.md`.
-  O backend ainda precisa publicar as rotas para integração ponta a ponta.
+- `AuthApi` espelha os DTOs de `backend/src/modules/auth/contract.ts` e o contrato
+  HTTP em `docs/plano-corte-1-backend.md`. As rotas de autenticação estão
+  integradas em `develop` desde o PR #7 e foram validadas de ponta a ponta com o
+  frontend em 24/09 (ver [relatório de migração](relatorios/2026-09-24-migracao-corte-1.md)).
 - `UsersApi` é um cliente da fundação anterior para `GET /users/:id`, sem uso nas
   telas. O corte 1 do backend remove essa rota; atualizá-lo quando o novo
   contrato de `users` for integrado.
