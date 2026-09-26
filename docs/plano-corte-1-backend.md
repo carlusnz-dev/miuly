@@ -145,8 +145,9 @@ Regras de entrada:
   - no `PATCH`, enviar `tags` substitui o conjunto (`[]` remove todas), e omitir
     mantém as atuais;
   - a resposta traz `tags: { id, name, slugUrl }[]`;
-  - 409 raro indica que outra requisição criou a mesma tag ao mesmo tempo: basta
-    repetir.
+  - se outra requisição criar a mesma tag ao mesmo tempo, o servidor repete a
+    transação uma vez; se a segunda tentativa também falhar por unicidade,
+    responde 409.
 - `DELETE` remove a tarefa e seus vínculos; as tags continuam no perfil.
 
 ### `apis` (Bearer)
