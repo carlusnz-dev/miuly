@@ -39,9 +39,12 @@ opcional. O valor usa decimal exato, e a moeda é persistida como código de tr�
 caracteres. `TypeFinance` diferencia entrada, saída e transferência.
 
 `Bank` resolve a relação anteriormente inexistente e mantém os lançamentos
-separados por perfil. Antes de evoluir o módulo, deve ser decidido se `Bank`
-representará uma conta concreta ou apenas a instituição; o segundo caso exige um
-modelo adicional de conta financeira.
+separados por perfil. Em decisão de 2026-09-26 tomada por Carlos, ficou
+definido que `Bank` representa uma conta concreta do usuário (ex.: "Nubank
+corrente", "Carteira"), com saldo próprio (`balance`) e nome único por perfil;
+não haverá modelo separado de instituição nem de conta financeira. O próximo
+corte do backend é finanças (`Bank` e `Finance`), cuja especificação e plano
+serão elaborados separadamente.
 
 ## Google Calendar
 
