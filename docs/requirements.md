@@ -10,14 +10,14 @@ Os requisitos funcionais descrevem as capacidades, fluxos de negócio e operaç�
 
 | Código | Módulo Afetado | Descrição do Requisito | Critérios de Aceite |
 | --- | --- | --- | --- |
-| **RF-001** | `identity` | Cadastro e Autenticação de Usuários | Permite registrar usuário com nome, e-mail único e senha criptografada (`hashPassword`). Cria automaticamente um perfil (`Profile`) associado. |
-| **RF-002** | `identity` | Gestão de Perfil do Usuário | Permite consultar e atualizar bio, foto (`urlPhoto`), username e slug de URL do perfil (`slugUrl`). |
-| **RF-003** | `identity` | Conexão OAuth 2.0 com Provedores Externos (Google) | Registra conexões de API externa (`Api`) mantendo escopos concedidos, expiração (`startTime`, `endTime`) e estado de ativação. |
-| **RF-004** | `identity` | Revogação de Conexão Externa | A revogação interrompe imediatamente a sincronização de dados e habilita a remoção dos dados importados conforme a política de privacidade. |
+| **RF-001** | `identity` (`auth`) | Cadastro e Autenticação de Usuários | Permite registrar usuário com nome, e-mail único e senha criptografada (`hashPassword`). Cria automaticamente um perfil (`Profile`) associado. |
+| **RF-002** | `identity` (`users`) | Gestão de Perfil do Usuário | Permite consultar e atualizar bio, foto (`urlPhoto`), username e slug de URL do perfil (`slugUrl`). |
+| **RF-003** | `identity` (`apis`) | Conexão OAuth 2.0 com Provedores Externos (Google) | Registra conexões de API externa (`Api`) mantendo escopos concedidos, expiração (`startTime`, `endTime`) e estado de ativação. |
+| **RF-004** | `identity` (`apis`) | Revogação de Conexão Externa | A revogação interrompe imediatamente a sincronização de dados e habilita a remoção dos dados importados conforme a política de privacidade. |
 | **RF-005** | `finance` | Gestão de Instituições Bancárias e Contas (`Bank`) | Cadastro e listagem de bancos/contas por perfil com saldo inicial armazenado com precisão decimal exata (`Numeric(10,2)`). |
 | **RF-006** | `finance` | Registro de Lançamentos Financeiros (`Finance`) | Permite criar lançamentos de Entrada (`Inflow`), Saída (`Outflow`) e Transferência (`Transfer`), vinculados a um banco, valor, moeda ISO 4217 e categoria (`Tag`). |
 | **RF-007** | `finance` | Transferências entre Contas Bancárias | Processa transferências afetando as duas pontas (origem/destino) de forma atômica sem duplicar receitas ou despesas nas estatísticas. |
-| **RF-008** | `tasks` | Gestão de Tarefas e Agendamentos (`Task`) | Criação, edição e exclusão de tarefas contendo título, observações, prioridade (`Low`, `Medium`, `High`, `Archived`), estado de conclusão (`done`) e data agendada (`scheduledAt`). |
+| **RF-008** | `tasks` | Gestão de Tarefas e Agendamentos (`Task`) | Criação, edição e exclusão de tarefas contendo título, observações, prioridade (API pública: `low`, `medium`, `high`, `archived`; valor armazenado: `low`, `medium`, `urgent`, `archived`, onde o membro `High` do enum é persistido como `"urgent"`), estado de conclusão (`done`) e data agendada (`scheduledAt`). |
 | **RF-009** | `tasks` | Categorização e Associação N:N de Tags | Permite vincular múltiplas tags a tarefas através da junção explícita `tasks_tags` e filtrar tarefas por tags ativas. |
 | **RF-010** | `calendar` | Sincronização e Espelhamento do Google Calendar (`Event`) | Espelha eventos utilizando `googleCalendarId`, `googleEventId`, `etag`, datas/instantes (`startAt`, `endAt`, `startDate`, `endDate`), fuso horário e eventos de dia inteiro (`allDay`). |
 | **RF-011** | `calendar` | Processamento Idempotente de Eventos | A recepção repetida da mesma notificação ou evento do Google não gera duplicatas nem corrompe os dados existentes. |

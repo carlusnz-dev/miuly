@@ -20,7 +20,7 @@ frontend/
   src/
     index.html                documento HTML e idioma
     main.ts                   bootstrap da aplicação
-    proxy.conf.json           /users/** -> backend local
+    proxy.conf.json           /auth/**, /users/**, /tasks/**, /apis/** -> backend local
     styles.scss               base visual global
     app/
       app.ts|html|scss        shell com layout e router-outlet
@@ -34,10 +34,13 @@ frontend/
         users.api.spec.ts     contrato de requisição testado
       components/
         ui/
-          brand/             componente visual reutilizável
+          brand/             marca SVG reutilizável
+          button/            botão com brilho no hover
+          field/             campo flutuante e mensagens de erro
+          mesh-gradient/     painel visual decorativo
         layout/
-          header/            cabeçalho e link para conteúdo
-          footer/            rodapé
+          header/            cabeçalho interno do shell e logout
+          sidebar/           navegação dos domínios previstos
       modules/
         auth/
           session.ts          estado em signals e hook useSession
@@ -96,17 +99,21 @@ tentar novamente sem afirmar que a sessão no servidor foi encerrada.
 
 ## Roteamento, estilos e execução
 
-O `app.routes.ts` registra `home`, `login` e `cadastro` com `loadComponent`. O `App` é o shell
-persistente; páginas entram no `router-outlet`. A rota curinga redireciona
+O `app.routes.ts` registra `home`, `login` e `cadastro` com `loadComponent`. O `App` mostra
+o shell (menu lateral e cabeçalho) somente fora das rotas de autenticação;
+nas rotas de autenticação, mantém o painel mesh fora do `router-outlet` para
+que ele não reinicie ao alternar login e cadastro. As páginas entram no
+`router-outlet`. O menu lista as áreas previstas
+como botões desabilitados, sem rotas ou dados simulados. A rota curinga redireciona
 para a página inicial enquanto não houver tela de 404 definida.
 
 Sass está configurado no `angular.json` e em arquivos `.scss`. A base global
-em `src/styles.scss` contém tokens semânticos do tema escuro, foco visível e
+em `src/styles.scss` contém tokens semânticos do tema escuro com primária verde, foco visível e
 preferência por movimento reduzido; estilos de componentes ficam próximos do
 HTML/TypeScript correspondente. A direção está em [docs/style](style/README.md).
-Não adicionar Tailwind.
+Ícones da navegação usam `@lucide/angular` standalone. Não adicionar Tailwind.
 
-Em desenvolvimento, a SPA chama `/auth/**` e `/users/**` na mesma origem. O proxy
+Em desenvolvimento, a SPA chama `/auth/**`, `/users/**`, `/tasks/**` e `/apis/**` na mesma origem. O proxy
 do Angular encaminha essas rotas para `localhost:8080`. Em implantação,
 configurar o servidor da SPA para encaminhá-las à API e servir `index.html` nas
 rotas de navegação.

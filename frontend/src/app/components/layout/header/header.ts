@@ -1,11 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { Brand } from '../../ui/brand/brand';
+import { Router } from '@angular/router';
 import { useSession } from '../../../modules/auth/session';
 
 @Component({
   selector: 'app-header',
-  imports: [Brand, RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })

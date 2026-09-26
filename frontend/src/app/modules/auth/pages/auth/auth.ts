@@ -3,10 +3,12 @@ import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { useSession } from '../../session';
+import { Button } from '../../../../components/ui/button/button';
+import { Field } from '../../../../components/ui/field/field';
 
 @Component({
   selector: 'app-auth',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Button, Field],
   templateUrl: './auth.html',
   styleUrl: './auth.scss',
 })

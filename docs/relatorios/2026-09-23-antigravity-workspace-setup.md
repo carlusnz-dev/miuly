@@ -13,7 +13,7 @@ Criação e Consolidação da Estrutura de Workspace do Antigravity para o Repos
 
 Nesta sessão, foi estruturado o workspace do **Google Antigravity** no repositório **Miuly**. O objetivo principal foi capacitar o Antigravity como o **Desenvolvedor Sênior Orquestrador** do projeto, unificando e harmonizando as governanças e habilidades (skills) pré-existentes do Claude Code e do Codex CLI.
 
-A estrutura criada garante interoperabilidade entre LLMs, conformidade estrita com o [ADR 0001](docs/adr/0001-uso-de-llm-para-codificacao.md) e [`AGENTS.md`](AGENTS.md), e institui regras modulares de Clean Architecture, Git Flow e Prisma ORM 8.
+A estrutura criada garante interoperabilidade entre LLMs, conformidade estrita com o [ADR 0001](../adr/0001-uso-de-llm-para-codificacao.md) e [`AGENTS.md`](../../AGENTS.md), e institui regras modulares de Clean Architecture, Git Flow e Prisma ORM 8.
 
 ---
 

@@ -1,13 +1,13 @@
 header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1rem;
   position: relative;
   min-height: 4.5rem;
   padding: 1rem clamp(1rem, 4vw, 3rem);
   border-bottom: 1px solid var(--miuly-border);
-  background: var(--miuly-surface);
+  background: var(--miuly-bg);
 }
 
 nav {
@@ -17,18 +17,12 @@ nav {
   gap: 1rem;
   color: var(--miuly-text-muted);
 }
-nav a {
-  color: var(--miuly-text);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 160ms ease;
-}
-nav a:hover {
-  color: var(--miuly-accent);
-}
 nav button {
-  border: 0;
-  background: transparent;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--miuly-border);
+  border-radius: 0.65rem;
+  background: var(--miuly-surface);
   color: var(--miuly-text);
   cursor: pointer;
   font: inherit;
@@ -36,10 +30,10 @@ nav button {
   transition: color 160ms ease;
 }
 nav button:hover {
-  color: var(--miuly-accent);
+  color: var(--miuly-primary);
 }
-nav :is(a, button):focus-visible {
-  outline: 2px solid var(--miuly-accent);
+nav button:focus-visible {
+  outline: 2px solid var(--miuly-primary);
   outline-offset: 3px;
 }
 .user-name {
