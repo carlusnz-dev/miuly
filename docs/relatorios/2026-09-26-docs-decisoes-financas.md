@@ -17,8 +17,11 @@
 ## 1. Resumo Executivo
 
 Nesta sessão, foram registradas na documentação do projeto as decisões tomadas por Carlos em 26/09/2026 relativas ao domínio financeiro:
-1. O modelo `Bank` representa uma conta concreta do usuário (ex.: "Nubank corrente", "Carteira"), com saldo próprio (`balance`) e nome único por perfil (`profileId` + `name`), eliminando a necessidade de modelos separados para instituição ou conta.
-2. O próximo corte do backend é finanças (`Bank` e `Finance`), cuja especificação e plano detalhado serão elaborados pelo Claude Code.
+1. O modelo `Bank` representa uma conta concreta do usuário (ex.: "Nubank corrente", "Carteira"), com saldo inicial (`balance`) e nome único por perfil (`profileId` + `name`), eliminando a necessidade de modelos separados para instituição ou conta. O saldo atual é calculado dinamicamente na leitura a partir dos lançamentos pagos e não é gravado.
+2. A moeda (ISO 4217) pertence à conta bancária (`Bank`); os lançamentos usam a moeda da conta de origem, e transferências só ocorrem entre contas da mesma moeda.
+3. Transferências financeiras são registradas em uma única linha com conta de origem (`bankId`) e conta de destino (`destinationBankId`), sem duplicar entradas e saídas nas estatísticas.
+4. Lançamentos sem `paidAt` são considerados previstos e não compõem o saldo.
+5. O próximo corte do backend é finanças (`Bank` e `Finance`), detalhado no plano do corte 2 (`plano-corte-2-financas.md`).
 
 Além disso, foi atualizado o parágrafo de `AuthApi` em `docs/frontend-architecture.md`, removendo referências obsoletas à branch `feature/modulos-corte-1` e ao estado pendente de publicação de rotas, registrando que as rotas de autenticação estão integradas em `develop` desde o PR #7 e foram validadas de ponta a ponta com o frontend em 24/09/2026. O parágrafo de `UsersApi` foi estritamente preservado.
 
@@ -28,11 +31,14 @@ Além disso, foi atualizado o parágrafo de `AuthApi` em `docs/frontend-architec
 
 ### Documentação
 - `docs/data-model-review.md`:
-  - Atualizada a seção "Finanças" para registrar a decisão de 26/09/2026 de Carlos definindo `Bank` como conta concreta com saldo próprio e unicidade por perfil.
-  - Registrado que o próximo corte do backend é finanças (`Bank` e `Finance`), sem antecipar requisitos ou regras não decididas.
+  - Atualizada a seção "Finanças" para registrar a decisão de 26/09/2026 de Carlos definindo `Bank` como conta concreta com nome único por perfil e saldo inicial (`balance`).
+  - Registrado que o saldo atual da conta é calculado dinamicamente na leitura a partir dos lançamentos pagos e não é gravado.
+  - Documentado que a moeda ISO 4217 pertence à conta (`Bank`), os lançamentos usam a moeda da conta de origem, transferências ocorrem apenas entre contas da mesma moeda e são representadas em uma única linha (origem e destino).
+  - Lançamentos sem data de pagamento (`paidAt`) são considerados previstos e não afetam o saldo.
+  - Adicionado link relativo para o plano do corte 2 em `plano-corte-2-financas.md`.
   - A seção "Decisões pendentes" não trata mais a representação de `Bank` como aberta.
 - `docs/requirements.md`:
-  - Atualizados os requisitos funcionais RF-005, RF-006 e RF-007 para refletir `Bank` como conta bancária concreta (com saldo próprio e nome único por perfil), ajustando os vínculos de lançamentos e transferências.
+  - Atualizados os requisitos funcionais RF-005, RF-006 e RF-007 para especificar que `Bank.balance` é o saldo inicial com cálculo de saldo atual na leitura, moeda vinculada à conta, lançamentos previstos (`paidAt` nulo) fora do saldo e transferências em linha única com origem e destino de mesma moeda.
 - `docs/frontend-architecture.md`:
   - Atualizado exclusivamente o parágrafo de `AuthApi` na seção "Limites de dependência", referenciando o PR #7 e a validação ponta a ponta documentada em `docs/relatorios/2026-09-24-migracao-corte-1.md`.
   - O parágrafo de `UsersApi` permaneceu inalterado.
@@ -40,7 +46,8 @@ Além disso, foi atualizado o parágrafo de `AuthApi` em `docs/frontend-architec
 ### Commits Criados
 - `093c999` — `docs(finance): registra Bank como conta concreta e próximo corte`
 - `3d6a195` — `docs(frontend): atualiza status de integração do AuthApi`
-- `fcd1dbb` — `docs(relatorios): registra decisões de finanças e atualização do AuthApi`
+- `3d28b4a` — `docs(relatorios): registra decisões de finanças e atualização do AuthApi`
+- `c5b74e8` — `docs(finance): alinha requisitos às decisões de saldo, moeda e transferência`
 
 ### Validações Executadas
 - `git diff --check`: executado sem apontamento de erros de espaçamento ou quebras indevidas;
