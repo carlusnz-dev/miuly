@@ -98,8 +98,16 @@ As forças em jogo são:
   perdido exigiria guardar o valor em claro ou permitir mais de um sucessor, e as
   duas opções enfraquecem a detecção de reuso.
 - O scrypt custa CPU e memória a cada login, e o corte 1 ainda não limita
-  tentativas. **Mitigação:** o limite de tentativas é obrigatório antes de qualquer
-  deploy público.
+  tentativas. **Mitigação:** antes de deploy público, `POST /auth/login` limita
+  cada IP a 20 tentativas por 15 minutos e cada e-mail normalizado a 5 falhas por
+  15 minutos; um login bem-sucedido limpa as falhas daquele e-mail.
+  `POST /auth/register` limita cada IP a 5 tentativas por hora. O excesso retorna
+  429 com `Retry-After` e mensagem genérica. Os contadores são mantidos em memória:
+  funcionam somente em instância única e zeram ao reiniciar. Atrás de proxy
+  reverso, `trust proxy` precisa ser configurado para `req.ip` representar o IP
+  real; ele não é habilitado por padrão. **Risco aceito:** terceiros podem
+  provocar o bloqueio do e-mail da vítima após cinco falhas, impedindo tentativas
+  por até 15 minutos; a janela curta limita a duração desse lockout.
 - Um segredo JWT fraco compromete tudo. **Mitigação:** `JWT_SECRET` é validado no
   `env.ts` com pelo menos 32 caracteres.
 

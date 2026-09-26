@@ -1,6 +1,11 @@
 import { BaseService } from '../../core/base';
-import { ConflictError, UnauthorizedError } from '../../core/error';
+import {
+  ConflictError,
+  TooManyRequestsError,
+  UnauthorizedError,
+} from '../../core/error';
 import type { PasswordHasher } from '../../core/security/password';
+import type { RateLimiter } from '../../core/security/rate-limiter';
 import type { AuthContext } from '../../core/types/auth';
 import {
   REFRESH_TOKEN_TTL_SECONDS,
@@ -30,7 +35,11 @@ export interface AuthServiceDeps {
   passwords: PasswordHasher;
   tokens: TokenService;
   now?: () => Date;
+  loginEmailLimiter?: RateLimiter;
 }
+
+export const LOGIN_EMAIL_FAILURE_LIMIT = 5;
+export const LOGIN_EMAIL_WINDOW_MS = 15 * 60 * 1000;
 
 // Renovações simultâneas de abas diferentes dentro desta janela recebem 409
 // em vez de disparar a detecção de reuso.
@@ -71,15 +80,26 @@ export class AuthServiceImpl
   }
 
   async login(input: LoginInput): Promise<AuthSession> {
-    const credentials = await this.repository.findCredentialsByEmail(
-      input.email,
-    );
+    const normalizedEmail = input.email.trim().toLowerCase();
+    const failureKey = `login-email-failure:${normalizedEmail}`;
+    if (this.deps.loginEmailLimiter) {
+      const retryAfter = this.deps.loginEmailLimiter.consume(
+        failureKey,
+        LOGIN_EMAIL_FAILURE_LIMIT,
+        LOGIN_EMAIL_WINDOW_MS,
+      );
+      if (retryAfter !== undefined) throw new TooManyRequestsError(retryAfter);
+    }
+    const credentials =
+      await this.repository.findCredentialsByEmail(normalizedEmail);
     const stored = credentials?.hashPassword ?? (await this.getDummyHash());
     const valid = await this.deps.passwords.verify(input.password, stored);
 
     if (!credentials || !valid) {
       throw new UnauthorizedError(INVALID_CREDENTIALS);
     }
+
+    this.deps.loginEmailLimiter?.reset(failureKey);
 
     const cutoff = new Date(this.now().getTime() - STALE_SESSION_MS);
     await this.repository.deleteStaleSessions(credentials.user.id, cutoff);

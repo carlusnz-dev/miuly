@@ -12,12 +12,14 @@ export interface FakeResponse {
   statusCode: number;
   body: unknown;
   headersSent: boolean;
+  headers: Record<string, string>;
   locals: Record<string, unknown>;
   cookies: FakeCookie[];
   status(code: number): FakeResponse;
   json(body: unknown): FakeResponse;
   cookie(name: string, value: string, options: unknown): FakeResponse;
   clearCookie(name: string, options: unknown): FakeResponse;
+  setHeader(name: string, value: string): FakeResponse;
 }
 
 export function fakeResponse(): FakeResponse {
@@ -25,6 +27,7 @@ export function fakeResponse(): FakeResponse {
     statusCode: 200,
     body: undefined,
     headersSent: false,
+    headers: {},
     locals: {},
     cookies: [],
     status(code) {
@@ -41,6 +44,10 @@ export function fakeResponse(): FakeResponse {
     },
     clearCookie(name, options) {
       this.cookies.push({ name, cleared: true, options });
+      return this;
+    },
+    setHeader(name, value) {
+      this.headers[name] = value;
       return this;
     },
   };
