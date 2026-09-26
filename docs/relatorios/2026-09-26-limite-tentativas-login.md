@@ -40,7 +40,7 @@ migração, acesso ao banco, dependência npm ou push.
 ### Commits Criados
 
 - `169d594865ed7dd0aa4d12e518df521b8755510b` — `feat(auth): limita tentativas de login e cadastro`
-- `HASH_RELATORIO` — `docs(auth): registra limite de tentativas`
+- `db9a58d420eeac57f198ec8e3faa7c64544ed3f6` — `docs(auth): registra limite de tentativas`
 
 ### Validações Executadas
 
