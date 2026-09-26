@@ -161,7 +161,7 @@ describe('AuthServiceImpl.login', () => {
     );
     const input = { email: 'ANA@EXAMPLE.COM', password: 'x' };
 
-    for (let attempt = 0; attempt < 4; attempt += 1) {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
       await expect(failedLogin.service.login(input)).rejects.toThrow(
         UnauthorizedError,
       );
@@ -186,15 +186,65 @@ describe('AuthServiceImpl.login', () => {
     );
     const blockedInput = { email: 'ana@example.com', password: 'x' };
     for (let attempt = 0; attempt < 5; attempt += 1) {
-      await expect(blocked.service.login(blockedInput)).rejects.toThrow(
-        UnauthorizedError,
-      );
+      const attemptResult = blocked.service.login(blockedInput);
+      await expect(attemptResult).rejects.toThrow(UnauthorizedError);
     }
     vi.mocked(blocked.passwords.verify).mockClear();
     await expect(blocked.service.login(blockedInput)).rejects.toThrow(
       TooManyRequestsError,
     );
     expect(blocked.passwords.verify).not.toHaveBeenCalled();
+  });
+
+  it('reserva vagas antes do verify em logins concorrentes', async () => {
+    const limiter = new InMemoryRateLimiter(() => NOW.getTime());
+    let verified = 0;
+    const repository: AuthRepository = {
+      findCredentialsByEmail: vi.fn(async () => ({
+        user: makeAuthUser(),
+        hashPassword: 'hash-real',
+      })),
+      findAuthUser: vi.fn(async () => makeAuthUser()),
+      createAccount: vi.fn(async () => makeAuthUser()),
+      createSession: vi.fn(async () => {}),
+      findRefreshToken: vi.fn(async () => makeStoredToken()),
+      rotateRefreshToken: vi.fn(async () => true),
+      revokeSession: vi.fn(async () => {}),
+      revokeAllSessions: vi.fn(async () => {}),
+      deleteStaleSessions: vi.fn(async () => {}),
+    };
+    const passwords: PasswordHasher = {
+      hash: vi.fn(async (password) => `hash(${password})`),
+      verify: vi.fn(async () => {
+        verified += 1;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        return false;
+      }),
+    };
+    const { tokens } = setup();
+    const service = new AuthServiceImpl(repository, {
+      passwords,
+      tokens,
+      now: () => NOW,
+      loginEmailLimiter: limiter,
+    });
+
+    const results = await Promise.all(
+      Array.from({ length: 10 }, () =>
+        service
+          .login({ email: 'same@example.com', password: 'wrong' })
+          .then(() => 'success')
+          .catch((error: unknown) => error),
+      ),
+    );
+
+    expect(verified).toBe(5);
+    expect(
+      results.filter((result) => result instanceof TooManyRequestsError),
+    ).toHaveLength(5);
+    expect(
+      results.filter((result) => result instanceof UnauthorizedError),
+    ).toHaveLength(5);
   });
 
   it('isola contadores de falhas entre e-mails e expira após a janela', async () => {

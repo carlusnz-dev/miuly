@@ -105,7 +105,9 @@ As forças em jogo são:
   429 com `Retry-After` e mensagem genérica. Os contadores são mantidos em memória:
   funcionam somente em instância única e zeram ao reiniciar. Atrás de proxy
   reverso, `trust proxy` precisa ser configurado para `req.ip` representar o IP
-  real; ele não é habilitado por padrão.
+  real; ele não é habilitado por padrão. **Risco aceito:** terceiros podem
+  provocar o bloqueio do e-mail da vítima após cinco falhas, impedindo tentativas
+  por até 15 minutos; a janela curta limita a duração desse lockout.
 - Um segredo JWT fraco compromete tudo. **Mitigação:** `JWT_SECRET` é validado no
   `env.ts` com pelo menos 32 caracteres.
 

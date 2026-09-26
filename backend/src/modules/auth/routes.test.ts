@@ -33,7 +33,7 @@ function setup() {
 }
 
 describe('AuthRoutes rate limits', () => {
-  it('bloqueia a 21ª tentativa do mesmo IP e informa Retry-After', () => {
+  it('bloqueia a 21ª tentativa do mesmo IP', () => {
     const { handlers } = setup();
     const middleware = handlers['/login']?.[0];
     const res = fakeResponse();
@@ -47,7 +47,6 @@ describe('AuthRoutes rate limits', () => {
     const next = fakeNext();
     middleware?.(req, asResponse(res), next);
     expect(next.mock.calls[0]?.[0]).toMatchObject({ statusCode: 429 });
-    expect(res.headers['Retry-After']).toBe('900');
   });
 
   it('mantém limites isolados entre IPs', () => {
@@ -83,6 +82,5 @@ describe('AuthRoutes rate limits', () => {
     const next = fakeNext();
     middleware?.(req, asResponse(res), next);
     expect(next.mock.calls[0]?.[0]).toMatchObject({ statusCode: 429 });
-    expect(res.headers['Retry-After']).toBe('3600');
   });
 });

@@ -49,13 +49,8 @@ export class AuthRoutes extends BaseRoutes<AuthController, Router> {
         next(error);
         return;
       }
-      if (retryAfter !== undefined) {
-        const error = new TooManyRequestsError(retryAfter);
-        res.setHeader('Retry-After', String(error.retryAfterSeconds));
-        next(error);
-        return;
-      }
-      next();
+      if (retryAfter !== undefined) next(new TooManyRequestsError(retryAfter));
+      else next();
     };
   }
 }

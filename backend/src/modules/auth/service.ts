@@ -83,7 +83,11 @@ export class AuthServiceImpl
     const normalizedEmail = input.email.trim().toLowerCase();
     const failureKey = `login-email-failure:${normalizedEmail}`;
     if (this.deps.loginEmailLimiter) {
-      const retryAfter = this.deps.loginEmailLimiter.check(failureKey);
+      const retryAfter = this.deps.loginEmailLimiter.consume(
+        failureKey,
+        LOGIN_EMAIL_FAILURE_LIMIT,
+        LOGIN_EMAIL_WINDOW_MS,
+      );
       if (retryAfter !== undefined) throw new TooManyRequestsError(retryAfter);
     }
     const credentials =
@@ -92,15 +96,6 @@ export class AuthServiceImpl
     const valid = await this.deps.passwords.verify(input.password, stored);
 
     if (!credentials || !valid) {
-      if (this.deps.loginEmailLimiter) {
-        const retryAfter = this.deps.loginEmailLimiter.incrementFailure(
-          failureKey,
-          LOGIN_EMAIL_FAILURE_LIMIT,
-          LOGIN_EMAIL_WINDOW_MS,
-        );
-        if (retryAfter !== undefined)
-          throw new TooManyRequestsError(retryAfter);
-      }
       throw new UnauthorizedError(INVALID_CREDENTIALS);
     }
 
