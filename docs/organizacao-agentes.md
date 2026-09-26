@@ -29,27 +29,54 @@ Regras que valem para todos, detalhadas no `AGENTS.md`:
 
 ## Onde cada agente trabalha
 
-Cada agente tem um **worktree fixo** no Orca e troca de **branch por tarefa**. O
-worktree é o lugar de trabalho; a branch é a tarefa. Assim, dois agentes nunca
-editam a mesma cópia do repositório.
+O Claude trabalha diretamente no repositório principal (`~/Documentos/Projetos/miuly`).
+Para o Codex e o Gemini (Antigravity), os worktrees no Orca são criados **por tarefa**
+em `~/orca/workspaces/miuly/<slug>` (por exemplo: `remodelacao-front`,
+`docs-remodelacao-front`), cada um com a branch da sua respectiva tarefa. Assim,
+dois agentes nunca editam o mesmo worktree nem a mesma cópia do repositório.
 
-| Agente | Worktree | Workspace no Orca |
+| Agente | Local de trabalho | Descrição no Orca |
 | --- | --- | --- |
-| Claude | `~/Documentos/Projetos/miuly` (repositório principal) | `feature/...` da tarefa corrente |
-| Codex | `~/orca/workspaces/miuly/Dev-senior` | "Dev senior" |
-| Gemini | `~/orca/workspaces/miuly/Documentação-do-projeto` | "Documentação do projeto" |
+| Claude | `~/Documentos/Projetos/miuly` (repositório principal) | Repositório base / branch da tarefa corrente |
+| Codex | `~/orca/workspaces/miuly/<slug>` | Worktree isolado criado por tarefa de desenvolvimento |
+| Gemini | `~/orca/workspaces/miuly/<slug>` | Worktree isolado criado por tarefa de documentação |
 
-A branch que o Orca cria junto com o worktree (`carlusnz-dev/Dev-senior`,
-`Documentação-do-projeto`) serve só de ponto de partida e **não é publicada**. Ao
-receber uma tarefa, o agente cria a branch dela a partir de `develop`:
+A branch que o Orca cria automaticamente junto com o worktree (por exemplo
+`carlusnz-dev/<slug>`) serve apenas de ponto de partida e **não é publicada**. Ao
+receber uma tarefa, o agente garante que sua branch de trabalho foi criada a
+partir de `origin/develop`:
 
 ```bash
-git fetch origin
 git switch -c feature/<slug> origin/develop   # ou fix/<slug>
 ```
 
-Não edite arquivos no worktree de outro agente. Se precisar do trabalho dele,
-espere o PR ser integrado em `develop` e atualize a sua branch.
+Os terminais dos agentes não têm a chave SSH do GitHub carregada: `git fetch` e
+`git push` por SSH falham com `Permission denied (publickey)`, e o Antigravity
+chega a travar esperando o `fetch`. Por isso, os agentes usam o `origin/develop`
+local e não fazem `fetch` nem `push`. Antes de delegar, o Claude atualiza as refs
+por HTTPS com a credencial do `gh`; push e PR também ficam com ele:
+
+```bash
+git -c url."https://github.com/".insteadOf=git@github.com: \
+  -c credential.helper= -c credential.helper='!gh auth git-credential' fetch origin
+```
+
+As refs `origin/*` são compartilhadas por todos os worktrees. Um `fetch` durante
+uma tarefa move o `origin/develop` que o agente usou como base; isso não é motivo
+para `git reset` na branch da tarefa.
+
+**Exceção de empilhamento:** como exceção possível (e não como regra), uma branch
+de documentação pode ser criada tendo como base uma branch de funcionalidade ainda
+não integrada em `develop`, caso a documentação dependa diretamente das mudanças
+dessa funcionalidade (como ocorreu no PR #9, cuja base foi `feature/remodelacao-front`).
+Essa dependência deve ser explicitada no briefing da tarefa.
+
+Não edite arquivos no worktree de outro agente. Se precisar do trabalho dele, a
+regra é esperar o PR ser integrado em `develop` e atualizar a sua branch.
+
+Como recomendação (e não regra aprovada), sugere-se que o worktree da tarefa seja
+removido no Orca após a conclusão e o merge do PR correspondente em `develop`,
+mantendo o ambiente limpo.
 
 ## Fluxo de uma mudança
 
@@ -104,26 +131,51 @@ Só a resposta volta; nada é editado. Ferramentas: `analyze_files`, `deep_searc
 
 ### Terminais do Orca: tarefas que alteram o repositório
 
-Para tarefas que produzem commits, o Claude envia um briefing ao agente que já
-está aberto no terminal do workspace dele, usando a CLI do Orca. Não é preciso
-nenhum MCP adicional. Dentro de um terminal do Orca, o comando é `orca`; fora dele,
-use `orca-ide`, porque `orca` pode ser o leitor de tela do GNOME.
+Para tarefas que produzem commits, o Claude cria um worktree por tarefa no Orca
+e delega ao respectivo agente via CLI do Orca. Não é preciso nenhum MCP adicional.
+Dentro de um terminal do Orca, o comando é `orca`; fora dele, use `orca-ide`,
+porque `orca` pode ser o leitor de tela do GNOME.
+
+O fluxo de delegação varia de acordo com o agente:
+
+#### Delegação para o Codex
+
+O Claude pode criar o worktree e já inicializar o Codex com o briefing em um único comando:
 
 ```bash
-# 1. Descobrir o terminal do agente (os handles mudam a cada reinício do Orca)
-orca terminal list --json
-
-# 2. Ver se o agente está ocioso antes de enviar
-orca terminal read --terminal <handle> --json
-orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 60000 --json
-
-# 3. Enviar o briefing e confirmar que o turno começou
-orca terminal send --terminal <handle> --text "<briefing>" --enter --wait-submit 10 --json
-
-# 4. Acompanhar e ler o resultado
-orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 600000 --json
-orca terminal read --terminal <handle> --json
+orca-ide worktree create --name <slug> --base-branch origin/develop --agent codex --prompt "<briefing>" --json
 ```
+
+#### Delegação para o Antigravity (Gemini)
+
+Para o Antigravity, o Claude cria o worktree e abre o terminal executando `agy`. Em seguida, aguarda a inicialização da TUI e envia o briefing:
+
+```bash
+# 1. Cria o worktree da tarefa a partir de develop
+orca-ide worktree create --name <slug> --base-branch origin/develop --json
+
+# 2. Cria o terminal com o Antigravity no worktree
+# (o <handle> do terminal é retornado no JSON de saída do terminal create)
+orca-ide terminal create --worktree <id> --command agy --json
+
+# 3. Aguarda a TUI inicializar e ficar ociosa
+orca-ide terminal wait --terminal <handle> --for tui-idle --timeout-ms 60000 --json
+
+# 4. Envia o briefing e confirma que o turno começou
+orca-ide terminal send --terminal <handle> --text "<briefing>" --enter --wait-submit 10 --json
+
+# 5. Acompanha a execução e lê o resultado
+orca-ide terminal wait --terminal <handle> --for tui-idle --timeout-ms 600000 --json
+orca-ide terminal read --terminal <handle> --json
+```
+
+O `<handle>` do terminal vem do comando de criação (`terminal create`) ou da listagem (`terminal list`, caso o terminal já esteja aberto ou o Orca tenha sido reiniciado).
+
+Num worktree novo, o `agy` pergunta primeiro se a pasta é confiável; o `wait`
+volta com `blockedReason: "agent-trust-workspace"`. Confirme com
+`terminal send --terminal <handle> --enter` e repita o `wait`. Sem `--agent`, o
+`worktree create` também abre um shell vazio; ele pode ficar ou ser fechado depois
+de conferido.
 
 Só envie o briefing quando o `wait` retornar `satisfied: true`: texto digitado
 enquanto a TUI ainda inicia é perdido. Nunca reenvie por falta de resposta; use
@@ -161,8 +213,5 @@ responsável e o gatilho.
 - `.agents/skills/` tem skills exclusivas do Antigravity (`antigravity-orchestrator`,
   `clean-architecture-review`) que não existem em `.claude/skills/`. Falta decidir
   se a regra de cópia idêntica passa a admitir skills por ferramenta.
-- O worktree aninhado `Documentação-do-projeto/.worktrees/antigravity`
-  (`feature/antigravity-workspace`) já foi integrado em `develop` pelo PR #2 e pode
-  ser removido.
 - `main` ainda está no commit inicial; a primeira promoção de `develop` depende de
   uma versão validada.

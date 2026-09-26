@@ -130,11 +130,14 @@ verificáveis em `specs/`. Dinheiro é sempre decimal + código ISO 4217, nunca 
 ## Papéis e delegação via Orca
 
 - O Claude é a LLM principal (arquitetura, código complexo, validação, debug, revisão e
-  merge de PRs). O Codex implementa como dev sênior fullstack no worktree
-  `~/orca/workspaces/miuly/Dev-senior`; o Gemini (Antigravity) documenta no worktree
-  `~/orca/workspaces/miuly/Documentação-do-projeto`. Detalhes em
-  `docs/organizacao-agentes.md`.
-- Tarefas que geram commits são delegadas pelo terminal do agente no Orca
-  (`orca terminal list/read/wait/send`, skill `orca-cli`), com briefing autossuficiente
-  no formato do documento acima. Consultas somente leitura ao Gemini vão pelo `agy-bridge`.
+  merge de PRs). O Codex implementa como dev sênior fullstack e o Gemini (Antigravity)
+  documenta, cada um num worktree do Orca criado por tarefa em
+  `~/orca/workspaces/miuly/<slug>`. Detalhes em `docs/organizacao-agentes.md`.
+- Tarefas que geram commits são delegadas criando o worktree com o agente
+  (`orca-ide worktree create --agent codex --prompt ...`; para o Gemini,
+  `terminal create --command agy` e depois `wait`/`send`; skill `orca-cli`), com
+  briefing autossuficiente no formato do documento acima. Consultas somente leitura
+  ao Gemini vão pelo `agy-bridge`.
+- Os agentes não fazem `git fetch`/`push` (SSH sem chave; o `agy` trava no `fetch`).
+  O Claude atualiza as refs e publica por HTTPS com `gh auth git-credential`.
 - Não edite os worktrees dos outros agentes; revise o resultado deles antes de PR ou merge.
