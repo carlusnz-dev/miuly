@@ -20,6 +20,10 @@ concluir as chamadas. O proxy de desenvolvimento encaminha `/auth/**` e
 `/users/**` para `http://localhost:8080`, porta padrão do backend. O backend só deve ser iniciado após configurar o banco,
 conforme [backend/README.md](../backend/README.md).
 
+`UsersApi` oferece as rotas autenticadas de usuário e perfil (`/users/me` e
+subrotas), seguindo os DTOs do contrato do backend. Nenhuma tela consome esse
+cliente ainda.
+
 ## Validação
 
 ```bash
