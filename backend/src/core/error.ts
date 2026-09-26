@@ -36,3 +36,13 @@ export class UnauthorizedError extends ApiError {
     this.name = 'Unauthorized';
   }
 }
+
+export class TooManyRequestsError extends ApiError {
+  public readonly retryAfterSeconds: number;
+
+  constructor(retryAfterSeconds: number) {
+    super('Muitas tentativas. Tente novamente mais tarde', 429);
+    this.name = 'TooManyRequests';
+    this.retryAfterSeconds = Math.max(1, Math.ceil(retryAfterSeconds));
+  }
+}

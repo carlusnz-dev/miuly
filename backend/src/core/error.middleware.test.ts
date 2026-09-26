@@ -2,7 +2,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as z from 'zod';
 import './zod';
 import { asResponse, fakeNext, fakeRequest, fakeResponse } from '../test/http';
-import { BadRequestError, NotFoundError, UnauthorizedError } from './error';
+import {
+  BadRequestError,
+  NotFoundError,
+  TooManyRequestsError,
+  UnauthorizedError,
+} from './error';
 import { errorHandler, notFoundHandler } from './error.middleware';
 
 afterEach(() => {
@@ -26,6 +31,17 @@ describe('errorHandler', () => {
 
     expect(res.statusCode).toBe(status);
     expect(res.body).toEqual({ ok: false, message: error.message });
+  });
+
+  it('responde 429 com Retry-After e envelope genérico', () => {
+    const { res } = handle(new TooManyRequestsError(42));
+
+    expect(res.statusCode).toBe(429);
+    expect(res.headers['Retry-After']).toBe('42');
+    expect(res.body).toEqual({
+      ok: false,
+      message: 'Muitas tentativas. Tente novamente mais tarde',
+    });
   });
 
   it('converte ZodError em 400 com issues em português', () => {

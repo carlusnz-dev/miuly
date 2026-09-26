@@ -4,6 +4,7 @@ import {
   type PasswordHasher,
 } from '../../core/security/password';
 import type { Database } from '../../prisma/database';
+import { InMemoryRateLimiter } from '../../core/security/rate-limiter';
 import { AuthController } from './controller';
 import { requireAuth } from './middleware';
 import { PrismaAuthRepository } from './repository';
@@ -37,12 +38,17 @@ export function authModule(
   const passwords = new ScryptPasswordHasher();
   const tokens = new JoseTokenService(options.jwtSecret);
   const repository = new PrismaAuthRepository(database);
-  const service = new AuthServiceImpl(repository, { passwords, tokens });
+  const limiter = new InMemoryRateLimiter();
+  const service = new AuthServiceImpl(repository, {
+    passwords,
+    tokens,
+    loginEmailLimiter: limiter,
+  });
   const controller = new AuthController(service, options.secureCookies);
   const guard = requireAuth(tokens);
 
   return {
-    router: new AuthRoutes(controller, guard).register(Router()),
+    router: new AuthRoutes(controller, guard, limiter).register(Router()),
     requireAuth: guard,
     passwords,
     sessions: service,

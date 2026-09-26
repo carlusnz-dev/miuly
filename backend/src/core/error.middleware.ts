@@ -49,6 +49,9 @@ export function errorHandler(
   }
 
   if (error instanceof ApiError) {
+    if (error.statusCode === 429 && 'retryAfterSeconds' in error) {
+      res.setHeader('Retry-After', String(error.retryAfterSeconds));
+    }
     sendError(res, error.statusCode, { message: error.message });
     return;
   }

@@ -403,5 +403,12 @@ conflito (409), validação e falha de infraestrutura propagada como 500 genéri
 
 - tags em tarefas (RF-009), finanças, calendário e auditoria;
 - fluxo OAuth com o Google e armazenamento de tokens de terceiros (RF-003/RF-004);
-- recuperação de senha por e-mail, verificação de e-mail e limite de tentativas
-  de login. **O limite de tentativas deve entrar antes de qualquer deploy público.**
+- recuperação de senha por e-mail e verificação de e-mail.
+
+O limite de tentativas de autenticação é implementado antes de qualquer deploy
+público: `POST /auth/login` permite 20 tentativas por IP a cada 15 minutos e 5
+falhas por e-mail normalizado na mesma janela (login bem-sucedido limpa o contador);
+`POST /auth/register` permite 5 tentativas por IP por hora. Ao exceder, responde
+429 com `Retry-After` e mensagem genérica. O estado fica em memória, exige uma
+única instância e zera ao reiniciar. Se houver proxy reverso, `trust proxy` deve
+ser configurado para `req.ip` refletir o IP real; não fica habilitado agora.
