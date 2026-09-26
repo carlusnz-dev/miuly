@@ -14,7 +14,12 @@ function fakeTransaction(options: {
   existingTags?: { id: number; slugUrl: string }[];
   ownedRow?: unknown;
   createTagsError?: unknown;
+  attempts?: {
+    existingTags?: { id: number; slugUrl: string }[];
+    createTagsError?: unknown;
+  }[];
 }) {
+  let transactionIndex = 0;
   const calls = {
     taskCreate: vi.fn(async () => ({ id: TASK_ID })),
     taskUpdate: vi.fn(async () => ({})),
@@ -37,14 +42,7 @@ function fakeTransaction(options: {
         }),
       },
       Tag: {
-        where: (filter: unknown) => {
-          calls.tagWhere(filter);
-          return {
-            where: () => ({
-              select: () => ({ all: async () => options.existingTags ?? [] }),
-            }),
-          };
-        },
+        where: (filter: unknown) => calls.tagWhere(filter),
         createAll: calls.tagCreateAll,
       },
       TaskTag: {
@@ -54,11 +52,26 @@ function fakeTransaction(options: {
     },
   };
   const database = {
-    transaction: async (fn: (tx: { orm: typeof orm }) => unknown) =>
-      fn({ orm }),
+    transaction: async (fn: (tx: { orm: typeof orm }) => unknown) => {
+      const attempt = options.attempts?.[transactionIndex];
+      transactionIndex += 1;
+      const configured = attempt ?? options;
+      calls.tagCreateAll.mockImplementation(async (rows) => {
+        if (configured.createTagsError) throw configured.createTagsError;
+        return rows.map((row, index) => ({ id: 100 + index, ...row }));
+      });
+      calls.tagWhere.mockImplementation(() => ({
+        where: () => ({
+          select: () => ({
+            all: async () => configured.existingTags ?? [],
+          }),
+        }),
+      }));
+      return fn({ orm });
+    },
   } as unknown as Database;
 
-  return { database, calls };
+  return { database, calls, transactionCount: () => transactionIndex };
 }
 
 const createInput = {
@@ -126,14 +139,63 @@ describe('PrismaTaskRepository.create', () => {
     expect(calls.linkCreate).not.toHaveBeenCalled();
   });
 
-  it('traduz tag criada em paralelo em ConflictError', async () => {
-    const { database } = fakeTransaction({
-      createTagsError: Object.assign(new Error('dup'), { sqlState: '23505' }),
+  it('repete uma vez a transação ao criar tags concorrentes', async () => {
+    const { database, calls, transactionCount } = fakeTransaction({
+      attempts: [
+        {
+          createTagsError: Object.assign(new Error('dup'), {
+            sqlState: '23505',
+          }),
+        },
+        {
+          existingTags: [
+            { id: 31, slugUrl: 'casa' },
+            { id: 32, slugUrl: 'compras' },
+          ],
+        },
+      ],
+    });
+
+    const task = await new PrismaTaskRepository(database).create(
+      PROFILE_ID,
+      createInput,
+    );
+
+    expect(task.id).toBe(TASK_ID);
+    expect(transactionCount()).toBe(2);
+    expect(calls.taskCreate).toHaveBeenCalledOnce();
+    expect(calls.linkCreate).toHaveBeenCalledWith([
+      { taskId: TASK_ID, tagId: 31 },
+      { taskId: TASK_ID, tagId: 32 },
+    ]);
+  });
+
+  it('mantém 409 depois de duas violações de unicidade', async () => {
+    const duplicate = Object.assign(new Error('dup'), { sqlState: '23505' });
+    const { database, transactionCount } = fakeTransaction({
+      attempts: [
+        { createTagsError: duplicate },
+        { createTagsError: duplicate },
+      ],
     });
 
     await expect(
       new PrismaTaskRepository(database).create(PROFILE_ID, createInput),
     ).rejects.toThrow(ConflictError);
+    expect(transactionCount()).toBe(2);
+  });
+
+  it('não repete erros que não são de unicidade', async () => {
+    const failure = new Error('indisponível');
+    const { database, transactionCount } = fakeTransaction({
+      createTagsError: failure,
+      attempts: [{ createTagsError: failure }, {}],
+    });
+
+    await expect(
+      new PrismaTaskRepository(database).create(PROFILE_ID, createInput),
+    ).rejects.toBe(failure);
+    expect(transactionCount()).toBe(1);
   });
 });
 
@@ -151,6 +213,32 @@ describe('PrismaTaskRepository.update', () => {
     expect(calls.linkDelete).toHaveBeenCalledOnce();
     expect(calls.linkCreate).toHaveBeenCalledWith([
       { taskId: TASK_ID, tagId: 3 },
+    ]);
+  });
+
+  it('repete uma vez a transação do PATCH ao criar tags concorrentes', async () => {
+    const { database, calls, transactionCount } = fakeTransaction({
+      attempts: [
+        {
+          createTagsError: Object.assign(new Error('dup'), {
+            sqlState: '23505',
+          }),
+        },
+        { existingTags: [{ id: 31, slugUrl: 'casa' }] },
+      ],
+    });
+
+    const task = await new PrismaTaskRepository(database).update(
+      PROFILE_ID,
+      TASK_ID,
+      { tags: ['Casa'] },
+    );
+
+    expect(task?.id).toBe(TASK_ID);
+    expect(transactionCount()).toBe(2);
+    expect(calls.linkDelete).toHaveBeenCalledOnce();
+    expect(calls.linkCreate).toHaveBeenCalledWith([
+      { taskId: TASK_ID, tagId: 31 },
     ]);
   });
 

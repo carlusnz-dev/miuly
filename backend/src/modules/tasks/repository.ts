@@ -334,16 +334,21 @@ export class PrismaTaskRepository
   }
 
   // Tarefas não têm unicidade própria; uma violação aqui vem de duas
-  // requisições criando a mesma tag ao mesmo tempo.
+  // requisições criando a mesma tag ao mesmo tempo. A transação inteira pode
+  // ser repetida: na nova tentativa, resolveTags encontra a tag já criada.
   private async withTagConflict<T>(operation: () => Promise<T>): Promise<T> {
-    try {
-      return await operation();
-    } catch (error) {
-      if (isUniqueViolation(error)) {
-        throw new ConflictError('Tag criada ao mesmo tempo; tente novamente');
-      }
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        return await operation();
+      } catch (error) {
+        if (!isUniqueViolation(error)) {
+          throw error;
+        }
 
-      throw error;
+        if (attempt === 1) {
+          throw new ConflictError('Tag criada ao mesmo tempo; tente novamente');
+        }
+      }
     }
   }
 }
