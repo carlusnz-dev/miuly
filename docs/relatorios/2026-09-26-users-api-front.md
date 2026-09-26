@@ -39,7 +39,7 @@ referência local já incluía eventuais atualizações remotas recentes.
 
 ### Commits Criados
 
-- A registrar após o commit desta sessão.
+- `005e36c` — `fix(frontend): alinha UsersApi às rotas /users/me`
 
 ### Validações Executadas
 
@@ -53,8 +53,8 @@ referência local já incluía eventuais atualizações remotas recentes.
 
 ## 3. Observações, Riscos e Próximos Passos
 
-- **Riscos Residuais:** a branch base usa a referência local `origin/develop`;
-  o fetch remoto não pôde ser atualizado devido à autenticação SSH indisponível.
+- **Riscos Residuais:** o Claude confirmou via GitHub que `85c00c2` era o
+  `develop` remoto no momento da criação da branch.
 - **Pendências:** revisão do Claude antes da abertura de PR, conforme solicitado.
 - **Próximos Passos:** revisar o commit e abrir PR para `develop` após a revisão;
   esta sessão não fez push nem abriu PR.
